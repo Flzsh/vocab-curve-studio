@@ -1,16 +1,5 @@
-const CACHE = 'vocab-curve-studio-v7-capacity-polish';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './sample_100_words_import.txt', './icons/icon-192.png', './icons/icon-512.png'];
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE && k.startsWith('vocab-curve-studio')).map(k => caches.delete(k)))).then(() => self.clients.claim()));
-});
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(res => {
-    const copy = res.clone();
-    caches.open(CACHE).then(cache => cache.put(event.request, copy)).catch(() => {});
-    return res;
-  }).catch(() => caches.match('./index.html'))));
-});
+const CACHE='vocab-curve-studio-v11';
+const ASSETS=["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./assets/badge-common.png", "./assets/badge-uncommon.png", "./assets/badge-rare.png", "./assets/badge-epic.png", "./assets/badge-legendary.png", "./assets/badge-mythic.png", "./assets/rank-D.png", "./assets/rank-C.png", "./assets/rank-Cplus.png", "./assets/rank-B.png", "./assets/rank-Bplus.png", "./assets/rank-A.png", "./assets/rank-Aplus.png", "./assets/rank-S.png", "./assets/rank-s-silver.png", "./assets/rank-s-gold.png", "./assets/rank-s-diamond.png", "./assets/rank-s-platinum.png", "./assets/rank-s-demon.png", "./assets/tab-study.png", "./assets/tab-import.png", "./assets/tab-planner.png", "./assets/tab-books.png", "./assets/tab-achievements.png", "./assets/tab-stats.png", "./assets/tab-settings.png", "./assets/tab-ranked.png", "./assets/tab-save.png", "./assets/tab-account.png", "./assets/tab-more.png"];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return; e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{const copy=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)); return res;}).catch(()=>caches.match('./index.html'))));});
