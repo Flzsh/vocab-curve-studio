@@ -39,3 +39,4 @@ Ranked mode now reveals the answer after the first rating choice and waits for c
 - The answer-confirm ranked flow is preserved: rate, view answer, change rating if needed, then confirm.
 - S-tier order changed to Silver S, Gold S, Platinum S, Diamond S, Demon S.
 - Cache/version bumped to v11. Deploy with `?v=11` to bypass old PWA cache.
+Redeploy V11
