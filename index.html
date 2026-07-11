@@ -1710,7 +1710,16 @@ body.ranked-mode .wager-card:not(.available){display:none}body.ranked-mode .batt
   function pauseRankClock(){if(rankMatch)rankMatch.clockPaused=true;}
   function resumeRankClock(){if(rankMatch){rankMatch.clockPaused=!!document.hidden;rankMatch.lastTick=performance.now();}}
 
-  function registerServiceWorker(){if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').then(reg=>{reg.update().catch(()=>{});navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V16_READY')console.info('V16 cache ready');});}).catch(()=>{});}
+  function registerServiceWorker(){
+    if(!('serviceWorker'in navigator)||!location.protocol.startsWith('http'))return;
+    const hadController=!!navigator.serviceWorker.controller;
+    let refreshing=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
+    navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>{
+      reg.update().catch(()=>{});
+      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V16_READY')console.info('V16 cache ready');});
+    }).catch(()=>{});
+  }
 
 })();
 </script>
