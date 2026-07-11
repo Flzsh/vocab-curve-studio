@@ -1,42 +1,31 @@
-# Vocab Curve Studio v9
+# Vocab Curve Studio v16
 
-Mobile/desktop SAT vocabulary trainer with ranked AI bot battles.
+V16 is an offline-capable vocabulary review studio with adaptive memory scheduling, section-based learning, and an Elo Ranked mode.
 
-## Deploy
-Upload the contents of this folder to GitHub Pages with `index.html` at the repository root.
+## Highlights
 
-## Backup scopes
-The app can export/import: words only, study save, account rank status, or all 3. Use All 3 when moving between desktop and iPhone.
+- New vocabulary is learned in permanent 20-word sections. The next section unlocks only after every word in the current section reaches the mastery target.
+- The section selector supports focused review and makes it easy to stop and resume at a clear boundary.
+- The calibrated memory model accounts for recall quality, response time, hints, lapses, and individual card difficulty without double-counting reviews.
+- Glory Road uses eight cosmic-fire tiers: Spark, Flame, Blaze, Inferno, Sun, White Dwarf, Pulsar, and Black Hole.
+- Ranked opponents scale from novice tool usage at low Elo to stronger tactical timing, combos, and resource management at high Elo.
+- Ranked clocks run only while a question is active. Answer confirmation and next-question screens are untimed.
+- Early forfeits do not change Elo; forfeiting after meaningful match progress is rated normally.
+- Study gives the word and meaning equal visual priority, with supporting bridge and example text below.
+- The Settings Transfer Center replaces scattered export buttons with compact Full backup, Current book, and Ranked profile transfers.
+- Transfers can be saved as a file, copied directly, or pasted for import. V15 JSON backups and plain word lists remain accepted.
+- The phone layout is tuned for the iPhone 14 Pro class viewport, safe areas, 44-pixel touch targets, keyboard visibility, and 16-pixel form controls.
 
-## Ranked S tiers
-Silver S: 0–9 stars, Gold S: 10–24, Diamond S: 25–49, Platinum S: 50–99, Demon S: 100+.
+## Run or deploy
 
+Serve this folder with any static web server, or upload its contents to a static host. Keep `index.html`, all five `v16-*` runtime files, `sw.js`, `manifest.webmanifest`, `assets/`, and `icons/` together at the site root. Open `index.html?v=16` once after an update so the new offline cache can activate.
 
-## v10 fixes
+Opening `index.html` directly is useful for a quick desktop check, but a static server is recommended because browsers restrict service workers on local files.
 
-- Cleaned generated tab, rank, and rarity assets so checkerboard backgrounds do not show in the UI.
-- Kept the sliding tab indicator.
-- Compact ranked ladder is collapsed by default.
-- Top rank pill now shows only the rank image.
-- New cards keep import order by default; shuffle only happens when you press Shuffle.
-- Achievements are grouped by rarity in Common → Mythic order.
-- Stats cards no longer stretch into blank space.
+## Transfer and migration
 
+Open Settings, then use Transfer Center. A Full backup includes books, Study memory, section unlocks, Glory Road, Ranked progress, achievements, and settings. Save a full transfer before moving devices or replacing an older deployment. Existing progress stored under the stable local save key is migrated in place.
 
-## v10.1 fix
+## Verification
 
-- Removed Knew It from Ranked rating controls. Ranked now uses 1 Again, 2 Hard, 3 Good, and 4 Instant only.
-
-
-## v11 ranked fix
-
-Ranked mode now reveals the answer after the first rating choice and waits for confirmation. You can change the rating before moving to the next question.
-
-
-## v11 bug fixes
-
-- Ranked Start match switches into a compact battle view so the question is visible on desktop and phone.
-- The answer-confirm ranked flow is preserved: rate, view answer, change rating if needed, then confirm.
-- S-tier order changed to Silver S, Gold S, Platinum S, Diamond S, Demon S.
-- Cache/version bumped to v11. Deploy with `?v=11` to bypass old PWA cache.
-Redeploy V11
+Run `npm test` with Node.js to execute the deterministic memory, sections, Ranked policy, transfer, UI structure, offline-cache, and release-integrity checks.
