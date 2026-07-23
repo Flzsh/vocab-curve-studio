@@ -1,12 +1,12 @@
 {
-  "name": "Vocab Curve Studio v16",
+  "name": "Vocab Curve Studio v20 Alpha 20",
   "short_name": "Vocab Curve",
-  "description": "Adaptive vocabulary memory trainer with a full Elo Ranked Hub, character kits, and Glory Road.",
-  "start_url": "./index.html?v=16",
+  "description": "Stable adaptive vocabulary trainer with optional OpenRouter-powered Pro Tutor intervention modes.",
+  "start_url": "./index.html?v=20.0.0-alpha.20",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f7f8ff",
-  "theme_color": "#f6f8ff",
+  "background_color": "#f3f6ff",
+  "theme_color": "#eef7ff",
   "icons": [
     {
       "src": "./icons/icon-192.png",

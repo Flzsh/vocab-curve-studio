@@ -14,7 +14,7 @@
     full: Object.freeze({
       code: 'f',
       label: 'Full backup',
-      description: 'All books, Study memory, Glory Road, Ranked progress, achievements, and settings.'
+      description: 'All books, Study memory, settings, and backward-compatible legacy data.'
     }),
     book: Object.freeze({
       code: 'b',
@@ -55,7 +55,9 @@
     'reviewSinceNew', 'reviewsDone', 'newIntroduced', 'correct', 'wrong', 'know', 'hints',
     'minutes', 'pauseNew', 'boostReview', 'activeSeconds', 'rawMs', 'afk', 'hiddenMs',
     'blurMs', 'predBefore', 'score', 'kind', 'installId', 'bias', 'speedWeight',
-    'observations', 'lastCalibratedAt', 'legacyUpgradeRefunded', 'legacyUpgradeRefundAmount'
+    'observations', 'lastCalibratedAt', 'legacyUpgradeRefunded', 'legacyUpgradeRefundAmount', 'shortTermMastery', 'shortTermUpdatedAt',
+    'shortTermEvidenceCount', 'usabilityScore', 'sessionAttempts', 'sessionIndependentCorrect',
+    'sessionUpdatedAt', 'sessionLastRating', 'sectionRetirements'
   ]);
   const TOKEN_BY_KEY = new Map(KEYS.map((key, index) => [key, index.toString(36)]));
   const KEY_BY_TOKEN = new Map(KEYS.map((key, index) => [index.toString(36), key]));
@@ -124,7 +126,9 @@
   const CARD_FINITE_FIELDS = Object.freeze([
     'dueAt', 'intervalDays', 'stability', 'memoryStability', 'difficulty', 'memoryDifficulty',
     'memoryScore', 'studyMastery', 'studyReviews', 'reps', 'lapses', 'createdAt', 'updatedAt',
-    'introducedAt', 'lastReviewedAt', 'peakStudyMastery', 'gloryStage', 'batchIndex'
+    'introducedAt', 'lastReviewedAt', 'peakStudyMastery', 'gloryStage', 'batchIndex',
+    'shortTermMastery', 'shortTermUpdatedAt', 'shortTermEvidenceCount', 'usabilityScore',
+    'sessionAttempts', 'sessionIndependentCorrect', 'sessionUpdatedAt'
   ]);
   const RANK_FINITE_FIELDS = Object.freeze([
     'elo', 'peakElo', 'matches', 'wins', 'losses', 'ties', 'overtime', 'winStreak',
@@ -171,10 +175,22 @@
     }
   }
 
+  function assertUniqueNonemptyIds(items, kind, label) {
+    const seen = new Set();
+    for (const item of items) {
+      const id = String(item && item.id || '').trim();
+      if (!id) continue;
+      if (seen.has(id)) throw new TypeError(`${label} contains duplicate ${kind} id: ${id}.`);
+      seen.add(id);
+    }
+  }
+
   function validateBookData(book, label = 'Book transfer') {
     if (!isRecord(book) || !Array.isArray(book.cards) || !Array.isArray(book.batches)) {
       throw new TypeError(`${label} is incomplete: cards or sections are missing.`);
     }
+    assertUniqueNonemptyIds(book.cards, 'card', label);
+    assertUniqueNonemptyIds(book.batches, 'batch', label);
     book.cards.forEach((card) => validateCard(card, label));
     if (!book.batches.every(isRecord)) throw new TypeError(`${label} contains an invalid section batch.`);
     assertFiniteProperties(book, ['createdAt', 'updatedAt'], label);
@@ -202,6 +218,7 @@
     if (!isRecord(data) || !Array.isArray(data.books) || data.books.length === 0) {
       throw new TypeError(`${label} is incomplete: books are missing.`);
     }
+    assertUniqueNonemptyIds(data.books, 'book', label);
     data.books.forEach((book) => validateBookData(book, label));
     if (!isRecord(data.profile) || !isRecord(data.profile.totals) || !isRecord(data.account) || !isRecord(data.settings)) {
       throw new TypeError(`${label} is incomplete: Study, Ranked, or settings data is missing.`);
@@ -231,6 +248,7 @@
     if (!hasBooks && !hasStudyProgress && !hasProfile) throw new TypeError('Legacy Study transfer is incomplete.');
     if (data.books != null) {
       if (!hasBooks) throw new TypeError('Legacy Study transfer has invalid books.');
+      assertUniqueNonemptyIds(data.books, 'book', 'Legacy Study transfer');
       data.books.forEach((book) => validateBookData(book, 'Legacy Study transfer'));
     }
     if (data.settings != null && !isRecord(data.settings)) throw new TypeError('Legacy Study transfer has invalid settings.');
@@ -312,11 +330,15 @@
       batch.id = mappedBatch(oldId);
     });
 
+    const cardMap = new Map();
     const missingBatches = new Map();
     const fallbackBatchId = originalBatchIds[0] || 'default';
     book.cards.forEach((card) => {
       const oldBatchId = String(card.batchId || fallbackBatchId);
-      card.id = nextId('card');
+      const oldCardId = String(card.id || '');
+      const newCardId = nextId('card');
+      if (oldCardId && !cardMap.has(oldCardId)) cardMap.set(oldCardId, newCardId);
+      card.id = newCardId;
       card.batchId = mappedBatch(oldBatchId);
       if (!representedBatches.has(oldBatchId)) {
         const detail = missingBatches.get(oldBatchId) || { count: 0, name: String(card.batchName || 'Imported') };
@@ -326,6 +348,30 @@
     });
     for (const [oldBatchId, detail] of missingBatches) {
       book.batches.push({ id: mappedBatch(oldBatchId), name: detail.name, count: detail.count, createdAt: Date.now() });
+    }
+
+    const remapCardIds = (values) => {
+      const output = [];
+      const seen = new Set();
+      for (const value of Array.isArray(values) ? values : []) {
+        const mapped = cardMap.get(String(value || ''));
+        if (!mapped || seen.has(mapped)) continue;
+        seen.add(mapped);
+        output.push(mapped);
+      }
+      return output;
+    };
+    if (isRecord(book.organization)) {
+      if (Array.isArray(book.organization.bookOrder)) book.organization.bookOrder = remapCardIds(book.organization.bookOrder);
+      for (const chapter of Array.isArray(book.organization.chapters) ? book.organization.chapters : []) {
+        if (isRecord(chapter) && Array.isArray(chapter.cardIds)) chapter.cardIds = remapCardIds(chapter.cardIds);
+      }
+      for (const set of Array.isArray(book.organization.sets) ? book.organization.sets : []) {
+        if (isRecord(set) && Array.isArray(set.cardIds)) set.cardIds = remapCardIds(set.cardIds);
+      }
+      if (isRecord(book.organization.activeScope) && Array.isArray(book.organization.activeScope.cardIds)) {
+        book.organization.activeScope.cardIds = remapCardIds(book.organization.activeScope.cardIds);
+      }
     }
 
     const sectionUnlocks = {};

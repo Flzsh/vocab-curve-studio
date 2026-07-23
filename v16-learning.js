@@ -1,14 +1,21 @@
 (function attachV16Learning(root, factory) {
-  const api = factory();
+  const metrics = typeof module === 'object' && module.exports
+    ? require('./v20-study-memory.js')
+    : root && root.V20StudyMemory;
+  const api = factory(metrics);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.V16Learning = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function createV16Learning() {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function createV16Learning(Metrics) {
   'use strict';
 
   const DAY = 86_400_000;
   const MINUTE = 60_000;
   const DECAY = 0.1542;
   const FACTOR = Math.pow(0.9, 1 / -DECAY) - 1;
+  const SHORT_TERM_READY = 90;
+  const metricShortTerm = Metrics && typeof Metrics.effectiveShortTerm === 'function'
+    ? Metrics.effectiveShortTerm
+    : (card) => clamp(card && (card.shortTermMastery ?? card.studyMastery), 0, 100);
 
   function clamp(value, min, max) {
     const number = Number(value);
@@ -24,6 +31,14 @@
     if (['wrong', 'again', 'hard'].includes(value)) return 'wrong';
     if (['know', 'known'].includes(value)) return 'know';
     return 'correct';
+  }
+
+  function historySource(entry) {
+    return String(entry && (entry.kind || entry.source || entry.context) || '').toLowerCase();
+  }
+
+  function isRankedHistory(entry) {
+    return ['ranked', 'battle'].includes(historySource(entry));
   }
 
   function defaultCalibration() {
@@ -87,8 +102,8 @@
 
   function migrateMemoryState(card) {
     const target = card && typeof card === 'object' ? card : {};
-    const hadDueAt = Object.prototype.hasOwnProperty.call(target, 'dueAt');
-    const dueAt = finite(target.dueAt, 0);
+    const rawDueAt = Number(target.dueAt);
+    const hasValidDueAt = Number.isFinite(rawDueAt) && rawDueAt > 0;
     const legacyInterval = clamp(target.intervalDays, 0, 36_500);
     target.memoryStability = memoryStability(target);
     const legacyDifficulty = finite(target.difficulty, 0.35);
@@ -103,12 +118,22 @@
     target.stability = target.memoryStability;
     target.difficulty = (target.memoryDifficulty - 1) / 9;
     target.intervalDays = legacyInterval || Math.min(target.memoryStability, 1);
-    const history = Array.isArray(target.history) ? target.history : [];
-    const studyHistory = history.filter((entry) => entry && entry.kind !== 'ranked');
-    const hasRankedHistory = history.some((entry) => entry && entry.kind === 'ranked');
+    const history = (Array.isArray(target.history) ? target.history : [])
+      .map((entry, index) => ({ entry, index }))
+      .sort((left, right) => {
+        const leftTime = finite(left.entry && (left.entry.time ?? left.entry.reviewedAt ?? left.entry.at), 0);
+        const rightTime = finite(right.entry && (right.entry.time ?? right.entry.reviewedAt ?? right.entry.at), 0);
+        return leftTime - rightTime || left.index - right.index;
+      })
+      .map(item => item.entry);
+    target.history = history;
+    const sourceOf = entry => String(entry && (entry.kind || entry.source || entry.context) || '').toLowerCase();
+    const isRankedEntry = entry => ['ranked', 'battle'].includes(sourceOf(entry));
+    const studyHistory = history.filter((entry) => entry && !isRankedEntry(entry));
+    const hasRankedHistory = history.some(isRankedEntry);
     const latestStudyScore = studyHistory
       .slice()
-      .sort((left, right) => finite(right.time, 0) - finite(left.time, 0))
+      .reverse()
       .map((entry) => [entry.studyMastery, entry.memoryScore, entry.score]
         .map(Number)
         .find((value) => Number.isFinite(value)))
@@ -125,12 +150,42 @@
     );
     const legacyStudyReviews = studyHistory.length;
     target.studyReviews = Math.max(0, Math.floor(finite(target.studyReviews, legacyStudyReviews)));
+    const latestStudyRating = studyHistory.length ? normalizeRating(studyHistory[studyHistory.length - 1].rating) : '';
+    const inferredShortTerm = latestStudyRating === 'wrong' ? 18 : latestStudyRating === 'know' ? 100 : latestStudyRating ? 90 : target.studyMastery;
+    target.shortTermMastery = clamp(finite(target.shortTermMastery, inferredShortTerm), 0, 100);
+    target.shortTermUpdatedAt = Math.max(0, finite(target.shortTermUpdatedAt,
+      finite(target.lastReviewedAt, finite(target.introducedAt, 0))));
+    target.shortTermEvidenceCount = Math.max(0, Math.floor(finite(target.shortTermEvidenceCount, target.studyReviews)));
+    target.sessionAttempts = Math.max(0, Math.floor(finite(target.sessionAttempts, target.shortTermEvidenceCount)));
+    target.sessionIndependentCorrect = Math.max(0, Math.floor(finite(target.sessionIndependentCorrect, 0)));
+    target.sessionUpdatedAt = Math.max(0, finite(target.sessionUpdatedAt, target.shortTermUpdatedAt));
+    target.sessionLastRating = String(target.sessionLastRating || '');
+    target.usabilityScore = target.usabilityScore === null || target.usabilityScore === undefined || target.usabilityScore === ''
+      ? null
+      : clamp(target.usabilityScore, 0, 100);
     target.memoryScore = clamp(finite(target.memoryScore, target.studyMastery), 0, 100);
     target.memoryStateVersion = 16;
-    if (hadDueAt) target.dueAt = dueAt;
-    else if (target.state === 'known') target.dueAt = 0;
+    const explicitStudyEvidence = finite(target.introducedAt, 0) > 0
+      || finite(target.studySeenAt, 0) > 0
+      || finite(target.studyReviews, 0) > 0
+      || finite(target.studyMastery, 0) > 0
+      || studyHistory.length > 0;
+    const compatibleReviewedAt = finite(target.lastReviewedAt, 0) > 0
+      && (!hasRankedHistory || studyHistory.length > 0 || explicitStudyEvidence);
+    const legacyRepsOnly = finite(target.reps, 0) > 0 && history.length === 0;
+    const hasStudyEvidence = explicitStudyEvidence || compatibleReviewedAt || legacyRepsOnly;
+    if (target.state === 'known') target.dueAt = 0;
+    else if (!hasStudyEvidence) {
+      target.dueAt = 0;
+      if (target.state !== 'suspended') target.state = 'new';
+      target.studyMastery = 0;
+      target.shortTermMastery = 0;
+      target.studyReviews = 0;
+    } else if (hasValidDueAt) target.dueAt = rawDueAt;
     else {
-      const anchor = finite(target.lastReviewedAt, finite(target.introducedAt, Date.now()));
+      const anchor = compatibleReviewedAt
+        ? finite(target.lastReviewedAt)
+        : finite(target.studySeenAt, finite(target.introducedAt, Date.now()));
       target.dueAt = anchor + target.intervalDays * DAY;
     }
     return target;
@@ -165,7 +220,7 @@
 
   function studySeen(card) {
     if (finite(card.studyReviews, 0) > 0 || finite(card.studySeenAt, 0) > 0 || finite(card.studyMastery, 0) > 0) return true;
-    return Array.isArray(card.history) && card.history.some((entry) => entry && entry.kind !== 'ranked');
+    return Array.isArray(card.history) && card.history.some((entry) => entry && !isRankedHistory(entry));
   }
 
   function sectionIndex(card, fallbackIndex = 0) {
@@ -188,7 +243,7 @@
     return sectionIndex(card) === 0 || hasStoredUnlock(unlocks, sectionKey(card));
   }
 
-  function summarizeSections(cards, unlocks = {}) {
+  function summarizeSections(cards, unlocks = {}, now = Date.now()) {
     const groups = new Map();
     const batchCounts = new Map();
     const batchOrders = new Map();
@@ -220,11 +275,22 @@
         const ordered = group.cards.slice().sort((left, right) => finite(left.batchIndex, 0) - finite(right.batchIndex, 0));
         const active = ordered.filter((card) => card.state !== 'suspended');
         const mastered = active.filter((card) => clamp(card.studyMastery, 0, 100) >= 70).length;
-        const unseen = active.filter((card) => !finite(card.introducedAt, 0) && card.state !== 'known').length;
+        const unseen = active.filter((card) => !finite(card.introducedAt, 0) && !studySeen(card) && card.state !== 'known').length;
+        const introduced = Math.max(0, active.length - unseen);
         const start = ordered.length ? Math.min(...ordered.map((card) => Math.max(0, Math.floor(finite(card.batchIndex, 0))))) + 1 : group.index * 20 + 1;
         const end = ordered.length ? Math.max(...ordered.map((card) => Math.max(0, Math.floor(finite(card.batchIndex, 0))))) + 1 : start;
         const unlocked = group.index === 0 || hasStoredUnlock(unlocks, group.key);
-        const completed = mastered === active.length;
+        const introducedComplete = active.length === 0 || unseen === 0;
+        const masteredComplete = active.length === 0 || mastered === active.length;
+        const shortTermAverage = active.length
+          ? active.reduce((sum, card) => sum + metricShortTerm(card, now, finite(card.memoryScore, 0)), 0) / active.length
+          : 0;
+        const longTermAverage = active.length
+          ? Math.round(active.reduce((sum, card) => sum + clamp(card.memoryScore, 0, 100), 0) / active.length)
+          : 0;
+        const shortTermComplete = introducedComplete && active.length > 0 && shortTermAverage >= SHORT_TERM_READY;
+        const longTermComplete = active.length > 0 && longTermAverage >= 90;
+        const completed = shortTermComplete;
         return {
           key: group.key,
           batchId: group.batchId,
@@ -235,10 +301,20 @@
           required: active.length,
           mastered,
           unseen,
+          introduced,
+          introducedComplete,
+          masteredComplete,
+          shortTermAverage,
+          shortTermComplete,
+          readyForNext: shortTermComplete,
+          shortTermThreshold: SHORT_TERM_READY,
+          longTermAverage,
+          longTermComplete,
+          retired: longTermComplete,
           unlocked,
           locked: !unlocked,
           completed,
-          status: completed ? 'completed' : unlocked ? 'unlocked' : 'locked',
+          status: longTermComplete ? 'retired' : completed ? 'completed' : introducedComplete && unlocked ? 'building' : unlocked ? 'unlocked' : 'locked',
           start,
           end,
           rangeLabel: `Words ${start}–${end}`
@@ -248,7 +324,7 @@
 
   function unlockEligibleSections(cards, unlocks = {}, now = Date.now()) {
     const nextUnlocks = unlocks && typeof unlocks === 'object' ? { ...unlocks } : {};
-    const summaries = summarizeSections(cards, nextUnlocks);
+    const summaries = summarizeSections(cards, nextUnlocks, now);
     const byBatch = new Map();
     for (const summary of summaries) {
       if (!byBatch.has(summary.batchId)) byBatch.set(summary.batchId, []);
@@ -261,7 +337,7 @@
         const current = sections[position];
         const next = sections[position + 1];
         const currentUnlocked = current.index === 0 || hasStoredUnlock(nextUnlocks, current.key);
-        if (!currentUnlocked || current.mastered !== current.required) break;
+        if (!currentUnlocked || !current.shortTermComplete) break;
         if (!hasStoredUnlock(nextUnlocks, next.key)) {
           nextUnlocks[next.key] = finite(now, Date.now());
           newlyUnlocked.push(next.key);
@@ -272,7 +348,7 @@
       unlocks: nextUnlocks,
       changed: newlyUnlocked.length > 0,
       newlyUnlocked,
-      summaries: summarizeSections(cards, nextUnlocks)
+      summaries: summarizeSections(cards, nextUnlocks, now)
     };
   }
 
@@ -330,7 +406,7 @@
   function reviewTransition(card, rating, context = {}) {
     const current = migrateMemoryState({ ...(card || {}) });
     const normalizedRating = normalizeRating(rating);
-    const source = context.source === 'ranked' ? 'ranked' : 'study';
+    const source = ['ranked', 'battle'].includes(String(context.source || '').toLowerCase()) ? 'ranked' : 'study';
     const now = finite(context.now, Date.now());
     const timing = sanitizeTiming(context.timing);
     const hints = Math.max(0, Math.floor(finite(context.hints, 0)));
@@ -371,7 +447,7 @@
       const relearningMinutes = clamp(baseMinutes + finite(current.lapses, 0) * 0.5, 2, 15);
       intervalDays = relearningMinutes / 1440;
       dueAt = now + relearningMinutes * MINUTE;
-      state = current.introducedAt ? 'relearning' : 'learning';
+      state = first && source === 'study' ? 'learning' : 'relearning';
     } else if (sourceWeight > 0 && normalizedRating === 'know' && source === 'study') {
       nextStability = clamp(Math.max(120, previousStability * 4), 0.02, 36_500);
       nextDifficulty = clamp(previousDifficulty - 0.72, 1, 10);
@@ -463,7 +539,7 @@
       if (transition.source === 'study') {
         target.studyMastery = transition.studyMastery;
         target.studyReviews = Math.max(0, Math.floor(finite(target.studyReviews, 0))) + 1;
-        target.studySeenAt = finite(target.studySeenAt, transition.reviewTime);
+        if (!(finite(target.studySeenAt, 0) > 0)) target.studySeenAt = transition.reviewTime;
         if (!finite(target.introducedAt, 0)) target.introducedAt = transition.reviewTime;
       }
     }
@@ -484,6 +560,7 @@
     MINUTE,
     DECAY,
     FACTOR,
+    SHORT_TERM_READY,
     defaultCalibration,
     migrateCalibration,
     desiredRetention,

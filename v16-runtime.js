@@ -192,10 +192,13 @@
     if (!Rules) throw new Error('V16Rules is required');
     if (!Learning) throw new Error('V16Learning is required');
     const {
-      getState, getRankMatch, setRankMatch, getRankTimer, setRankTimer, els, achievements,
-      helpers
+      getState, getRankMatch, setRankMatch, getRankTimer, setRankTimer, els, achievements, appVersion,
+      legacyCompetitiveFeatures, helpers
     } = deps;
     const h = helpers;
+    const legacyFeatures = legacyCompetitiveFeatures == null
+      ? (typeof document !== 'undefined' && document.documentElement?.dataset?.legacyRanked === 'true')
+      : Boolean(legacyCompetitiveFeatures);
     let previewCharacterId = null;
     let activeRankTab = 'arena';
     let activeProgressTab = 'glory';
@@ -223,16 +226,24 @@
       return !document.hidden && focused && !confirmationOpen && (!rankedView || rankedView.classList.contains('active'));
     }
 
+    function runtimeHistorySource(entry) {
+      return String(entry && (entry.kind || entry.source || entry.context) || '').toLowerCase();
+    }
+
+    function runtimeRankedHistory(entry) {
+      return ['ranked', 'battle'].includes(runtimeHistorySource(entry));
+    }
+
     function normalStudyEvidence(card) {
       const history = Array.isArray(card.history) ? card.history : [];
-      return history.find((entry) => entry && entry.time && entry.kind !== 'ranked') || null;
+      return history.find((entry) => entry && (entry.time || entry.at || entry.reviewedAt) && !runtimeRankedHistory(entry)) || null;
     }
 
     function normalizeCardProgress(card) {
       if (!card.studySeenAt) {
         const evidence = normalStudyEvidence(card);
-        const hasOnlyRanked = Array.isArray(card.history) && card.history.length && card.history.every((entry) => entry && entry.kind === 'ranked');
-        if (evidence) card.studySeenAt = Number(evidence.time);
+        const hasOnlyRanked = Array.isArray(card.history) && card.history.length && card.history.every(runtimeRankedHistory);
+        if (evidence) card.studySeenAt = Number(evidence.time || evidence.at || evidence.reviewedAt);
         else if (!hasOnlyRanked && (card.state === 'known' || card.introducedAt)) card.studySeenAt = Number(card.introducedAt || card.createdAt || Date.now());
       }
       card.peakStudyMastery = clamp(Number(card.peakStudyMastery || 0), 0, 100);
@@ -261,8 +272,8 @@
 
     function normalizeState() {
       const s = state();
-      s.schemaVersion = 16;
-      s.appVersion = '16.0.0';
+      s.schemaVersion = Math.max(16, Number(s.schemaVersion) || 0);
+      if (appVersion) s.appVersion = String(appVersion);
       s.profile = s.profile || {};
       s.profile.memoryCalibration = Learning.migrateCalibration(s.profile.memoryCalibration || {});
       s.settings = s.settings || {};
@@ -270,6 +281,14 @@
       s.sectionUnlocks = s.sectionUnlocks && typeof s.sectionUnlocks === 'object' ? s.sectionUnlocks : {};
       s.account = s.account || {};
       s.account.progress = s.account.progress || {};
+      const allCards = s.books.flatMap((book) => Array.isArray(book.cards) ? book.cards : []);
+      for (const card of allCards) {
+        Learning.migrateMemoryState(card);
+        normalizeCardProgress(card);
+      }
+      s.sectionUnlocks = Learning.unlockEligibleSections(allCards, s.sectionUnlocks, Date.now()).unlocks;
+      if (!legacyFeatures) return;
+
       const p = s.account.progress;
       p.unlockedCharacters = Array.isArray(p.unlockedCharacters) ? [...new Set(p.unlockedCharacters)] : ['nova'];
       if (!p.unlockedCharacters.includes('nova')) p.unlockedCharacters.unshift('nova');
@@ -290,12 +309,6 @@
       const refund = Rules.refundLegacyUpgrades(p);
       Object.assign(p, refund);
       ensureCharacterPower();
-      const allCards = s.books.flatMap((book) => Array.isArray(book.cards) ? book.cards : []);
-      for (const card of allCards) {
-        Learning.migrateMemoryState(card);
-        normalizeCardProgress(card);
-      }
-      s.sectionUnlocks = Learning.unlockEligibleSections(allCards, s.sectionUnlocks, Date.now()).unlocks;
       if (!p.memoryMigrationComplete) {
         let total = 0;
         for (const card of allCards) {
@@ -315,8 +328,9 @@
     }
 
     function studyAward(card, result) {
-      const p = progress();
+      if (!legacyFeatures) return 0;
       card.studySeenAt = card.studySeenAt || Date.now();
+      const p = progress();
       const award = Rules.gloryAwardForStudy(card, result && result.memoryScore != null ? result.memoryScore : Number(card.memoryScore || 0), true);
       card.gloryStage = award.stage;
       card.peakStudyMastery = award.peakStudyMastery;
@@ -391,8 +405,9 @@
     }
 
     function bindEvents() {
-      if (eventsBound) return;
+      if (!legacyFeatures || eventsBound) return;
       eventsBound = true;
+      if (!legacyFeatures) return;
       document.getElementById('rankSubtabs')?.addEventListener('click', (event) => {
         const button = event.target.closest('[data-rank-tab]');
         if (button) setRankTab(button.dataset.rankTab);
@@ -491,6 +506,10 @@
     }
 
     function activateView(name) {
+      if (!legacyFeatures) {
+        document.body.classList.remove('v15-hub-mode', 'ranked-mode');
+        return;
+      }
       document.body.classList.toggle('v15-hub-mode', name === 'ranked' || name === 'achievements');
       if (name === 'ranked') { setRankTab(activeRankTab); renderRanked(); resumeClock(); }
       else pauseClock();
@@ -627,6 +646,7 @@
     }
 
     function renderRanked() {
+      if (!legacyFeatures) return;
       if (!els.rankDisplay) return;
       const rankedViewActive = document.getElementById('view-ranked')?.classList.contains('active');
       document.body.classList.toggle('ranked-mode', Boolean(match() && rankedViewActive));
@@ -752,6 +772,7 @@
     }
 
     function renderAchievements() {
+      if (!legacyFeatures) return;
       if (!els.achievementGrid) return;
       const filter = els.achievementFilter?.value || 'all';
       const source = els.achievementSourceFilter?.value || 'all';
@@ -792,28 +813,33 @@
     }
 
     function renderProgress() {
+      if (!legacyFeatures) return;
       renderGlory(); renderAchievements(); setProgressTab(activeProgressTab);
     }
 
     function renderTodayStrip() {
-      const day = h.todayLog(), counts = h.counts();
-      els.todayStrip.innerHTML = `<span class="pill cool">${h.todayKey()}</span><span class="pill ${h.dailyNewRemaining() ? 'ok' : 'warn'}">New ${h.dailyNewRemaining()}</span><span class="pill ${h.dailyReviewRemaining() ? 'ok' : 'hot'}">Review ${h.dailyReviewRemaining()}</span><span class="pill ${counts.dueAll > h.effectiveReviewLimit() ? 'hot' : 'cool'}">Due ${counts.dueAll}</span><span class="pill lock">MP ${progress().memoryPoints}</span><span class="pill cool">Cores ${progress().characterCores}</span>${day.pauseNew ? '<span class="pill warn">New paused</span>' : ''}${h.backlogHeld() ? `<span class="pill hot">Overflow ${h.backlogHeld()}</span>` : ''}`;
+      const counts = h.counts();
+      if (!els.todayStrip) return;
+      els.todayStrip.innerHTML = `<span class="pill cool">${h.todayKey()}</span><span class="pill ${h.dailyNewRemaining() ? 'ok' : 'warn'}">New ${h.dailyNewRemaining()}</span><span class="pill ${h.dailyReviewRemaining() ? 'ok' : 'hot'}">Review ${h.dailyReviewRemaining()}</span><span class="pill ${counts.dueAll > h.effectiveReviewLimit() ? 'hot' : 'cool'}">Due ${counts.dueAll}</span>`;
     }
 
     function renderStats() {
       const counts = h.counts(), day = h.todayLog(), adaptive = h.adaptiveModel(), rank = state().account.rank;
       const learnedTotal = counts.learned + counts.known;
       const longTermTotal = counts.longTerm + counts.known;
-      const values = [
+      const coreValues = [
         ['Book cards', counts.total, h.percent(counts.total, Math.max(1, state().settings.targetTotal)), `${counts.active} active · ${counts.known} known`],
         ['Learned', learnedTotal, h.percent(learnedTotal, Math.max(1, counts.total - counts.suspended)), `${counts.unseen} unseen`],
         ['Recall calibration', `${Math.round((adaptive.accuracyEMA || 0) * 100)}%`, Math.round((adaptive.accuracyEMA || 0) * 100), `${adaptive.samples || 0} samples`],
-        ['Memory Points', progress().memoryPoints, Math.min(100, progress().memoryPoints / 100), 'lifetime dedication'],
-        ['Character Cores', progress().characterCores, Math.min(100, progress().characterCores), 'spendable power currency'],
         ['Reviews today', day.reviewsDone, h.percent(day.reviewsDone, Math.max(1, h.effectiveReviewLimit())), `${counts.dueAll} currently due`],
-        ['Rank Elo', rank.elo || 850, h.percent((rank.elo || 850) - 600, 1600), Rules.rankBandForElo(rank.elo).name],
         ['Long-term', longTermTotal, h.percent(longTermTotal, Math.max(1, counts.total - counts.suspended)), '30+ day interval or explicitly known']
       ];
+      const legacyValues = legacyFeatures ? [
+        ['Memory Points', progress().memoryPoints, Math.min(100, progress().memoryPoints / 100), 'lifetime dedication'],
+        ['Character Cores', progress().characterCores, Math.min(100, progress().characterCores), 'spendable power currency'],
+        ['Rank Elo', rank.elo || 850, h.percent((rank.elo || 850) - 600, 1600), Rules.rankBandForElo(rank.elo).name]
+      ] : [];
+      const values = [...coreValues, ...legacyValues];
       els.statGrid.innerHTML = values.map(([label, number, bar, sub]) => `<div class="stat"><div class="num">${number}</div><div class="label">${label}</div><div class="statbar"><span style="width:${clamp(bar, 0, 100)}%"></span></div><div class="tiny">${h.esc(sub)}</div></div>`).join('');
       h.renderHardWords(); h.renderBookBars(); h.renderDeck();
     }

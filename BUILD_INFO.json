@@ -1,0 +1,14 @@
+{
+  "name": "Vocab Curve Studio",
+  "version": "20.0.0-alpha.20",
+  "packageType": "tester-runtime",
+  "excluded": [
+    "tests",
+    "docs/verification",
+    "docs/superpowers",
+    "scripts",
+    ".git",
+    "legacy",
+    "node_modules"
+  ]
+}
