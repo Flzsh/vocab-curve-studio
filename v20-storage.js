@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createV20Storage() {
   'use strict';
 
-  const VERSION = '20.0.0-alpha.20';
+  const VERSION = '20.0.0-alpha.21';
   const FORMAT = 'vocab-curve-save-envelope-v1';
   const LEGACY_PRIMARY_KEY = 'vocab-curve-studio:stable-v20';
   const LEGACY_BACKUP_KEY = 'vocab-curve-studio:stable-v20:backups';

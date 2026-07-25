@@ -1,4 +1,4 @@
-/* macOS Workspace v20.0.0-alpha.20-macos.10 */
+/* macOS Workspace v20.0.0-alpha.21-macos.11 */
 
 /* Shared macOS palette, geometry, and contextual-current defaults. */
 :root {
@@ -3465,5 +3465,13 @@ body.low-power input[type="range"]::-webkit-slider-runnable-track {
   #longTermSphere[data-memory-world="v3"] .v20-world-storm {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* Alpha 21: keep medium-length words clear of the metadata lane on narrow phones. */
+@media (max-width: 480px) {
+  body.study-mode .v20-study-word-region.is-compact-mobile-word:not(.is-long-word) .front-title {
+    font-size: clamp(32px, 10vw, 42px) !important;
+    line-height: .94 !important;
   }
 }

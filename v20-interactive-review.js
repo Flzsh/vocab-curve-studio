@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='20.0.0-alpha.20';
+  const VERSION='20.0.0-alpha.21';
   const PHASES=new Set(['coach','recall','assess','complete']);
 
   function finite(value,fallback=0){const number=Number(value);return Number.isFinite(number)?number:fallback;}

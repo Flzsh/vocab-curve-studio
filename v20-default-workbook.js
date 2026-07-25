@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createV20DefaultWorkbook() {
   'use strict';
 
-  const VERSION = '20.0.0-alpha.20';
+  const VERSION = '20.0.0-alpha.21';
   const BUNDLED_REVISION = 1;
   const BOOK_ID = 'sat-full-vocab-l1-l3';
   const BOOK_NAME = 'SAT Full Vocabulary L1–L3';

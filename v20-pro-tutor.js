@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='20.0.0-alpha.20';
+  const VERSION='20.0.0-alpha.21';
   const OPENROUTER_CHAT_URL='https://openrouter.ai/api/v1/chat/completions';
   const OPENROUTER_AUTH_URL='https://openrouter.ai/auth';
   const OPENROUTER_KEY_URL='https://openrouter.ai/api/v1/auth/keys';

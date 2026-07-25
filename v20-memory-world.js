@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createV20MemoryWorld() {
   'use strict';
 
-  const VERSION = '20.0.0-alpha.20';
+  const VERSION = '20.0.0-alpha.21';
   const STAGES = Object.freeze([
     Object.freeze({ id:'luna', label:'Luna', min:0, max:19, color:'#8495ff', liquid:'#6f82f6', coreScale:.68, bodyScale:.68, moons:0, satellites:0, asteroids:0, orbitBodies:0, bodyCount:1, orbitPaths:0, orbitRate:.42, hoverRate:1.05 }),
     Object.freeze({ id:'mars', label:'Mars', min:20, max:39, color:'#e0765f', liquid:'#c95b49', coreScale:.82, bodyScale:.82, moons:2, satellites:0, asteroids:0, orbitBodies:2, bodyCount:3, orbitPaths:2, orbitRate:.58, hoverRate:1.42 }),

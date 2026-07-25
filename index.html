@@ -11,7 +11,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Vocab Curve Studio v20 Alpha 20</title>
+<title>Vocab Curve Studio v20 Alpha 21</title>
 <style>
 :root{
   --bg0:#f7f8ff;--bg1:#f1fbff;--bg2:#fff9f3;--ink:#202437;--muted:#697189;--soft:#8d94a8;
@@ -377,7 +377,7 @@ body.ranked-mode .wager-card:not(.available){display:none}body.ranked-mode .batt
 @media (min-width:721px) and (max-width:930px){.today-strip{display:none}.nav{grid-template-columns:1fr}.top-actions .save-pill,.top-actions .book-select{max-width:150px}.ranked-shell{grid-template-columns:1fr}.rank-side-panel{grid-template-columns:repeat(2,minmax(0,1fr))}.rank-account-summary,.compact-rank-info{grid-column:1/-1}}
 
 
-/* Alpha 20 final-audit presentation */
+/* Alpha 21 final-audit presentation */
 .logo{overflow:hidden;padding:0!important;isolation:isolate}.logo img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}.logo[data-icon-fallback]::after{content:attr(data-icon-fallback);font-size:25px;font-weight:1000}
 .v20-performance-settings{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important}.v20-performance-settings h2{margin:2px 0 0!important}.v20-low-power-toggle{display:flex;align-items:center;gap:10px;min-width:min(100%,330px);padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.72)}.v20-low-power-toggle>span{display:grid;gap:2px}.v20-low-power-toggle small{color:var(--muted)}
 body.low-power .ambient,body.low-power .blob{display:none!important}
@@ -394,12 +394,12 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 @media(max-width:720px){.v20-performance-settings{align-items:stretch!important;flex-direction:column!important}.v20-low-power-toggle{width:100%}}
 
 </style>
-<link rel="stylesheet" href="./v16.css?v=20.0.0-alpha.20">
-<link rel="stylesheet" href="./v17.css?v=20.0.0-alpha.20">
-<link rel="stylesheet" href="./v18.css?v=20.0.0-alpha.20">
-<link rel="stylesheet" href="./v19.css?v=20.0.0-alpha.20-macos.10">
-<link rel="stylesheet" href="./v20.css?v=20.0.0-alpha.20">
-<link rel="stylesheet" href="./macos-workspace.css?v=20.0.0-alpha.20-macos.10">
+<link rel="stylesheet" href="./v16.css?v=20.0.0-alpha.21">
+<link rel="stylesheet" href="./v17.css?v=20.0.0-alpha.21">
+<link rel="stylesheet" href="./v18.css?v=20.0.0-alpha.21">
+<link rel="stylesheet" href="./v19.css?v=20.0.0-alpha.21-macos.11">
+<link rel="stylesheet" href="./v20.css?v=20.0.0-alpha.21">
+<link rel="stylesheet" href="./macos-workspace.css?v=20.0.0-alpha.21-macos.11">
 </head>
 <body>
 <div class="ambient"><div class="blob one"></div><div class="blob two"></div><div class="blob three"></div></div>
@@ -772,22 +772,23 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 <div class="toast-zone" id="toastZone" role="status" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></div>
 <div class="modal" id="newPickerModal" role="dialog" aria-modal="true" aria-label="Pick a new word" tabindex="-1"><div class="modal-card picker-modal-card"><div class="row" style="justify-content:space-between;align-items:center"><div><h2>Pick a new word</h2><p class="muted">New words come from the active set, chapter, selection, or automatic section.</p></div><button class="btn btn-mini" id="closePickerBtn">Close</button></div><div class="split"><div class="field"><label for="modalBatchPicker">Batch</label><select id="modalBatchPicker"></select></div><div class="field"><label for="modalPickerSearch">Search</label><input id="modalPickerSearch" placeholder="word or meaning"></div></div><div class="field"><label for="modalSectionPicker">Review focus</label><select id="modalSectionPicker"></select></div><div class="section-progress" id="modalSectionProgress" aria-live="polite"></div><div class="new-card-list modal-new-card-list" id="modalNewCardList"></div></div></div>
 <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText" tabindex="-1"><div class="modal-card"><h2 id="confirmTitle">Confirm</h2><p class="muted" id="confirmText"></p><div class="modal-actions"><button class="btn" id="confirmCancel">Cancel</button><button class="btn btn-primary" id="confirmOk">OK</button></div></div></div>
-<script src="./v16-rules.js?v=20.0.0-alpha.20"></script>
-<script src="./v20-storage.js?v=20.0.0-alpha.20"></script>
-<script src="./v20-study-memory.js?v=20.0.0-alpha.20-macos.10"></script>
-<script src="./v20-liquid-motion.js?v=20.0.0-alpha.20"></script>
-<script src="./v20-memory-world.js?v=20.0.0-alpha.20"></script>
-<script src="./v20-library.js?v=20.0.0-alpha.20"></script>
-<script src="./v20-default-workbook.js?v=20.0.0-alpha.20"></script>
-<script src="./v20-forecast.js?v=20.0.0-alpha.20"></script>
-<script src="./v16-learning.js?v=20.0.0-alpha.20"></script>
-<script src="./v16-transfer.js?v=20.0.0-alpha.20"></script>
-<script src="./v16-runtime.js?v=20.0.0-alpha.20"></script>
-<script src="./v17-study.js?v=20.0.0-alpha.20"></script>
-<script src="./v18-study.js?v=20.0.0-alpha.20"></script>
-<script src="./v19-ui.js?v=20.0.0-alpha.20-macos.10"></script>
-<script src="./v20-interactive-review.js?v=20.0.0-alpha.20"></script>
-<script src="./v20-pro-tutor.js?v=20.0.0-alpha.20"></script>
+<script src="./v16-rules.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-storage.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-study-memory.js?v=20.0.0-alpha.21-macos.11"></script>
+<script src="./v20-queue-policy.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-liquid-motion.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-memory-world.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-library.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-default-workbook.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-forecast.js?v=20.0.0-alpha.21"></script>
+<script src="./v16-learning.js?v=20.0.0-alpha.21"></script>
+<script src="./v16-transfer.js?v=20.0.0-alpha.21"></script>
+<script src="./v16-runtime.js?v=20.0.0-alpha.21"></script>
+<script src="./v17-study.js?v=20.0.0-alpha.21"></script>
+<script src="./v18-study.js?v=20.0.0-alpha.21"></script>
+<script src="./v19-ui.js?v=20.0.0-alpha.21-macos.11"></script>
+<script src="./v20-interactive-review.js?v=20.0.0-alpha.21"></script>
+<script src="./v20-pro-tutor.js?v=20.0.0-alpha.21"></script>
 <script>
 (() => {
   'use strict';
@@ -795,6 +796,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const Storage = window.V20Storage;
   const Learning = window.V16Learning;
   const V20StudyMemory = window.V20StudyMemory;
+  const QueuePolicy = window.V20QueuePolicy;
   const LiquidMotion = window.V20LiquidMotion;
   const MemoryWorld = window.V20MemoryWorld;
   const Library = window.V20Library;
@@ -805,7 +807,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const V18Study = window.V18Study;
   const ProInteractiveReview = window.ProInteractiveReview;
   const ProTutor = window.V20ProTutor;
-  const APP_VERSION = '20.0.0-alpha.20';
+  const APP_VERSION = '20.0.0-alpha.21';
   const PRO_TUTOR_SESSION_KEY = 'vocab-curve-studio:v20-openrouter-session-key';
   const PRO_TUTOR_PKCE_KEY = 'vocab-curve-studio:v20-openrouter-pkce';
   const LEGACY_STORAGE_KEY = 'vocab-curve-studio:stable';
@@ -1058,7 +1060,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       try{result=await Storage.saveCoordinated(localStorage,stateSnapshot,saveMeta,{writerId:SAVE_WRITER_ID,reason,now:()=>Date.now(),backupLimit:3});}
       catch(error){result={ok:false,error};}
       if(result.ok&&saveMeta.stale)result={ok:false,conflict:true,currentRevision:Number(saveMeta.externalRevision||result.meta?.revision||0)};
-      if(result.ok){saveMeta={...result.meta,lastFailure:''};lastCommittedState=JSON.parse(JSON.stringify(stateSnapshot));saveConflictNotified=false;setSaveConflictState(false);setSavePill('saved','Saved');}
+      if(result.ok){saveMeta={...result.meta,lastFailure:''};lastCommittedState=stateSnapshot;saveConflictNotified=false;setSaveConflictState(false);setSavePill('saved','Saved');}
       else if(result.conflict){saveMeta={...saveMeta,stale:true,externalRevision:result.currentRevision};notifySaveConflict('This tab is protected from overwriting it. Reload before continuing.');}
       else if(result.busy){saveMeta={...saveMeta,lastFailure:'busy'};setSavePill('error','Save busy — try again');console.warn('Another tab is currently saving.');}
       else{saveMeta={...saveMeta,lastFailure:'storage'};setSavePill('error','Save failed — export');console.warn(result.error||'Save failed');}
@@ -1268,13 +1270,16 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     els.pauseNewBtn.textContent=d.pauseNew?'Resume new':'Pause new';
     els.boostReviewBtn.textContent=d.boostReview?'Boost on':'Review boost';
     renderNewPicker();
-    const top=priorityReviewCards(Date.now()).slice(0,40);
-    els.priorityList.innerHTML=top.length?top.map(({card,priority,selected,overflow})=>`<div class="priority-item"><div><strong>${esc(card.word)}</strong><div class="tiny">${esc(shortMeaning(card))}</div></div><span class="pill ${selected?'ok':overflow?'cool':'warn'}">${selected?'now':overflow?'overflow':'held'} ${Math.round(priority)}</span></div>`).join(''):'<div class="tiny">No due cards now. Short learning steps may appear a few minutes early when new cards are finished.</div>';
+    let top=priorityReviewCards(Date.now()).slice(0,40);
+    if(QueuePolicy.visibleReviewCount(0,current)>0&&current?.card&&!top.some(entry=>entry.card.id===current.card.id)){
+      top=[{card:current.card,priority:reviewUtility(current.card,Date.now()),selected:true,overflow:false},...top].slice(0,40);
+    }
+    els.priorityList.innerHTML=top.length?top.map(({card,priority,selected,overflow})=>`<div class="priority-item"><div><strong>${esc(card.word)}</strong><div class="tiny">${esc(shortMeaning(card))}</div></div><span class="pill ${selected?'ok':overflow?'cool':'warn'}">${selected?'now':overflow?'overflow':'held'} ${Math.round(priority)}</span></div>`).join(''):'<div class="tiny">No other review is ready. The queue will pull a near-due card only when spacing is needed.</div>';
     renderForecast();
     if(current?.card){
       const card=current.card;
-      const stateLabel=card.state==='relearning'?'Relearning':card.state==='review'?'Review':card.state==='known'?'Known':'Learning';
-      els.currentMeta.dataset.cardState=card.state;
+      const stateLabel=QueuePolicy.reviewKindLabel(current,Date.now());
+      els.currentMeta.dataset.cardState=current.kind==='early-review'?'early-review':card.state;
       els.currentMeta.innerHTML=`<b>${esc(card.word)}</b><br>${stateLabel} · ${card.reps||0} reviews · ${card.lapses||0} lapses<br>${formatDue(card.dueAt)} · ${formatInterval(card.intervalDays)}<br>Long-term ${Math.round(getMemoryScore(card))}%`;
     }else{delete els.currentMeta.dataset.cardState;els.currentMeta.textContent='No card selected.';}
   }
@@ -1311,6 +1316,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const length=Array.from(String(word||'').trim()).length;
     const row=els.frontTitle?.closest('.v20-study-word-region');
     if(!row)return;
+    row.classList.toggle('is-compact-mobile-word',length>9);
     row.classList.toggle('is-long-word',length>16);
     row.classList.toggle('is-very-long-word',length>28);
   }
@@ -2407,6 +2413,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     }
     const c=current.card;
     const isReinforcement=current.kind==='reinforcement'||current.kind==='repair';
+    const isEarlyReview=current.kind==='early-review'||(current.kind==='review'&&Number(c?.dueAt)>Date.now());
     studyController?.prepareCard({cardKey:c.id,wordScore:snapshot.shortTerm,sectionScore:snapshot.sectionShortTerm,climate,empty});
     els.emptyState.classList.add('hidden');els.cardShell.classList.remove('hidden');
     els.cardShell.classList.remove('flip','answer-visible');restartStudyCardEntrance();
@@ -2414,19 +2421,20 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     els.hintPanel.classList.remove('show');els.hintPanel.innerHTML='';
     els.answerPanel.classList.remove('show');delete els.answerPanel.dataset.cardId;
     els.frontTitle.classList.remove('cloze-title');
-    els.cardMode.textContent=(current.kind==='new'?'New · ':isReinforcement?'Reinforce · ':'Review · ')+'word → meaning';
+    els.cardMode.textContent=(current.kind==='new'?'New · ':isReinforcement?'Reinforce · ':isEarlyReview?'Early review · ':'Review · ')+'word → meaning';
     els.memoryChip.textContent=`Short-term ${Math.round(snapshot.sectionShortTerm)}%`;
     els.frontTitle.textContent=c.word;applyStudyWordFit(c.word);
     els.frontPrompt.textContent='';
     els.typeInput.placeholder='Optional: type your meaning/translation before revealing';
-    const kindLabel=current.kind==='new'?'New word':isReinforcement?'Short-term reinforcement':'Adaptive priority review';
-    els.queueTitle.innerHTML=`<b>${esc(activeBook().name)}</b><br><span class="tiny">${kindLabel} · ${counts().dueAll} due · ${backlogHeld()} beyond normal cap</span>`;
+    const kindLabel=QueuePolicy.reviewKindLabel(current,Date.now());
+    const visibleDue=QueuePolicy.visibleReviewCount(counts().dueAll,current,Date.now());
+    els.queueTitle.innerHTML=`<b>${esc(activeBook().name)}</b><br><span class="tiny">${kindLabel} · ${visibleDue} in queue · ${backlogHeld()} beyond normal cap</span>`;
     scheduleStudyAnswer(c);
     applyV18StudyVisuals({snapshot:{word:snapshot.shortTerm,section:snapshot.sectionShortTerm,sectionKey:snapshot.sectionKey},climate,phase:'recall'});
     renderSide();
   }
   function showHint(){if(!current?.card)return;hintCount++;todayLog().hints++;state.profile.totals.hints++;const c=current.card,layers=[];if(hintCount>=1)layers.push(`<b>Layer 1 · Sentence:</b> ${esc(c.example||'No example sentence provided.')}`);if(hintCount>=2)layers.push(`<b>Layer 2 · Memory bridge:</b> ${esc(c.bridge||'No memory bridge provided.')}`);if(hintCount>=3){const pos=(c.meaning||c.fullMeaning||'').match(/^(adj\.|adv\.|v\.|vt\.|vi\.|n\.|phr\.)/i);if(pos)layers.push(`<b>Layer 3 · Part of speech:</b> ${esc(pos[1])}`);layers.push(`<b>Layer 3 · Word shape:</b> ${esc(c.word[0]||'')} ${'· '.repeat(Math.max(0,Math.min(10,c.word.length-1)))}`);}els.hintPanel.innerHTML=layers.map(x=>`<div>${x}</div>`).join('');els.hintPanel.classList.add('show');saveState();}
-  function renderTodayStrip(){const c=counts();els.todayStrip.innerHTML=`<span class="pill cool">${todayKey()}</span><span class="pill ${dailyNewRemaining()?'ok':'warn'}">New ${dailyNewRemaining()}</span><span class="pill ${dailyReviewRemaining()?'ok':'hot'}">Review ${dailyReviewRemaining()}</span><span class="pill ${c.dueAll>effectiveReviewLimit()?'hot':'cool'}">Due ${c.dueAll}</span>`;}
+  function renderTodayStrip(){const c=counts(),ready=QueuePolicy.visibleReviewCount(c.dueAll,current,Date.now());els.todayStrip.innerHTML=`<span class="pill cool">${todayKey()}</span><span class="pill ${dailyNewRemaining()?'ok':'warn'}">New ${dailyNewRemaining()}</span><span class="pill ${dailyReviewRemaining()?'ok':'hot'}">Review ${dailyReviewRemaining()}</span><span class="pill ${ready>effectiveReviewLimit()?'hot':'cool'}">Due ${ready}</span>`;}
   function renderStats(){const c=counts(),d=todayLog(),a=adaptiveModel(),p=state.account.progress,r=state.account.rank,items=[['Book cards',c.total,percent(c.total,Math.max(1,state.settings.targetTotal)),`${c.active} active · ${c.known} known`],['Learned',c.learned,percent(c.learned,Math.max(1,c.active)),`${c.unseen} unseen`],['Recall calibration',Math.round((a.accuracyEMA||0)*100)+'%',Math.round((a.accuracyEMA||0)*100),`target ${Math.round(adaptiveTargetRetention()*100)}% · ${a.samples||0} samples`],['New today',d.newIntroduced,percent(d.newIntroduced,Math.max(1,state.settings.dailyNewLimit)),`${dailyNewRemaining()} left`],['Reviews today',d.reviewsDone,percent(d.reviewsDone,Math.max(1,effectiveReviewLimit())),`${c.dueAll} currently due`],['Training tokens',p.trainingTokens||0,Math.min(100,(p.trainingTokens||0)%100),`${p.lifetimeTrainingTokens||0} lifetime`],['Rank Elo',r.elo||850,percent((r.elo||850)-600,1600),rankLabel(r)],['Long-term',c.longTerm,percent(c.longTerm,Math.max(1,c.active)),'30+ day interval']];els.statGrid.innerHTML=items.map(([lab,num,bar,sub])=>`<div class="stat"><div class="num">${num}</div><div class="label">${lab}</div><div class="statbar"><span style="width:${clamp(bar,0,100)}%"></span></div><div class="tiny">${esc(sub)}</div></div>`).join('');renderHardWords();renderBookBars();renderDeck();}
   /* ---------- V14 achievements, characters, upgrades, and rank presentation ---------- */
   function characterById(id){return V14_CHARACTERS.find(x=>x.id===id)||V14_CHARACTERS[0];}
@@ -2714,7 +2722,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function proTutorAppUrl(){try{const url=new URL(location.href);for(const key of ['code','error','error_description','vcs_openrouter'])url.searchParams.delete(key);return url.toString();}catch(_error){return '';}}
   function rebuildProTutorClient(){
     if(!ProTutor||typeof fetch!=='function'){proTutorClient=null;return null;}
-    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio v20 Alpha 20'});return proTutorClient;
+    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio v20 Alpha 21'});return proTutorClient;
   }
 
   function friendlyProTutorError(error){
@@ -3327,14 +3335,15 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(els.sectionProgress)els.sectionProgress.innerHTML=progress;if(els.modalSectionProgress)els.modalSectionProgress.innerHTML=progress;renderStudySectionStatus(summaries);
   }
   function filteredNewCards(search=''){
-    const scope=activeLibraryStudyScope(),q=norm(search);
+    const scope=activeLibraryStudyScope(),q=norm(search),now=Date.now();
+    const availableNew=card=>!card.introducedAt&&!card.studySeenAt&&!card.studyReviews&&(!(Number(card.dueAt)>0)||Number(card.dueAt)<=now);
     if(!libraryScopeAutomatic(scope)){
-      let list=libraryScopedNewPool(activeCards(),scope).filter(card=>!card.introducedAt&&!card.studySeenAt&&!card.studyReviews);
+      let list=libraryScopedNewPool(activeCards(),scope).filter(availableNew);
       if(q)list=list.filter(card=>norm(card.word).includes(q)||norm(card.fullMeaning||card.meaning).includes(q)||norm(card.bridge).includes(q));
       const order=new Map(activeBook().organization.bookOrder.map((id,index)=>[String(id),index]));
       return list.sort((left,right)=>(order.get(String(left.id))??Number.MAX_SAFE_INTEGER)-(order.get(String(right.id))??Number.MAX_SAFE_INTEGER));
     }
-    const id=selectedBatchId();refreshSectionState();let pool=activeCards();if(id!=='all')pool=pool.filter(card=>card.batchId===id);let list=Learning.eligibleNewCards(pool,state.sectionUnlocks||{});if(q)list=list.filter(card=>norm(card.word).includes(q)||norm(card.fullMeaning||card.meaning).includes(q)||norm(card.bridge).includes(q));return list.sort((left,right)=>(left.batchIndex??left.createdAt??0)-(right.batchIndex??right.createdAt??0));
+    const id=selectedBatchId();refreshSectionState();let pool=activeCards();if(id!=='all')pool=pool.filter(card=>card.batchId===id);let list=Learning.eligibleNewCards(pool,state.sectionUnlocks||{}).filter(availableNew);if(q)list=list.filter(card=>norm(card.word).includes(q)||norm(card.fullMeaning||card.meaning).includes(q)||norm(card.bridge).includes(q));return list.sort((left,right)=>(left.batchIndex??left.createdAt??0)-(right.batchIndex??right.createdAt??0));
   }
   function priorityReviewCards(now=Date.now()){
     const remain=dailyReviewRemaining(),scope=activeLibraryStudyScope(),all=allDueReviewItems(now);
@@ -3382,12 +3391,12 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       }
     }
     if(day.pauseNew&&overflow.length)normalQueue=normalQueue.concat(overflow.map(card=>({card,kind:'review'})));
-    let bridgePool=day.pauseNew?routineStudyCards(libraryScopedReviewPool(activeCards(),scope)):[];
-    if(day.pauseNew&&libraryScopeAutomatic(scope)){
+    let bridgePool=routineStudyCards(libraryScopedReviewPool(activeCards(),scope),{includeRetired:false});
+    if(libraryScopeAutomatic(scope)){
       const focus=activeSectionFocus();
       bridgePool=Learning.filterForSection(bridgePool,focus,state.sectionUnlocks||{});
     }
-    return V20StudyMemory.applyPauseNewBridge(normalQueue,bridgePool,{pauseNew:day.pauseNew,recentCardIds:studyRecentCardIds,now});
+    return QueuePolicy.interleaveRecentReviews(normalQueue,bridgePool,{recentCardIds:studyRecentCardIds,now,gap:2});
   }
   function currentStudySnapshot(card=current?.card){
     if(!card)return{word:0,section:0,shortTerm:0,sectionShortTerm:0,usability:0,usabilityMeasured:false,usabilityLabel:'Unmeasured',longTerm:0,sectionLongTerm:0,sectionKey:'',sectionReady:false,sectionRetired:false,longTermObserved:0,longTermCoverage:0};
@@ -3406,12 +3415,13 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
   async function maybeAdvanceLibraryStudyScope(){
     let book=activeBook(),scope=activeLibraryStudyScope(book);if(scope.type!=='set')return false;
+    let summary=libraryScopeSnapshot(scope);if(!summary?.complete)return false;
     const ownsGate=!committedStudyAdvanceRunning;if(ownsGate)committedStudyAdvanceRunning=true;
     try{
       if(!await waitForStudyAdvanceSaveIdle())return null;
       if(!verifyWritableRevision('Study data changed before the next set could be selected.'))return null;
       book=activeBook();scope=activeLibraryStudyScope(book);if(scope.type!=='set')return false;
-      const summary=libraryScopeSnapshot(scope);if(!summary?.complete)return false;
+      summary=libraryScopeSnapshot(scope);if(!summary?.complete)return false;
       const currentSet=book.organization.sets.find(set=>set.id===scope.id);if(!currentSet)return false;
       const siblings=book.organization.sets.filter(set=>(set.chapterId||null)===(currentSet.chapterId||null)).sort((left,right)=>left.order-right.order),index=siblings.findIndex(set=>set.id===currentSet.id),next=siblings[index+1];
       if(!next){toast(`${currentSet.name} ready`,`All ${summary.total} words were introduced and short-term mastery reached ${summary.shortTermAverage}%.`);return false;}
@@ -3472,7 +3482,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     window.V19UI?.refresh();
   }
 
-  function renderTodayStrip(){if(v16Runtime)v16Runtime.renderTodayStrip();}
+  function renderTodayStrip(){const c=counts(),ready=QueuePolicy.visibleReviewCount(c.dueAll,current);if(!els.todayStrip)return;els.todayStrip.innerHTML=`<span class="pill cool">${todayKey()}</span><span class="pill ${dailyNewRemaining()?'ok':'warn'}">New ${dailyNewRemaining()}</span><span class="pill ${dailyReviewRemaining()?'ok':'hot'}">Review ${dailyReviewRemaining()}</span><span class="pill ${ready>effectiveReviewLimit()?'hot':'cool'}">Due ${ready}</span>`;}
   function renderStats(){if(v16Runtime)v16Runtime.renderStats();}
   function renderAchievements(){if(v16Runtime)v16Runtime.renderAchievements();}
   function renderRanked(){if(v16Runtime)v16Runtime.renderRanked();}
@@ -3558,7 +3568,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
     navigator.serviceWorker.register(`./sw.js?v=${encodeURIComponent(APP_VERSION)}`,{updateViaCache:'none'}).then(reg=>{
       reg.update().catch(()=>{});
-      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V20 Alpha 20 cache ready');});
+      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V20 Alpha 21 cache ready');});
     }).catch(()=>{});
   }
 
@@ -3566,6 +3576,6 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
 })();
 </script>
-<script src="./macos-workspace.js?v=20.0.0-alpha.20-macos.10"></script>
+<script src="./macos-workspace.js?v=20.0.0-alpha.21-macos.11"></script>
 </body>
 </html>
