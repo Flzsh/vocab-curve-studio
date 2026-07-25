@@ -11,7 +11,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Vocab Curve Studio v20 Alpha 21</title>
+<title>Vocab Curve Studio Beta v43</title>
 <style>
 :root{
   --bg0:#f7f8ff;--bg1:#f1fbff;--bg2:#fff9f3;--ink:#202437;--muted:#697189;--soft:#8d94a8;
@@ -394,12 +394,12 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 @media(max-width:720px){.v20-performance-settings{align-items:stretch!important;flex-direction:column!important}.v20-low-power-toggle{width:100%}}
 
 </style>
-<link rel="stylesheet" href="./v16.css?v=20.0.0-alpha.21">
-<link rel="stylesheet" href="./v17.css?v=20.0.0-alpha.21">
-<link rel="stylesheet" href="./v18.css?v=20.0.0-alpha.21">
-<link rel="stylesheet" href="./v19.css?v=20.0.0-alpha.21-macos.11">
-<link rel="stylesheet" href="./v20.css?v=20.0.0-alpha.21">
-<link rel="stylesheet" href="./macos-workspace.css?v=20.0.0-alpha.21-macos.11">
+<link rel="stylesheet" href="./v16.css?v=43.0.0-beta">
+<link rel="stylesheet" href="./v17.css?v=43.0.0-beta">
+<link rel="stylesheet" href="./v18.css?v=43.0.0-beta">
+<link rel="stylesheet" href="./v19.css?v=43.0.0-beta-studio.12">
+<link rel="stylesheet" href="./v20.css?v=43.0.0-beta">
+<link rel="stylesheet" href="./studio-workspace.css?v=43.0.0-beta-studio.12">
 </head>
 <body>
 <div class="ambient"><div class="blob one"></div><div class="blob two"></div><div class="blob three"></div></div>
@@ -772,23 +772,23 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 <div class="toast-zone" id="toastZone" role="status" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></div>
 <div class="modal" id="newPickerModal" role="dialog" aria-modal="true" aria-label="Pick a new word" tabindex="-1"><div class="modal-card picker-modal-card"><div class="row" style="justify-content:space-between;align-items:center"><div><h2>Pick a new word</h2><p class="muted">New words come from the active set, chapter, selection, or automatic section.</p></div><button class="btn btn-mini" id="closePickerBtn">Close</button></div><div class="split"><div class="field"><label for="modalBatchPicker">Batch</label><select id="modalBatchPicker"></select></div><div class="field"><label for="modalPickerSearch">Search</label><input id="modalPickerSearch" placeholder="word or meaning"></div></div><div class="field"><label for="modalSectionPicker">Review focus</label><select id="modalSectionPicker"></select></div><div class="section-progress" id="modalSectionProgress" aria-live="polite"></div><div class="new-card-list modal-new-card-list" id="modalNewCardList"></div></div></div>
 <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText" tabindex="-1"><div class="modal-card"><h2 id="confirmTitle">Confirm</h2><p class="muted" id="confirmText"></p><div class="modal-actions"><button class="btn" id="confirmCancel">Cancel</button><button class="btn btn-primary" id="confirmOk">OK</button></div></div></div>
-<script src="./v16-rules.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-storage.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-study-memory.js?v=20.0.0-alpha.21-macos.11"></script>
-<script src="./v20-queue-policy.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-liquid-motion.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-memory-world.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-library.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-default-workbook.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-forecast.js?v=20.0.0-alpha.21"></script>
-<script src="./v16-learning.js?v=20.0.0-alpha.21"></script>
-<script src="./v16-transfer.js?v=20.0.0-alpha.21"></script>
-<script src="./v16-runtime.js?v=20.0.0-alpha.21"></script>
-<script src="./v17-study.js?v=20.0.0-alpha.21"></script>
-<script src="./v18-study.js?v=20.0.0-alpha.21"></script>
-<script src="./v19-ui.js?v=20.0.0-alpha.21-macos.11"></script>
-<script src="./v20-interactive-review.js?v=20.0.0-alpha.21"></script>
-<script src="./v20-pro-tutor.js?v=20.0.0-alpha.21"></script>
+<script src="./v16-rules.js?v=43.0.0-beta"></script>
+<script src="./v20-storage.js?v=43.0.0-beta"></script>
+<script src="./v20-study-memory.js?v=43.0.0-beta-studio.12"></script>
+<script src="./v20-queue-policy.js?v=43.0.0-beta"></script>
+<script src="./v20-liquid-motion.js?v=43.0.0-beta"></script>
+<script src="./v20-memory-world.js?v=43.0.0-beta"></script>
+<script src="./v20-library.js?v=43.0.0-beta"></script>
+<script src="./v20-default-workbook.js?v=43.0.0-beta"></script>
+<script src="./v20-forecast.js?v=43.0.0-beta"></script>
+<script src="./v16-learning.js?v=43.0.0-beta"></script>
+<script src="./v16-transfer.js?v=43.0.0-beta"></script>
+<script src="./v16-runtime.js?v=43.0.0-beta"></script>
+<script src="./v17-study.js?v=43.0.0-beta"></script>
+<script src="./v18-study.js?v=43.0.0-beta"></script>
+<script src="./v19-ui.js?v=43.0.0-beta-studio.12"></script>
+<script src="./v20-interactive-review.js?v=43.0.0-beta"></script>
+<script src="./v20-pro-tutor.js?v=43.0.0-beta"></script>
 <script>
 (() => {
   'use strict';
@@ -807,7 +807,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const V18Study = window.V18Study;
   const ProInteractiveReview = window.ProInteractiveReview;
   const ProTutor = window.V20ProTutor;
-  const APP_VERSION = '20.0.0-alpha.21';
+  const APP_VERSION = '43.0.0-beta';
   const PRO_TUTOR_SESSION_KEY = 'vocab-curve-studio:v20-openrouter-session-key';
   const PRO_TUTOR_PKCE_KEY = 'vocab-curve-studio:v20-openrouter-pkce';
   const LEGACY_STORAGE_KEY = 'vocab-curve-studio:stable';
@@ -1185,7 +1185,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(enabled&&els.longTermSphere){els.longTermSphere.style.setProperty('--v20-sphere-x','0deg');els.longTermSphere.style.setProperty('--v20-sphere-y','0deg');}
     return enabled;
   }
-  function hydrateInputs(){ const s=state.settings; els.targetTotal.value=s.targetTotal; els.targetDays.value=s.targetDays; els.curveProfile.value=s.curve; els.dailyNewRange.value=s.dailyNewLimit; els.dailyReviewRange.value=s.dailyReviewLimit; els.dailyNewValue.textContent=s.dailyNewLimit; els.dailyReviewValue.textContent=effectiveReviewLimit(); els.queueStyle.value=s.queueStyle; els.protectBacklog.checked=!!s.protectBacklog; els.requireTypingInstant.checked=!!s.requireTypingInstant; if(els.lowPowerMode)els.lowPowerMode.checked=!!s.lowPowerMode; applyLowPowerMode(); renderBookSelect(); document.dispatchEvent(new CustomEvent('macos:controls-sync')); }
+  function hydrateInputs(){ const s=state.settings; els.targetTotal.value=s.targetTotal; els.targetDays.value=s.targetDays; els.curveProfile.value=s.curve; els.dailyNewRange.value=s.dailyNewLimit; els.dailyReviewRange.value=s.dailyReviewLimit; els.dailyNewValue.textContent=s.dailyNewLimit; els.dailyReviewValue.textContent=effectiveReviewLimit(); els.queueStyle.value=s.queueStyle; els.protectBacklog.checked=!!s.protectBacklog; els.requireTypingInstant.checked=!!s.requireTypingInstant; if(els.lowPowerMode)els.lowPowerMode.checked=!!s.lowPowerMode; applyLowPowerMode(); renderBookSelect(); document.dispatchEvent(new CustomEvent('studio:controls-sync')); }
   function renderBookSelect(){const cur=state.activeBookId; els.bookSelect.innerHTML=state.books.map(b=>`<option value="${escAttr(b.id)}" ${b.id===cur?'selected':''}>${esc(b.name)} · ${b.cards.filter(c=>!c.deleted).length}</option>`).join('');}
   function showView(name){
     const mobileOverflow = ['planner','books','achievements','stats','settings'].includes(name);
@@ -2722,7 +2722,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function proTutorAppUrl(){try{const url=new URL(location.href);for(const key of ['code','error','error_description','vcs_openrouter'])url.searchParams.delete(key);return url.toString();}catch(_error){return '';}}
   function rebuildProTutorClient(){
     if(!ProTutor||typeof fetch!=='function'){proTutorClient=null;return null;}
-    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio v20 Alpha 21'});return proTutorClient;
+    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio Beta v43'});return proTutorClient;
   }
 
   function friendlyProTutorError(error){
@@ -3568,7 +3568,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
     navigator.serviceWorker.register(`./sw.js?v=${encodeURIComponent(APP_VERSION)}`,{updateViaCache:'none'}).then(reg=>{
       reg.update().catch(()=>{});
-      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V20 Alpha 21 cache ready');});
+      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('BETA V43 cache ready');});
     }).catch(()=>{});
   }
 
@@ -3576,6 +3576,6 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
 })();
 </script>
-<script src="./macos-workspace.js?v=20.0.0-alpha.21-macos.11"></script>
+<script src="./studio-workspace.js?v=43.0.0-beta-studio.12"></script>
 </body>
 </html>

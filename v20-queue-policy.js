@@ -4,7 +4,7 @@
   if (root) root.V20QueuePolicy = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createV20QueuePolicy() {
   'use strict';
-  const VERSION = '20.0.0-alpha.21';
+  const VERSION = '43.0.0-beta';
   const finite=(value,fallback=0)=>Number.isFinite(Number(value))?Number(value):fallback;
   const cardId=card=>card&&card.id!==null&&card.id!==undefined?String(card.id).trim():'';
   function hasStudyEvidence(card){return finite(card&&card.introducedAt)>0||finite(card&&card.studySeenAt)>0||finite(card&&card.studyReviews)>0||finite(card&&card.sessionAttempts)>0;}

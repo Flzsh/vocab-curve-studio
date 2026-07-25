@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='20.0.0-alpha.21';
+  const VERSION='43.0.0-beta';
   const TILE_PX=48;
   const BASE_CYCLE_MS=12800;
   const RATE_SMOOTHING_MS=1800;

@@ -1,15 +1,15 @@
-// macOS Workspace v20.0.0-alpha.21-macos.11
+// Vocab Curve Studio Beta v43
 (function (root, factory) {
   'use strict';
   var api = factory(root);
   if (typeof module === 'object' && module.exports) module.exports = api;
-  if (root) root.MacOSWorkspace = api;
+  if (root) root.VocabCurveStudioWorkspace = api;
   if (root && root.document) {
     try {
       api.boot(root.document);
     } catch (error) {
       if (root.console && typeof root.console.warn === 'function') {
-        root.console.warn('macOS workspace enhancement unavailable', error);
+        root.console.warn('Vocab Curve Studio workspace enhancement unavailable', error);
       }
     }
   }
@@ -168,7 +168,7 @@
     var queueCombobox = null;
     var generatedId = 0;
 
-    if (body.classList && typeof body.classList.add === 'function') body.classList.add('macos-workspace');
+    if (body.classList && typeof body.classList.add === 'function') body.classList.add('studio-workspace');
 
     function safeMedia(query) {
       if (typeof windowRef.matchMedia !== 'function') return null;
@@ -885,7 +885,7 @@
       documentRef.addEventListener('scroll', dismissLibraryScroll, true);
       documentRef.addEventListener('pointerdown', press, { passive: true });
       documentRef.addEventListener('click', dismissAfterAction);
-      documentRef.addEventListener('macos:controls-sync', controlsSync);
+      documentRef.addEventListener('studio:controls-sync', controlsSync);
       documentRef.addEventListener('pointerup', clearPress, { passive: true });
       documentRef.addEventListener('pointercancel', clearPress, { passive: true });
       documentRef.addEventListener('pointerleave', clearPress, { passive: true });

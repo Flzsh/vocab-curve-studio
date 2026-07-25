@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createV20StudyMemory() {
   'use strict';
 
-  const VERSION = '20.0.0-alpha.21';
+  const VERSION = '43.0.0-beta';
   const HOUR = 60 * 60 * 1000;
   const SESSION_HOLD_HOURS = 6;
   const DECAY_HOURS = 12;

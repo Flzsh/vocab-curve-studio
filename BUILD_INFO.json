@@ -1,6 +1,6 @@
 {
-  "name": "Vocab Curve Studio",
-  "version": "20.0.0-alpha.21",
+  "name": "Vocab Curve Studio Beta v43",
+  "version": "43.0.0-beta",
   "packageType": "tester-runtime",
   "excluded": [
     "tests",

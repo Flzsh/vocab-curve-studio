@@ -1,6 +1,6 @@
-# Vocab Curve Studio V20 Alpha 21 — macOS Workspace 11
+# Vocab Curve Studio Beta v43
 
-Runtime-only tester build of the revamped adaptive vocabulary trainer.
+Runtime-only tester build of the adaptive vocabulary trainer.
 
 ## Run
 
@@ -8,11 +8,11 @@ Runtime-only tester build of the revamped adaptive vocabulary trainer.
 python3 -m http.server 4173
 ```
 
-Open `http://localhost:4173/index.html?v=20.0.0-alpha.21`.
+Open `http://localhost:4173/index.html?v=43.0.0-beta`.
 
 Export a Full backup before changing browser profile, device, folder, or origin. OpenRouter is optional.
 
-## Alpha 21 checks
+## Beta v43 checks
 
 - Review cards always produce a visible queue count, including a deliberately pulled-forward review.
 - The same card cannot repeat immediately. When necessary, the queue inserts the nearest two eligible review cards before returning to it.

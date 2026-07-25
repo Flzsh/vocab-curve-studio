@@ -1,6 +1,6 @@
-# Vocab Curve Studio V20 Alpha 20
+# Vocab Curve Studio Beta v43
 
-Alpha 20 is the final V20 alpha audit build. It keeps existing Alpha 10+ progress in the protected V20 save channel.
+Beta v43 is the platform-neutral runtime release. It preserves existing saved progress by retaining the established storage, database, and channel identifiers.
 
 ## Run
 
@@ -11,7 +11,7 @@ python3 -m http.server 4173
 Open:
 
 ```text
-http://localhost:4173/index.html?v=20.0.0-alpha.20
+http://localhost:4173/index.html?v=43.0.0-beta
 ```
 
 Use a local web server rather than opening `index.html` through `file://` so storage and offline caching behave consistently.
@@ -20,16 +20,14 @@ Use a local web server rather than opening `index.html` through `file://` so sto
 
 Export a **Full backup** from Settings before changing browser profile, device, folder, or web origin. When another tab has a newer save, a stale tab is blocked from overwriting it and must be reloaded.
 
-## Main changes
+## Release notes
 
-- Real Vocab Curve Studio app icon in the header.
-- Optional **Low Power mode** in Settings → Power.
-- Pro Review returns directly to Study after its final useful step; there is no empty Done page.
-- Stronger save revision checks, full rolling backups, invalid-due repair, and chronological history migration.
-- Calendar-day review forecasting.
-- Less background rendering while studying.
-- Responsive Study, Reveal, Books, Stats, Planner, Import, and Settings layouts for compact laptops, tablets, and phones.
-- Complete meaning, memory bridge, and context visibility on short laptop screens.
+- Public workspace assets use neutral Studio naming.
+- Review cards retain visible queue counts and no-immediate-repeat protections.
+- Skipped unseen words are deferred until the next day.
+- Wrong, Correct, and Know results persist across reloads.
+- Coordinated saves, rolling backups, invalid-due repair, and chronological history migration protect progress.
+- Low Power mode reduces continuous motion and expensive visual effects without changing study, saving, import, Planner, Stats, or Pro Tutor behavior.
 
 ## Low Power mode
 
