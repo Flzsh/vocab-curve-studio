@@ -1,6 +1,6 @@
-# Vocab Curve Studio Beta v43
+# Vocab Curve Studio Beta v43 — Studio Workspace 13
 
-Runtime-only tester build of the adaptive vocabulary trainer.
+Slim tester build of the adaptive vocabulary trainer.
 
 ## Run
 
@@ -8,15 +8,15 @@ Runtime-only tester build of the adaptive vocabulary trainer.
 python3 -m http.server 4173
 ```
 
-Open `http://localhost:4173/index.html?v=43.0.0-beta`.
+Open `http://localhost:4173/index.html?v=43.0.0-beta-studio.13`.
 
 Export a Full backup before changing browser profile, device, folder, or origin. OpenRouter is optional.
 
-## Beta v43 checks
+## Beta v43
 
-- Review cards always produce a visible queue count, including a deliberately pulled-forward review.
-- The same card cannot repeat immediately. When necessary, the queue inserts the nearest two eligible review cards before returning to it.
-- Skipping an unseen word holds it until the next day instead of selecting it again immediately.
-- Wrong, Correct, and Know results are persisted and survive reload.
-- Coordinated saves and rolling backups protect progress from stale tabs and malformed primary data.
-- Low Power mode preserves core study behavior while disabling nonessential continuous motion and expensive visual effects.
+- **Due** counts only reviews whose scheduled time has arrived; **Queue** includes due, early-spacing, and reinforcement work.
+- When a card would repeat immediately, the nearest eligible review cards are inserted first. A temporary spacing cycle ends after the deferred card instead of looping forever.
+- Phone navigation uses Study, Import, and More with one application scroller and a contained Details sheet.
+- Daily Limit is the shared visual pattern for progress bars, and expandable sections use one consistent disclosure pattern.
+
+- Inclusive range input accepts hyphen, en dash, em dash, and minus-sign separators.

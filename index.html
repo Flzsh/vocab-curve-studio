@@ -377,7 +377,7 @@ body.ranked-mode .wager-card:not(.available){display:none}body.ranked-mode .batt
 @media (min-width:721px) and (max-width:930px){.today-strip{display:none}.nav{grid-template-columns:1fr}.top-actions .save-pill,.top-actions .book-select{max-width:150px}.ranked-shell{grid-template-columns:1fr}.rank-side-panel{grid-template-columns:repeat(2,minmax(0,1fr))}.rank-account-summary,.compact-rank-info{grid-column:1/-1}}
 
 
-/* Alpha 21 final-audit presentation */
+/* Beta v43 final-audit presentation */
 .logo{overflow:hidden;padding:0!important;isolation:isolate}.logo img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}.logo[data-icon-fallback]::after{content:attr(data-icon-fallback);font-size:25px;font-weight:1000}
 .v20-performance-settings{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important}.v20-performance-settings h2{margin:2px 0 0!important}.v20-low-power-toggle{display:flex;align-items:center;gap:10px;min-width:min(100%,330px);padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.72)}.v20-low-power-toggle>span{display:grid;gap:2px}.v20-low-power-toggle small{color:var(--muted)}
 body.low-power .ambient,body.low-power .blob{display:none!important}
@@ -394,18 +394,18 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 @media(max-width:720px){.v20-performance-settings{align-items:stretch!important;flex-direction:column!important}.v20-low-power-toggle{width:100%}}
 
 </style>
-<link rel="stylesheet" href="./v16.css?v=43.0.0-beta">
-<link rel="stylesheet" href="./v17.css?v=43.0.0-beta">
-<link rel="stylesheet" href="./v18.css?v=43.0.0-beta">
-<link rel="stylesheet" href="./v19.css?v=43.0.0-beta-studio.12">
-<link rel="stylesheet" href="./v20.css?v=43.0.0-beta">
-<link rel="stylesheet" href="./studio-workspace.css?v=43.0.0-beta-studio.12">
+<link rel="stylesheet" href="./v16.css?v=43.0.0-beta-studio.13">
+<link rel="stylesheet" href="./v17.css?v=43.0.0-beta-studio.13">
+<link rel="stylesheet" href="./v18.css?v=43.0.0-beta-studio.13">
+<link rel="stylesheet" href="./v19.css?v=43.0.0-beta-studio.13">
+<link rel="stylesheet" href="./v20.css?v=43.0.0-beta-studio.13">
+<link rel="stylesheet" href="./studio-workspace.css?v=43.0.0-beta-studio.13">
 </head>
 <body>
 <div class="ambient"><div class="blob one"></div><div class="blob two"></div><div class="blob three"></div></div>
 <div class="app">
   <header class="topbar panel v20-top-shell">
-    <div class="brand"><div class="logo" aria-hidden="true"><img src="./icons/icon-192.png" alt="" width="52" height="52" onerror="this.hidden=true;this.parentElement.dataset.iconFallback='V'"></div><div><h1>Vocab Curve Studio</h1><p class="muted">Adaptive vocabulary</p></div></div>
+    <div class="brand"><div class="logo" aria-hidden="true"><img src="./icons/icon-192.png" alt="" width="52" height="52" onerror="this.hidden=true;this.parentElement.dataset.iconFallback='V'"></div><div><h1>Vocab Curve Studio</h1><p class="muted">BETA V43 · Adaptive vocabulary</p></div></div>
     <nav class="header-nav v20-header-nav" aria-label="Primary">
       <div class="nav-tab-groups">
         <div class="tabs" id="tabs">
@@ -714,7 +714,6 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
           <button class="hub-tile" data-go="books"><b><span class="hub-icon asset-books"></span> Books</b></button>
           <button class="hub-tile" data-go="stats"><b><span class="hub-icon asset-stats"></span> Stats</b></button>
           <button class="hub-tile" data-go="settings"><b><span class="hub-icon asset-save"></span> Settings</b></button>
-          <button class="hub-tile" data-go="import"><b><span class="hub-icon asset-import"></span> Import</b></button>
         </div>
       </div>
     </section>
@@ -772,23 +771,23 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 <div class="toast-zone" id="toastZone" role="status" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></div>
 <div class="modal" id="newPickerModal" role="dialog" aria-modal="true" aria-label="Pick a new word" tabindex="-1"><div class="modal-card picker-modal-card"><div class="row" style="justify-content:space-between;align-items:center"><div><h2>Pick a new word</h2><p class="muted">New words come from the active set, chapter, selection, or automatic section.</p></div><button class="btn btn-mini" id="closePickerBtn">Close</button></div><div class="split"><div class="field"><label for="modalBatchPicker">Batch</label><select id="modalBatchPicker"></select></div><div class="field"><label for="modalPickerSearch">Search</label><input id="modalPickerSearch" placeholder="word or meaning"></div></div><div class="field"><label for="modalSectionPicker">Review focus</label><select id="modalSectionPicker"></select></div><div class="section-progress" id="modalSectionProgress" aria-live="polite"></div><div class="new-card-list modal-new-card-list" id="modalNewCardList"></div></div></div>
 <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText" tabindex="-1"><div class="modal-card"><h2 id="confirmTitle">Confirm</h2><p class="muted" id="confirmText"></p><div class="modal-actions"><button class="btn" id="confirmCancel">Cancel</button><button class="btn btn-primary" id="confirmOk">OK</button></div></div></div>
-<script src="./v16-rules.js?v=43.0.0-beta"></script>
-<script src="./v20-storage.js?v=43.0.0-beta"></script>
-<script src="./v20-study-memory.js?v=43.0.0-beta-studio.12"></script>
-<script src="./v20-queue-policy.js?v=43.0.0-beta"></script>
-<script src="./v20-liquid-motion.js?v=43.0.0-beta"></script>
-<script src="./v20-memory-world.js?v=43.0.0-beta"></script>
-<script src="./v20-library.js?v=43.0.0-beta"></script>
-<script src="./v20-default-workbook.js?v=43.0.0-beta"></script>
-<script src="./v20-forecast.js?v=43.0.0-beta"></script>
-<script src="./v16-learning.js?v=43.0.0-beta"></script>
-<script src="./v16-transfer.js?v=43.0.0-beta"></script>
-<script src="./v16-runtime.js?v=43.0.0-beta"></script>
-<script src="./v17-study.js?v=43.0.0-beta"></script>
-<script src="./v18-study.js?v=43.0.0-beta"></script>
-<script src="./v19-ui.js?v=43.0.0-beta-studio.12"></script>
-<script src="./v20-interactive-review.js?v=43.0.0-beta"></script>
-<script src="./v20-pro-tutor.js?v=43.0.0-beta"></script>
+<script src="./v16-rules.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-storage.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-study-memory.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-queue-policy.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-liquid-motion.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-memory-world.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-library.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-default-workbook.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-forecast.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v16-learning.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v16-transfer.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v16-runtime.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v17-study.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v18-study.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v19-ui.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-interactive-review.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-pro-tutor.js?v=43.0.0-beta-studio.13"></script>
 <script>
 (() => {
   'use strict';
@@ -946,6 +945,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   let lastCommittedState=JSON.parse(JSON.stringify(state));
   let current = null, answerShown = false, hintCount = 0, undoSnapshot = null, confirmResolve = null, confirmPromise = null, confirmOpener = null, pickerOpener = null, sessionStart = Date.now(), deferredSessionMinutes = 0, sessionMinuteFlushScheduled = false, autosaveTimer = null, rankMatch = null, rankTimer = null, cardStartedAt = 0, answerRevealedAt = 0, lastRevealMs = 0, cardTimer = null, v18FeedbackTimer = 0, v16Runtime = null, studyController = null, memoryWorldMotionController = null, liquidMotionController = null, studyTransitionId = 0, dataContextEpoch = 0, pendingSectionHandoff = null, pendingCommittedStudyAdvance = null, committedStudyAdvanceRunning = false, studyRatingInFlight = false;
   const studyRecentCardIds = [];
+  let studyQueuePlan = [];
   let activeRankTab = 'arena', activeProgressTab = 'glory', activeUtilityCategory = 'attack';
   let proTutorClient = null, proTutorQueuePlan = [], proTutorSetBuffer = [], pendingProTutorSetReview = null, proTutorStorageBlocked = false, proTutorOutcomeSaving = false;
   let proSetReviewUiState={session:null,review:null,cardsById:new Map(),local:false};
@@ -1262,23 +1262,23 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function renderTodayStrip(){const c=counts();els.todayStrip.innerHTML=`<span class="pill cool">${todayKey()}</span><span class="pill ${dailyNewRemaining()?'ok':'warn'}">New ${dailyNewRemaining()}</span><span class="pill ${dailyReviewRemaining()?'ok':'hot'}">Review ${dailyReviewRemaining()}</span><span class="pill ${c.dueAll>effectiveReviewLimit()?'hot':'cool'}">Due ${c.dueAll}</span>`;}
   function renderStats(){ const c=counts(), d=todayLog(), s=achievementStats(); const items=[['Book cards',c.total,percent(c.total,Math.max(1,state.settings.targetTotal)),`${c.active} active · ${c.known} known`],['Learned',c.learned,percent(c.learned,Math.max(1,c.active)),`${c.unseen} unseen`],['Due selected',Math.min(c.dueAll,Math.max(1,dailyReviewRemaining())),percent(Math.min(c.dueAll,Math.max(1,dailyReviewRemaining())),Math.max(1,effectiveReviewLimit())),`${backlogHeld()} held by normal cap`],['New today',d.newIntroduced,percent(d.newIntroduced,Math.max(1,state.settings.dailyNewLimit)),`${dailyNewRemaining()} left`],['Reviews today',d.reviewsDone,percent(d.reviewsDone,Math.max(1,effectiveReviewLimit())),`${dailyReviewRemaining()} normal left`],['Long-term',c.longTerm,percent(c.longTerm,Math.max(1,c.active)),'30+ day interval']]; els.statGrid.innerHTML=items.map(([lab,num,bar,sub])=>`<div class="stat"><div class="num">${num}</div><div class="label">${lab}</div><div class="statbar"><span style="width:${bar}%"></span></div><div class="tiny">${esc(sub)}</div></div>`).join(''); renderHardWords(); renderBookBars(); renderDeck(); }
   function renderSide(){
-    const d=todayLog(),c=counts();
-    const newLimit=Math.max(1,Number(state.settings.dailyNewLimit)||0),reviewLimit=effectiveReviewLimit(),held=backlogHeld();
-    els.capText.innerHTML=`<span class="cap-chip"><em>New</em><b>${d.newIntroduced}/${newLimit}</b></span><span class="cap-chip"><em>Review</em><b>${d.reviewsDone}/${reviewLimit}</b></span><span class="cap-chip ${held?'hot':''}"><em>Held</em><b>${held}</b></span>`;
-    els.newProgress.style.width=percent(d.newIntroduced,newLimit)+'%';
-    els.reviewProgress.style.width=percent(d.reviewsDone,Math.max(1,reviewLimit))+'%';
-    els.pauseNewBtn.textContent=d.pauseNew?'Resume new':'Pause new';
-    els.boostReviewBtn.textContent=d.boostReview?'Boost on':'Review boost';
+    const day=todayLog(),newLimit=Math.max(1,Number(state.settings.dailyNewLimit)||0),reviewLimit=effectiveReviewLimit(),held=backlogHeld(),now=Date.now();
+    els.capText.innerHTML=`<span class="cap-chip"><em>New</em><b>${day.newIntroduced}/${newLimit}</b></span><span class="cap-chip"><em>Review</em><b>${day.reviewsDone}/${reviewLimit}</b></span><span class="cap-chip ${held?'hot':''}"><em>Held</em><b>${held}</b></span>`;
+    els.newProgress.style.width=percent(day.newIntroduced,newLimit)+'%';
+    els.reviewProgress.style.width=percent(day.reviewsDone,Math.max(1,reviewLimit))+'%';
+    els.pauseNewBtn.textContent=day.pauseNew?'Resume new':'Pause new';
+    els.boostReviewBtn.textContent=day.boostReview?'Boost on':'Review boost';
     renderNewPicker();
-    let top=priorityReviewCards(Date.now()).slice(0,40);
-    if(QueuePolicy.visibleReviewCount(0,current)>0&&current?.card&&!top.some(entry=>entry.card.id===current.card.id)){
-      top=[{card:current.card,priority:reviewUtility(current.card,Date.now()),selected:true,overflow:false},...top].slice(0,40);
-    }
-    els.priorityList.innerHTML=top.length?top.map(({card,priority,selected,overflow})=>`<div class="priority-item"><div><strong>${esc(card.word)}</strong><div class="tiny">${esc(shortMeaning(card))}</div></div><span class="pill ${selected?'ok':overflow?'cool':'warn'}">${selected?'now':overflow?'overflow':'held'} ${Math.round(priority)}</span></div>`).join(''):'<div class="tiny">No other review is ready. The queue will pull a near-due card only when spacing is needed.</div>';
+    const snapshot=reviewUiSnapshot(now),queue=snapshot.entries.slice(0,40);
+    els.priorityList.innerHTML=queue.length?queue.map(entry=>{
+      const card=entry.card,kind=entry.normalizedKind||entry.kind;
+      const label=kind==='early-review'?'Early review':kind==='reinforcement'?'Reinforcement':'Due now';
+      const cls=kind==='review'?'hot':kind==='reinforcement'?'warn':'cool';
+      return `<div class="priority-item" data-queue-kind="${escAttr(kind)}"><div><strong>${esc(card.word)}</strong><div class="tiny">${esc(shortMeaning(card))}</div></div><span class="pill ${cls}">${label}</span></div>`;
+    }).join(''):'<div class="tiny">No review work is queued.</div>';
     renderForecast();
     if(current?.card){
-      const card=current.card;
-      const stateLabel=QueuePolicy.reviewKindLabel(current,Date.now());
+      const card=current.card,stateLabel=QueuePolicy.reviewKindLabel(current,now);
       els.currentMeta.dataset.cardState=current.kind==='early-review'?'early-review':card.state;
       els.currentMeta.innerHTML=`<b>${esc(card.word)}</b><br>${stateLabel} · ${card.reps||0} reviews · ${card.lapses||0} lapses<br>${formatDue(card.dueAt)} · ${formatInterval(card.intervalDays)}<br>Long-term ${Math.round(getMemoryScore(card))}%`;
     }else{delete els.currentMeta.dataset.cardState;els.currentMeta.textContent='No card selected.';}
@@ -1311,7 +1311,33 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(due.length && (d.reviewSinceNew < reviewFirstTarget || !canNew || !news.length || duePressure)) return due.map(card=>({card,kind:'review'}));
     if(canNew&&news.length) return [{card:news[0],kind:'new'}].concat(due.map(card=>({card,kind:'review'})));
     return due.map(card=>({card,kind:'review'})); }
-  function selectNextCard(forceToast=false, forceNew=false){ const q=buildQueue(forceNew); if(!q.length){ current=null; answerShown=false; renderCard(); if(forceToast) toast('Nothing ready','No new card left and no due/near-due review. Try Review boost or wait a few minutes.'); return; } current=q[0]; answerShown=false; hintCount=0; renderCard(); }
+  function plannedQueueEntryAvailable(entry){
+    const card=entry?.card;if(!card||card.deleted||card.state==='suspended'||card.state==='known')return false;
+    return activeCards().some(candidate=>String(candidate.id)===String(card.id));
+  }
+  function consumeStudyQueuePlan(){
+    if(!current?.card||!Array.isArray(studyQueuePlan)||!studyQueuePlan.length)return{entry:null,exhaustedSpacing:false};
+    const currentId=String(current.card.id),firstId=String(studyQueuePlan[0]?.card?.id||'');
+    if(firstId!==currentId){studyQueuePlan=[];return{entry:null,exhaustedSpacing:false};}
+    const wasSpacingPlan=studyQueuePlan.some(entry=>entry?.spacingCycle===true);
+    studyQueuePlan=studyQueuePlan.slice(1).filter(plannedQueueEntryAvailable);
+    const entry=studyQueuePlan[0]||null;
+    if(entry&&entry.kind!=='new'&&entry.kind!=='reinforcement')entry.kind=Number(entry.card.dueAt||0)<=Date.now()?'review':'early-review';
+    return{entry,exhaustedSpacing:wasSpacingPlan&&!entry};
+  }
+  function selectNextCard(forceToast=false,forceNew=false,consumePlan=false){
+    let planned=null,exhaustedSpacing=false;
+    if(consumePlan&&!forceNew){const consumed=consumeStudyQueuePlan();planned=consumed.entry;exhaustedSpacing=consumed.exhaustedSpacing;}
+    if(planned){current=planned;answerShown=false;hintCount=0;renderCard();return;}
+    const queue=buildQueue(forceNew,{allowEmptyNormalBridge:!exhaustedSpacing});
+    studyQueuePlan=Array.isArray(queue)?queue.slice():[];
+    if(!studyQueuePlan.length){
+      current=null;answerShown=false;renderCard();
+      if(forceToast)toast('Nothing ready','No new card, due review, or safe spacing review is ready yet.');
+      return;
+    }
+    current=studyQueuePlan[0];answerShown=false;hintCount=0;renderCard();
+  }
   function applyStudyWordFit(word){
     const length=Array.from(String(word||'').trim()).length;
     const row=els.frontTitle?.closest('.v20-study-word-region');
@@ -1512,6 +1538,14 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     });
     const active=document.activeElement,editable=active&&active.closest?.('input,textarea,select,[contenteditable]');
     if(!editable)requestAnimationFrame(()=>els.studyStage.focus({preventScroll:true}));
+    if(window.matchMedia&&window.matchMedia('(max-width:720px), (min-width:721px) and (max-width:900px) and (max-height:520px)').matches){
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        const appRoot=document.querySelector('.app'),nav=document.querySelector('.header-nav'),dock=els.ratingDock;
+        if(!appRoot||!nav||!dock)return;
+        const navRect=nav.getBoundingClientRect(),dockRect=dock.getBoundingClientRect();
+        if(dockRect.bottom>navRect.top-8)appRoot.scrollTop+=dockRect.bottom-(navRect.top-8);
+      }));
+    }
   }
   function rateCurrent(rating){ if(!current?.card) return; if(!answerShown) return showAnswer(); rating=normalizeSmartRating(rating); if(rating==='know'&&state.settings.requireTypingInstant){ const mustType=els.typeInput.value.trim(); if(mustType.length<2) return toast('Type first','Know requires a typed self-check in Settings.'); } undoSnapshot=JSON.stringify({state,current}); const c=current.card, now=Date.now(), d=todayLog(); const first=!c.introducedAt; const typed=els.typeInput.value.trim(); const beforeKind=current.kind||'review'; if(first){c.introducedAt=now; d.newIntroduced++; d.reviewSinceNew=0;} else {d.reviewsDone++; d.reviewSinceNew++;} d[rating]=(d[rating]||0)+1; if(rating==='wrong') d.again=(d.again||0)+1; if(rating==='correct') d.good=(d.good||0)+1; if(rating==='know'){ d.known=(d.known||0)+1; d.knownBefore=(d.knownBefore||0)+1; }
     state.profile.totals.reviews++; state.profile.totals[rating]=(state.profile.totals[rating]||0)+1; if(rating==='wrong') state.profile.totals.again=(state.profile.totals.again||0)+1; if(rating==='correct') state.profile.totals.good=(state.profile.totals.good||0)+1; if(rating==='know') state.profile.totals.knownBefore=(state.profile.totals.knownBefore||0)+1; state.profile.flags.mobileStudy = state.profile.flags.mobileStudy || window.innerWidth<=430; const hour=new Date().getHours(); if(hour<7) state.profile.flags.earlyStudy=true; if(hour>=23) state.profile.flags.lateStudy=true; const result=applySmartRating(c,rating,now,first,{typed,hints:hintCount}); c.lastReviewedAt=now; c.lastRating=rating; c.reps++; c.updatedAt=now; c.history.push({time:now,rating,score:result.score,memoryScore:c.memoryScore,dueAt:c.dueAt,intervalDays:c.intervalDays,hints:hintCount,hintPenalty:hintPenalty(hintCount),revealMs:result.timing.rawMs,activeSeconds:result.timing.seconds,hiddenMs:result.timing.hiddenMs||0,activityCount:result.timing.activityCount||0,afk:result.timing.afk,kind:beforeKind,modelScale:memoryModel().intervalScale}); c.history=c.history.slice(-60); activeBook().updatedAt=now; saveState('study-rating',false,true);  renderAll(); selectNextCard(false); }
@@ -2259,7 +2293,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function chooseNewCard(id){
     const card=filteredNewCards().find(entry=>entry.id===id);
     if(!card)return toast('Section unavailable','That word is not in the earliest unlocked learning section.');
-    current={card,kind:'new'};answerShown=false;hintCount=0;closeNewPicker();showView('study');renderCard();toast('Selected new word',card.word);
+    current={card,kind:'new'};studyQueuePlan=[current];answerShown=false;hintCount=0;closeNewPicker();showView('study');renderCard();toast('Selected new word',card.word);
   }
   function cardAction(action,id){
     const card=cards().find(entry=>entry.id===id);if(!card||!verifyWritableRevision())return;cancelRankMatchForDataChange();
@@ -2307,7 +2341,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(repair.length)return repair.map(card=>({card,kind:'reinforcement'}));
     return[];
   }
-  function buildQueue(forceNew=false){return applyProTutorQueue(buildBaseQueue(forceNew));}
+  function buildQueue(forceNew=false,queueOptions={}){return applyProTutorQueue(buildBaseQueue(forceNew,queueOptions));}
   function awardTrainingTokens(c,rating,result,first,hints){if(rating==='wrong')return 0;const d=todayLog(),cap=140;if(d.trainingTokens>=cap)return 0;let earned=0;if(rating==='know')earned=1;else if(first)earned=1;else if(result.predBefore<.82)earned=1;if(!hints&&!result.timing.afk&&result.predBefore<.68)earned++;if(result.shortTerm)earned=Math.min(1,earned);earned=Math.min(3,earned,cap-d.trainingTokens);if(earned<=0)return 0;d.trainingTokens+=earned;const p=state.account.progress;p.trainingTokens=(p.trainingTokens||0)+earned;p.lifetimeTrainingTokens=(p.lifetimeTrainingTokens||0)+earned;state.profile.totals.trainingTokensEarned=(state.profile.totals.trainingTokensEarned||0)+earned;return earned;}
   function scheduleStudyBackgroundRender(){
     const run=()=>{renderAll();};
@@ -2340,7 +2374,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       const advanceResult=await maybeAdvanceLibraryStudyScope();
       if(advanceResult===null){deferCommittedStudyAdvanceRetry(continuation);return false;}
       if(continuation.contextEpoch!==dataContextEpoch||continuation.bookId!==(activeBook()?.id||''))return false;
-      selectNextCard(false);return true;
+      selectNextCard(false,false,true);return true;
     }finally{
       committedStudyAdvanceRunning=false;
       if(pendingCommittedStudyAdvance&&!pendingCommittedStudyAdvance.retryOnUser&&document.body.dataset.activeView==='study')void resumeCommittedStudyAdvance();
@@ -2409,6 +2443,8 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       els.emptyState.classList.remove('hidden');els.cardShell.classList.add('hidden');
       els.queueTitle.innerHTML='<b>Session complete</b><br><span class="tiny">No due review or short-term reinforcement is waiting.</span>';
       delete els.currentMeta.dataset.cardState;els.currentMeta.textContent='No card selected.';
+      renderTodayStrip();
+      renderSide();
       return;
     }
     const c=current.card;
@@ -2427,8 +2463,8 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     els.frontPrompt.textContent='';
     els.typeInput.placeholder='Optional: type your meaning/translation before revealing';
     const kindLabel=QueuePolicy.reviewKindLabel(current,Date.now());
-    const visibleDue=QueuePolicy.visibleReviewCount(counts().dueAll,current,Date.now());
-    els.queueTitle.innerHTML=`<b>${esc(activeBook().name)}</b><br><span class="tiny">${kindLabel} · ${visibleDue} in queue · ${backlogHeld()} beyond normal cap</span>`;
+    const reviewWork=reviewUiSnapshot();
+    els.queueTitle.innerHTML=`<b>${esc(activeBook().name)}</b><br><span class="tiny">${kindLabel} · ${reviewWork.dueNow} due · ${reviewWork.queueCount} queued</span>`;
     scheduleStudyAnswer(c);
     applyV18StudyVisuals({snapshot:{word:snapshot.shortTerm,section:snapshot.sectionShortTerm,sectionKey:snapshot.sectionKey},climate,phase:'recall'});
     renderSide();
@@ -3365,13 +3401,12 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     }
     const summaries=refreshSectionState(),focus=activeSectionFocus(summaries),batchId=selectedBatchId(),candidates=summaries.filter(section=>section.unlocked&&!section.retired&&section.introducedComplete&&!section.shortTermComplete&&(focus==='all'||section.key===focus)&&(batchId==='all'||section.batchId===batchId)),section=candidates.sort((left,right)=>left.batchId.localeCompare(right.batchId)||left.index-right.index)[0];if(!section)return[];const sectionCards=activeCards().filter(card=>Learning.sectionKey(card)===section.key);return V20StudyMemory.reinforcementCandidates(sectionCards,{now,recentCardIds:studyRecentCardIds,threshold:V20StudyMemory.SHORT_TERM_TARGET,longTermOf:getMemoryScore}).slice(0,24);
   }
-  function buildBaseQueue(forceNew=false){
-    const now=Date.now(),day=todayLog(),summary=counts(),scope=activeLibraryStudyScope(),focus=libraryScopeAutomatic(scope)?activeSectionFocus():'library-active',items=priorityReviewCards(now),selected=items.filter(entry=>entry.selected).map(entry=>entry.card),overflow=items.map(entry=>entry.card),news=filteredNewCards(''),repair=shortTermRepairCards(now),scopeDuePressure=libraryScopeAutomatic(scope)?summary.dueAll:items.length,canNew=(libraryScopeAutomatic(scope)?focus==='all':true)&&dailyNewRemaining()>0&&!day.pauseNew&&(!state.settings.protectBacklog||scopeDuePressure<=Math.max(5,effectiveReviewLimit()*.9)||forceNew);
+  function buildBaseQueue(forceNew=false,queueOptions={}){
+    const now=Date.now(),day=todayLog(),summary=counts(),scope=activeLibraryStudyScope(),focus=libraryScopeAutomatic(scope)?activeSectionFocus():'library-active',items=priorityReviewCards(now),selected=items.filter(entry=>entry.selected).map(entry=>entry.card),overflow=items.map(entry=>entry.card),news=filteredNewCards(''),repair=shortTermRepairCards(now),scopeDuePressure=libraryScopeAutomatic(scope)?summary.dueAll:items.length,canNew=(libraryScopeAutomatic(scope)?focus==='all':true)&&dailyNewRemaining()>0&&!day.pauseNew&&(!state.settings.protectBacklog||scopeDuePressure<=Math.max(5,effectiveReviewLimit()*.9)||forceNew),suppressEarlyExpansion=queueOptions.allowEmptyNormalBridge===false;
+    if(suppressEarlyExpansion&&!selected.length&&!overflow.length&&!(canNew&&news.length))return[];
     let normalQueue=[];
     if(forceNew&&canNew&&news.length){
       normalQueue=[{card:news[0],kind:'new'}];
-    }else if(!news.length&&repair.length){
-      normalQueue=repair.map(card=>({card,kind:'reinforcement'}));
     }else{
       let due=selected;
       const newUnavailable=!canNew||!news.length||dailyNewRemaining()<=0||day.pauseNew;
@@ -3396,7 +3431,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       const focus=activeSectionFocus();
       bridgePool=Learning.filterForSection(bridgePool,focus,state.sectionUnlocks||{});
     }
-    return QueuePolicy.interleaveRecentReviews(normalQueue,bridgePool,{recentCardIds:studyRecentCardIds,now,gap:2});
+    return QueuePolicy.interleaveRecentReviews(normalQueue,bridgePool,{recentCardIds:studyRecentCardIds,now,gap:2,allowEmptyNormalBridge:queueOptions.allowEmptyNormalBridge!==false});
   }
   function currentStudySnapshot(card=current?.card){
     if(!card)return{word:0,section:0,shortTerm:0,sectionShortTerm:0,usability:0,usabilityMeasured:false,usabilityLabel:'Unmeasured',longTerm:0,sectionLongTerm:0,sectionKey:'',sectionReady:false,sectionRetired:false,longTermObserved:0,longTermCoverage:0};
@@ -3460,6 +3495,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     document.querySelectorAll('.view').forEach(view=>view.classList.toggle('active',view.id==='view-'+name));
     document.querySelectorAll('.tab').forEach(tab=>{const selected=useMoreTab?tab.dataset.view==='more':tab.dataset.view===name;tab.classList.toggle('active',selected);if(selected)tab.setAttribute('aria-current','page');else tab.removeAttribute('aria-current');});
     const active=document.querySelector('.nav-tab-groups .tab.active');
+    if(window.matchMedia&&window.matchMedia('(max-width:720px)').matches){const appRoot=document.querySelector('.app');if(appRoot)appRoot.scrollTop=0;}
     requestAnimationFrame(()=>{updateTabIndicator();if(focusedInOutgoing)active?.focus({preventScroll:true});});
     if(name==='study'){if(pendingCommittedStudyAdvance?.retryOnUser)delete pendingCommittedStudyAdvance.retryOnUser;renderSide();void resumeCommittedStudyAdvance();}
     if(name==='stats')renderStats();if(name==='books')renderBooks();if(name==='planner')renderPlanner();if(name==='import')renderImportPreview();if(name==='settings'){renderTransferCenter();renderProTutorSettings();updateSaveHealth();}
@@ -3482,7 +3518,21 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     window.V19UI?.refresh();
   }
 
-  function renderTodayStrip(){const c=counts(),ready=QueuePolicy.visibleReviewCount(c.dueAll,current);if(!els.todayStrip)return;els.todayStrip.innerHTML=`<span class="pill cool">${todayKey()}</span><span class="pill ${dailyNewRemaining()?'ok':'warn'}">New ${dailyNewRemaining()}</span><span class="pill ${dailyReviewRemaining()?'ok':'hot'}">Review ${dailyReviewRemaining()}</span><span class="pill ${ready>effectiveReviewLimit()?'hot':'cool'}">Due ${ready}</span>`;}
+  function reviewUiSnapshot(now=Date.now()){
+    const dueEntries=allDueReviewItems(now);
+    const queueEntries=Array.isArray(studyQueuePlan)?studyQueuePlan:[];
+    return QueuePolicy.reviewWorkSnapshot({dueEntries,queueEntries,currentEntry:current,now});
+  }
+  function reviewStripStatus(snapshot=reviewUiSnapshot()){
+    if(snapshot.activeKind==='reinforcement')return{label:'Reinforce',className:'warn'};
+    if(snapshot.activeKind==='early-review')return{label:'Early',className:'cool'};
+    return{label:'Queue',className:snapshot.dueNow>effectiveReviewLimit()?'hot':'cool'};
+  }
+  function renderTodayStrip(){
+    if(!els.todayStrip)return;
+    const snapshot=reviewUiSnapshot(),status=reviewStripStatus(snapshot);
+    els.todayStrip.innerHTML=`<span class="pill cool">${todayKey()}</span><span class="pill ${dailyNewRemaining()?'ok':'warn'}">New ${dailyNewRemaining()}</span><span class="pill ${snapshot.dueNow?'hot':'cool'}">Due ${snapshot.dueNow}</span><span class="pill ${status.className}">${status.label} ${snapshot.queueCount}</span>`;
+  }
   function renderStats(){if(v16Runtime)v16Runtime.renderStats();}
   function renderAchievements(){if(v16Runtime)v16Runtime.renderAchievements();}
   function renderRanked(){if(v16Runtime)v16Runtime.renderRanked();}
@@ -3568,7 +3618,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
     navigator.serviceWorker.register(`./sw.js?v=${encodeURIComponent(APP_VERSION)}`,{updateViaCache:'none'}).then(reg=>{
       reg.update().catch(()=>{});
-      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('BETA V43 cache ready');});
+      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V20 Beta v43 cache ready');});
     }).catch(()=>{});
   }
 
@@ -3576,6 +3626,6 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
 })();
 </script>
-<script src="./studio-workspace.js?v=43.0.0-beta-studio.12"></script>
+<script src="./studio-workspace.js?v=43.0.0-beta-studio.13"></script>
 </body>
 </html>

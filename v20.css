@@ -4233,7 +4233,7 @@ body.study-mode .v19-side-pane[data-study-side-pane="today"].active{
   letter-spacing:.015em!important;
 }
 
-/* V20 Alpha 21 — balanced Today sidebar */
+/* V20 current — balanced Today sidebar */
 body.study-mode .v19-side-deck{
   box-sizing:border-box!important;
   padding:12px!important;
@@ -4327,7 +4327,7 @@ body.study-mode .daily-cap-section{
   flex:none!important;
 }
 
-/* V20 Alpha 21 — persistent evidence-driven liquid rails */
+/* V20 current — persistent evidence-driven liquid rails */
 #memorySpine .v17-conduit{
   width:14px!important;
   border:1px solid color-mix(in srgb,currentColor 12%,rgba(255,255,255,.26))!important;
@@ -4385,7 +4385,7 @@ body.study-mode .daily-cap-section{
   #memorySpine .v17-rail-bubble{animation:none!important;transform:none!important}
 }
 
-/* V20 Alpha 21 — guided Pro Tutor and motion safety */
+/* V20 current — guided Pro Tutor and motion safety */
 .pro-review-card[data-interaction-mode="guided"]{
   min-height:0!important;
   display:grid!important;
@@ -4490,7 +4490,7 @@ body.study-mode .daily-cap-section{
   #memorySpine .v20-liquid-flow-layer,#memorySpine .v17-rail-bubble{animation:none!important;transform:none!important}
 }
 
-/* V20 Alpha 21 — focused coaching and delayed recall. */
+/* V20 current — focused coaching and delayed recall. */
 .pro-review-card[data-interaction-mode="guided"]{
   min-height:0!important;
   display:grid!important;
@@ -4594,7 +4594,7 @@ body.study-mode .daily-cap-section{
   .pro-guided-recall{animation:none!important;transition:none!important}
 }
 
-/* V20 Alpha 21 final — flat liquid progress channels and delayed review */
+/* V20 current — flat liquid progress channels and delayed review */
 #memorySpine .v17-liquid-rail{
   min-width:28px!important;
   grid-template-rows:18px minmax(0,1fr) 22px!important;
@@ -4798,7 +4798,7 @@ body.study-mode .daily-cap-section{
   background-image:linear-gradient(90deg,color-mix(in srgb,currentColor 82%,#fff 18%),currentColor 56%,color-mix(in srgb,currentColor 84%,#26324b))!important;
 }
 
-/* V20 Alpha 21 — continuous phase liquid */
+/* V20 current — continuous phase liquid */
 #memorySpine .v17-liquid{
   transform:none!important;
   transform-origin:initial!important;
@@ -4851,7 +4851,7 @@ body.study-mode .daily-cap-section{
   #memorySpine .v17-rail-bubble{animation:none!important;transition:none!important}
 }
 
-/* Build: 43.0.0-beta-final */
+/* Build: 43.0.0-beta */
 .pro-review-card[data-interaction-mode="coach"]{
   display:grid!important;
   align-content:start!important;

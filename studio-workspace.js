@@ -1,4 +1,4 @@
-// Vocab Curve Studio Beta v43
+// Studio Workspace v43.0.0-beta-studio.13
 (function (root, factory) {
   'use strict';
   var api = factory(root);
@@ -9,7 +9,7 @@
       api.boot(root.document);
     } catch (error) {
       if (root.console && typeof root.console.warn === 'function') {
-        root.console.warn('Vocab Curve Studio workspace enhancement unavailable', error);
+        root.console.warn('Studio workspace enhancement unavailable', error);
       }
     }
   }
@@ -30,7 +30,7 @@
   });
   var OWNERS = new WeakMap();
   var TABLET_QUERY = '(min-width: 721px) and (max-width: 1179px)';
-  var PHONE_QUERY = '(max-width: 720px)';
+  var PHONE_QUERY = '(max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px)';
   var REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
   var CONTROL_SELECTOR = 'button,.btn,.rate,.v19-side-tab';
 
@@ -142,6 +142,9 @@
     var currentMeta = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('currentMeta') : null;
     var answerPanel = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('answerPanel') : null;
     var tabs = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('tabs') : null;
+    var headerNav = typeof documentRef.querySelector === 'function' ? documentRef.querySelector('.header-nav') : null;
+    var headerNavHome = headerNav ? headerNav.parentNode : null;
+    var headerNavNext = headerNav ? headerNav.nextSibling : null;
     var savePill = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('savePill') : null;
     var toastZone = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('toastZone') : null;
     var booksView = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('view-books') : null;
@@ -359,7 +362,7 @@
         }
       }
       if (toggle) {
-        var label = isPhone() ? 'Study tools' : 'Inspector';
+        var label = isPhone() ? 'Details' : 'Inspector';
         toggle.textContent = label;
         setAttributeIfChanged(toggle, 'aria-label', label);
         toggle.hidden = !usable;
@@ -383,16 +386,31 @@
         }
       }
       if (closeButton) {
-        setAttributeIfChanged(closeButton, 'aria-label', isPhone() ? 'Close Study tools' : 'Close Inspector');
+        setAttributeIfChanged(closeButton, 'aria-label', isPhone() ? 'Close Details' : 'Close Inspector');
         closeButton.hidden = !closeUsable;
         closeButton.disabled = !closeUsable;
       }
       return toggle;
     }
 
+    function syncNavPortal() {
+      if (!headerNav || !headerNavHome) return;
+      if (isPhone()) {
+        if (headerNav.parentNode !== body && typeof body.appendChild === 'function') body.appendChild(headerNav);
+        body.classList && body.classList.add('mac-phone-nav-portal');
+      } else {
+        if (headerNav.parentNode !== headerNavHome) {
+          if (headerNavNext && headerNavNext.parentNode === headerNavHome && typeof headerNavHome.insertBefore === 'function') headerNavHome.insertBefore(headerNav, headerNavNext);
+          else if (typeof headerNavHome.appendChild === 'function') headerNavHome.appendChild(headerNav);
+        }
+        body.classList && body.classList.remove('mac-phone-nav-portal');
+      }
+    }
+
     function syncTabs(view) {
+      syncNavPortal();
       if (!tabs || typeof tabs.querySelectorAll !== 'function') return;
-      var destination = isPhone() ? (view === 'study' ? 'study' : view === 'books' ? 'books' : 'more') : view;
+      var destination = isPhone() ? (view === 'study' ? 'study' : view === 'import' ? 'import' : 'more') : view;
       setAttributeIfChanged(tabs, 'data-mac-destination', destination);
       var tabList = tabs.querySelectorAll('.tab');
       if (!tabList || typeof tabList.forEach !== 'function') return;

@@ -181,7 +181,7 @@
     const limit = Math.max(0, Math.floor(finite(total, 0)));
     const result = new Set();
     for (const raw of String(expression || '').split(/[;,\s]+/u).filter(Boolean)) {
-      const range = raw.match(/^(\d+)\s*-\s*(\d+)$/u);
+      const range = raw.match(/^(\d+)\s*[-\u2012\u2013\u2014\u2212]\s*(\d+)$/u);
       if (range) {
         let start = Number(range[1]);
         let end = Number(range[2]);

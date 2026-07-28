@@ -1,4 +1,4 @@
-/* Vocab Curve Studio Beta v43 */
+/* Studio Workspace v43.0.0-beta-studio.13 */
 
 /* Shared macOS palette, geometry, and contextual-current defaults. */
 :root {
@@ -3468,10 +3468,704 @@ body.low-power input[type="range"]::-webkit-slider-runnable-track {
   }
 }
 
-/* Alpha 21: keep medium-length words clear of the metadata lane on narrow phones. */
+/* Beta v43: keep medium-length words clear of the metadata lane on narrow phones. */
 @media (max-width: 480px) {
   body.study-mode .v20-study-word-region.is-compact-mobile-word:not(.is-long-word) .front-title {
     font-size: clamp(32px, 10vw, 42px) !important;
     line-height: .94 !important;
+  }
+}
+
+/* Beta v43 — one progress and disclosure language across the workspace. */
+:root {
+  --alpha22-progress-height: 8px;
+  --alpha22-progress-track: color-mix(in srgb, var(--mac-secondary) 13%, transparent);
+  --alpha22-disclosure-radius: 18px;
+}
+
+:is(.mini-progress, .statbar, .v20-library-progress, .health-track, .timer-track) {
+  position: relative;
+  display: block;
+  height: var(--alpha22-progress-height) !important;
+  min-height: var(--alpha22-progress-height) !important;
+  max-height: var(--alpha22-progress-height) !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--alpha22-progress-track) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+:is(.mini-progress, .statbar, .v20-library-progress, .health-track, .timer-track) > :is(span, i, .fill, .health-fill, .timer-fill),
+:is(.mini-progress, .statbar, .v20-library-progress) > span {
+  height: 100% !important;
+  min-height: 100% !important;
+  border: 0 !important;
+  border-radius: inherit !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+:is(.v20-chapter-card, .save-details, .mobile-answer-extra) {
+  overflow: clip;
+  border: 1px solid color-mix(in srgb, var(--mac-separator) 72%, transparent) !important;
+  border-radius: var(--alpha22-disclosure-radius) !important;
+  background: color-mix(in srgb, var(--mac-surface) 86%, transparent) !important;
+  box-shadow: none !important;
+}
+
+:is(.v20-chapter-card, .save-details, .mobile-answer-extra) > summary {
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-radius: var(--alpha22-disclosure-radius) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+
+:is(.v20-chapter-card, .save-details, .mobile-answer-extra) > summary::after {
+  content: "⌄";
+  flex: 0 0 auto;
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+:is(.v20-chapter-card, .save-details, .mobile-answer-extra)[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+/* Beta v43 — phone-first workspace: one app scroller and one fixed navigator. */
+@media (max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  html,
+  body,
+  body.study-mode,
+  body:not(.study-mode) {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    scrollbar-gutter: auto !important;
+  }
+
+  .app,
+  body.study-mode .app,
+  body[data-v19-view="settings"] .app {
+    position: fixed !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    padding: 8px 8px calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: auto !important;
+  }
+
+  .topbar.v20-top-shell,
+  body.study-mode .topbar.v20-top-shell,
+  body[data-v19-view="settings"] .topbar.v20-top-shell {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 54px !important;
+    margin: 0 0 8px !important;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .topbar .brand { min-width: 0 !important; }
+  .topbar .brand .muted { display: none !important; }
+  .topbar .brand h1 {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 16px !important;
+    line-height: 1.1 !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar .logo { width: 38px !important; height: 38px !important; border-radius: 11px !important; }
+  .topbar .top-actions { min-width: 0 !important; gap: 4px !important; }
+  .topbar .save-pill { display: none !important; }
+  .topbar .book-select { display: block !important; width: min(42vw, 172px) !important; max-width: min(42vw, 172px) !important; min-height: 40px !important; }
+
+  .header-nav.v20-header-nav {
+    position: fixed !important;
+    z-index: 1300 !important;
+    inset: auto 8px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 5px !important;
+    border-radius: 18px !important;
+  }
+
+  .header-nav.v20-header-nav .tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    width: 100% !important;
+    min-height: 52px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .header-nav .tab {
+    display: none !important;
+    min-width: 0 !important;
+    min-height: 50px !important;
+    padding: 5px 8px !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    border-radius: 13px !important;
+    transform: none !important;
+  }
+
+  .header-nav .tab[data-view="study"],
+  .header-nav .tab[data-view="import"],
+  .header-nav .tab[data-view="more"] {
+    display: inline-flex !important;
+  }
+
+  .header-nav .tab-label {
+    position: static !important;
+    display: inline !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip-path: none !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+  }
+  .header-nav .tab-icon { width: 22px !important; height: 22px !important; }
+  .header-nav .tab-indicator { pointer-events: none !important; }
+
+  .main,
+  body.study-mode .main,
+  .main > .view.active,
+  body.study-mode #view-study {
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .study-grid,
+  body.study-mode .study-grid {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .study-card,
+  body.study-mode .study-card {
+    width: 100% !important;
+    min-height: calc(100dvh - 150px) !important;
+    padding: 8px !important;
+    overflow: visible !important;
+  }
+
+  body.study-mode .study-top {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  body.study-mode .study-top > .row {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    gap: 4px !important;
+  }
+
+  body.study-mode .study-top > .row .btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 40px !important;
+    padding: 5px 3px !important;
+    overflow: hidden;
+    font-size: 10.5px !important;
+    line-height: 1.05 !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transform: none !important;
+  }
+
+  body.study-mode .study-side {
+    position: fixed !important;
+    z-index: 1400 !important;
+    top: 8px !important;
+    right: 8px !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    left: auto !important;
+    display: grid !important;
+    width: min(392px, calc(100vw - 16px)) !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 0 !important;
+    opacity: var(--mac-inspector-progress, 0) !important;
+    overflow: hidden !important;
+    pointer-events: none;
+    transform: translate3d(0, calc((1 - var(--mac-inspector-progress, 0)) * 108%), 0) !important;
+  }
+
+  body.mac-inspector-open.study-mode .study-side { pointer-events: auto !important; }
+
+  body.study-mode .study-side .side-card {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.study-mode .study-side .v19-side-pane.active {
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.study-mode .study-side > .mac-inspector-close {
+    position: absolute !important;
+    z-index: 20 !important;
+    top: 8px !important;
+    right: 8px !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  #view-books,
+  #view-books .v20-library-workspace,
+  #view-books .v20-library-content-grid,
+  #view-books .v20-library-browser,
+  #view-books .v20-library-chapter-list,
+  #view-books .v20-library-word-list,
+  #view-books .v20-library-scroll-region {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+  }
+
+  #view-books .v20-library-content-grid,
+  #view-import > .grid,
+  #view-planner > .grid,
+  #view-settings .pro-tutor-settings-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  #view-books .v20-word-row {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    grid-template-columns: auto 30px minmax(0, 1fr) !important;
+    grid-template-areas: "check pos word" "meaning meaning meaning" "state state state" !important;
+  }
+
+  #view-books .v20-word-meaning,
+  #view-books .v20-word-name {
+    min-width: 0 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .modal.show { align-items: end !important; padding: 8px !important; }
+  .modal.show > .modal-card { width: 100% !important; max-width: 100% !important; max-height: calc(100dvh - 16px) !important; border-radius: 20px !important; }
+}
+
+@media (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  body.mac-inspector-open.study-mode .topbar.v20-top-shell {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+@media (max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  .header-nav .tab[data-view="books"],
+  .header-nav .tab[data-view="planner"],
+  .header-nav .tab[data-view="stats"],
+  .header-nav .tab[data-view="settings"] {
+    display: none !important;
+  }
+  body.mac-phone-nav-portal > .header-nav.v20-header-nav {
+    position: fixed !important;
+    top: auto !important;
+    right: 8px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 8px !important;
+    transform: none !important;
+  }
+}
+@media (max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  body.study-mode #view-study .study-side {
+    display: grid !important;
+  }
+}
+@media (max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  body.mac-inspector-open.study-mode .topbar.v20-top-shell {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+@media (max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  body.study-mode #view-study .study-side {
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* Beta v43 final mobile containment: the Details sheet stays inside the usable
+   viewport throughout its fade instead of sliding through the bottom nav. */
+@media (max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  body.study-mode #view-study .study-side {
+    transform: none !important;
+  }
+}
+
+/* Beta v43 final phone polish: keep recall controls balanced and predictable. */
+@media (max-width: 720px), (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  body.study-mode .v20-study-controls .type-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  body.study-mode .v20-study-controls .type-row #typeInput {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body.study-mode .v20-study-controls .type-row #hintBtn {
+    grid-column: 1 !important;
+    width: 100% !important;
+  }
+
+  body.study-mode .v20-study-controls .type-row #proTutorBtn {
+    grid-column: 2 !important;
+    width: 100% !important;
+  }
+
+  body.study-mode .v20-study-controls .type-row #showAnswerBtn {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+}
+
+/* Beta v43 compact-phone landscape: keep the complete Study loop in the
+   usable viewport instead of relying on browser auto-scroll. */
+@media (min-width: 721px) and (max-width: 900px) and (max-height: 520px) {
+  body.study-mode .topbar.v20-top-shell {
+    display: none !important;
+  }
+
+  body.study-mode .app {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    padding: 6px 8px calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow: hidden !important;
+  }
+
+  body.study-mode .main,
+  body.study-mode #view-study,
+  body.study-mode .study-grid {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  body.study-mode .study-grid {
+    display: block !important;
+  }
+
+  body.study-mode .study-card {
+    display: grid !important;
+    grid-template-rows: 34px minmax(0, 1fr) auto !important;
+    gap: 4px !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+  }
+
+  body.study-mode .study-top {
+    height: 34px !important;
+    min-height: 34px !important;
+    gap: 0 !important;
+  }
+
+  body.study-mode .study-top .queue-title {
+    display: none !important;
+  }
+
+  body.study-mode .study-top > .row {
+    height: 34px !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+
+  body.study-mode .study-top > .row .btn {
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 3px 5px !important;
+    font-size: 10px !important;
+  }
+
+  body.study-mode #cardShell {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+
+  body.study-mode .v17-study-stage {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: "card" !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 4px !important;
+    gap: 0 !important;
+  }
+
+  body.study-mode #memorySpine {
+    display: none !important;
+  }
+
+  body.study-mode .v17-card-face {
+    height: 100% !important;
+    min-height: 0 !important;
+    grid-template-rows: 28px minmax(0, 1fr) 40px !important;
+    border-radius: 14px !important;
+  }
+
+  body.study-mode .v20-study-metadata {
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 3px 8px !important;
+    gap: 4px !important;
+  }
+
+  body.study-mode .v20-study-metadata > * {
+    min-height: 22px !important;
+    padding: 3px 7px !important;
+    font-size: 9px !important;
+  }
+
+  body.study-mode .v20-study-word-region {
+    min-height: 0 !important;
+    padding: 4px 12px !important;
+  }
+
+  body.study-mode .v20-study-word-region .front-title {
+    font-size: clamp(40px, 8vw, 68px) !important;
+    line-height: .94 !important;
+  }
+
+  body.study-mode .v20-study-word-region.is-long-word .front-title {
+    font-size: clamp(30px, 6vw, 48px) !important;
+  }
+
+  body.study-mode .v20-study-word-region.is-very-long-word .front-title {
+    font-size: clamp(23px, 4.8vw, 38px) !important;
+  }
+
+  body.study-mode .front-prompt {
+    display: none !important;
+  }
+
+  body.study-mode .v20-study-controls {
+    width: calc(100% - 12px) !important;
+    height: 40px !important;
+    margin: 0 auto !important;
+    gap: 0 !important;
+    overflow: visible !important;
+  }
+
+  body.study-mode .v20-study-controls .type-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: 36px !important;
+    gap: 5px !important;
+    width: 100% !important;
+    height: 36px !important;
+  }
+
+  body.study-mode .v20-study-controls #typeInput {
+    display: none !important;
+  }
+
+  html body.study-mode #view-study .v20-study-controls .type-row > #hintBtn {
+    grid-column: 1 / 2 !important;
+    grid-row: 1 !important;
+  }
+
+  html body.study-mode #view-study .v20-study-controls .type-row > #proTutorBtn {
+    grid-column: 2 / 3 !important;
+    grid-row: 1 !important;
+  }
+
+  html body.study-mode #view-study .v20-study-controls .type-row > #showAnswerBtn {
+    grid-column: 3 / 4 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+  }
+
+  body.study-mode .v20-study-controls .btn {
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 4px 7px !important;
+    font-size: 11px !important;
+  }
+
+  body.study-mode .hint-panel {
+    display: none !important;
+  }
+
+  body.study-mode .card-shell.answer-visible .v17-card-face {
+    grid-template-rows: 26px 54px minmax(0, 1fr) !important;
+  }
+
+  body.study-mode .card-shell.answer-visible .v20-study-word-region {
+    padding: 0 10px !important;
+  }
+
+  body.study-mode .card-shell.answer-visible .v20-study-word-region .front-title {
+    font-size: clamp(28px, 5vw, 42px) !important;
+  }
+
+  body.study-mode .card-shell.answer-visible .v20-study-answer-region {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 3px 7px 7px !important;
+    overflow: hidden !important;
+  }
+
+  body.study-mode .v20-study-answer-region .answer-panel.show {
+    overflow: hidden !important;
+    scrollbar-gutter: auto !important;
+  }
+
+  body.study-mode .v20-study-answer-region .answer-grid {
+    grid-template-areas: none !important;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    grid-auto-rows: minmax(0, 1fr) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    gap: 7px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body.study-mode #view-study .v20-study-answer-region .answer-grid > .answer-meaning-card,
+  html body.study-mode #view-study .v20-study-answer-region .answer-grid > .answer-bridge {
+    grid-row: 1 !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    height: auto !important;
+  }
+
+  html body.study-mode #view-study .v20-study-answer-region .answer-grid > .answer-meaning-card {
+    grid-column: 1 !important;
+    padding: 8px 11px !important;
+    overflow: auto !important;
+  }
+
+  html body.study-mode #view-study .v20-study-answer-region .answer-grid > .answer-bridge {
+    grid-column: 2 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding: 8px 11px !important;
+    gap: 3px !important;
+    overflow: auto !important;
+  }
+
+  body.study-mode .v20-study-answer-region .answer-meaning {
+    font-size: clamp(18px, 2.6vw, 28px) !important;
+    line-height: 1.12 !important;
+  }
+
+  body.study-mode .v20-study-answer-region .answer-bridge > b {
+    font-size: 9px !important;
+  }
+
+  body.study-mode .v20-study-answer-region .v17-memory-path {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+
+  body.study-mode .v20-study-answer-region .v17-path-signal {
+    display: none !important;
+  }
+
+  body.study-mode .v20-study-answer-region .v17-path-copy {
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+  }
+
+  body.study-mode .v20-study-answer-region .answer-example,
+  body.study-mode .v20-study-answer-region .answer-review,
+  body.study-mode .v20-study-answer-region .mobile-answer-extra {
+    display: none !important;
+  }
+
+  html body.study-mode #cardShell.answer-visible ~ #ratingDock {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    margin: 0 !important;
+    padding: 4px !important;
+    border-radius: 13px !important;
+    animation: none !important;
+  }
+
+  html body.study-mode #ratingDock .rate-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    height: 34px !important;
+  }
+
+  html body.study-mode #ratingDock .rate {
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 3px 6px !important;
+    font-size: 11px !important;
+  }
+
+  body.study-mode #ratingDock .rate small,
+  body.study-mode #ratingDock .keyboard {
+    display: none !important;
   }
 }
