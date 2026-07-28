@@ -18,6 +18,7 @@ const manifest = JSON.parse(readFileSync(path.join(runtime, 'manifest.webmanifes
 const html = readFileSync(path.join(runtime, 'index.html'), 'utf8');
 const worker = readFileSync(path.join(runtime, 'sw.js'), 'utf8');
 const adapter = readFileSync(path.join(runtime, EXPECTED_JS.slice(2)), 'utf8');
+const stylesheet = readFileSync(path.join(runtime, EXPECTED_CSS.slice(2)), 'utf8');
 
 test('release runtime uses the neutral Beta v43 branding contract', () => {
   assert.equal(buildInfo.name, EXPECTED_NAME);
@@ -40,7 +41,7 @@ test('release runtime uses the neutral Beta v43 branding contract', () => {
   assert.match(adapter, /VocabCurveStudioWorkspace/);
   assert.match(adapter, /studio-workspace/);
   assert.match(adapter, /studio:controls-sync/);
-  assert.doesNotMatch(`${html}\n${worker}\n${adapter}`, /20\.0\.0-alpha\.22|macos\.13|MacOSWorkspace|macos:controls-sync/i);
+  assert.doesNotMatch(`${html}\n${worker}\n${adapter}\n${stylesheet}`, /20\.0\.0-alpha\.22|macos\.13|MacOSWorkspace|macos:controls-sync|alpha22|macOS/i);
   assert.equal(existsSync(path.join(runtime, 'macos-workspace.css')), false);
   assert.equal(existsSync(path.join(runtime, 'macos-workspace.js')), false);
 });

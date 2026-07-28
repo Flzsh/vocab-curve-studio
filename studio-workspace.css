@@ -1,6 +1,6 @@
 /* Studio Workspace v43.0.0-beta-studio.13 */
 
-/* Shared macOS palette, geometry, and contextual-current defaults. */
+/* Shared workspace palette, geometry, and contextual-current defaults. */
 :root {
   --mac-canvas: #f5f5f7;
   --mac-surface: #ffffff;
@@ -3478,21 +3478,21 @@ body.low-power input[type="range"]::-webkit-slider-runnable-track {
 
 /* Beta v43 — one progress and disclosure language across the workspace. */
 :root {
-  --alpha22-progress-height: 8px;
-  --alpha22-progress-track: color-mix(in srgb, var(--mac-secondary) 13%, transparent);
-  --alpha22-disclosure-radius: 18px;
+  --studio-progress-height: 8px;
+  --studio-progress-track: color-mix(in srgb, var(--mac-secondary) 13%, transparent);
+  --studio-disclosure-radius: 18px;
 }
 
 :is(.mini-progress, .statbar, .v20-library-progress, .health-track, .timer-track) {
   position: relative;
   display: block;
-  height: var(--alpha22-progress-height) !important;
-  min-height: var(--alpha22-progress-height) !important;
-  max-height: var(--alpha22-progress-height) !important;
+  height: var(--studio-progress-height) !important;
+  min-height: var(--studio-progress-height) !important;
+  max-height: var(--studio-progress-height) !important;
   overflow: hidden !important;
   border: 0 !important;
   border-radius: 999px !important;
-  background: var(--alpha22-progress-track) !important;
+  background: var(--studio-progress-track) !important;
   box-shadow: none !important;
   filter: none !important;
 }
@@ -3510,7 +3510,7 @@ body.low-power input[type="range"]::-webkit-slider-runnable-track {
 :is(.v20-chapter-card, .save-details, .mobile-answer-extra) {
   overflow: clip;
   border: 1px solid color-mix(in srgb, var(--mac-separator) 72%, transparent) !important;
-  border-radius: var(--alpha22-disclosure-radius) !important;
+  border-radius: var(--studio-disclosure-radius) !important;
   background: color-mix(in srgb, var(--mac-surface) 86%, transparent) !important;
   box-shadow: none !important;
 }
@@ -3523,7 +3523,7 @@ body.low-power input[type="range"]::-webkit-slider-runnable-track {
   gap: 10px !important;
   padding: 10px 12px !important;
   border: 0 !important;
-  border-radius: var(--alpha22-disclosure-radius) !important;
+  border-radius: var(--studio-disclosure-radius) !important;
   background: transparent !important;
   box-shadow: none !important;
   cursor: pointer;
