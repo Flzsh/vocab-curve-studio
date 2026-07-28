@@ -1,22 +1,30 @@
-# Vocab Curve Studio Beta v43 — Studio Workspace 13
+# Vocab Curve Studio Beta v43
 
-Slim tester build of the adaptive vocabulary trainer.
+Local-first adaptive vocabulary practice that spaces reviews, protects progress, and works offline.
 
-## Run
+![Release](https://img.shields.io/badge/release-Beta%20v43-6d5dfc)
+![Storage](https://img.shields.io/badge/storage-local--first-168257)
+![PWA](https://img.shields.io/badge/PWA-offline--ready-2457d6)
 
-```bash
-python3 -m http.server 4173
-```
+[Open the live app](https://flzsh.github.io/vocab-curve-studio/)
 
-Open `http://localhost:4173/index.html?v=43.0.0-beta-studio.13`.
+![Vocab Curve Studio Study view](assets/readme-preview.png)
 
-Export a Full backup before changing browser profile, device, folder, or origin. OpenRouter is optional.
+## Why Vocab Curve Studio
 
-## Beta v43
+- **Adaptive review** keeps the next useful word ready, whether it is new, due, or needs reinforcement.
+- **Deliberate spacing** prevents immediate repeats and makes review cycles more meaningful.
+- **Durable progress** keeps your books, settings, and study memory in browser-local storage.
+- **Offline-ready PWA** keeps practice available when your connection is not.
+- **Responsive study views** make the same workflow comfortable on desktop and phone.
+- **Optional AI tutor** adds OpenRouter-powered help when you choose to connect it; core study works without it.
 
-- **Due** counts only reviews whose scheduled time has arrived; **Queue** includes due, early-spacing, and reinforcement work.
-- When a card would repeat immediately, the nearest eligible review cards are inserted first. A temporary spacing cycle ends after the deferred card instead of looping forever.
-- Phone navigation uses Study, Import, and More with one application scroller and a contained Details sheet.
-- Daily Limit is the shared visual pattern for progress bars, and expandable sections use one consistent disclosure pattern.
+## Run locally
 
-- Inclusive range input accepts hyphen, en dash, em dash, and minus-sign separators.
+1. Download or clone this repository.
+2. Run `python3 -m http.server 4173` from the project folder.
+3. Open `http://localhost:4173/`.
+
+## Your data
+
+Progress stays in this browser profile and origin. Use a **Full backup** export from Settings before changing browser profiles, devices, folders, or origins, then restore it where you continue studying. OpenRouter is optional; you can use the complete vocabulary workflow without an API key.
