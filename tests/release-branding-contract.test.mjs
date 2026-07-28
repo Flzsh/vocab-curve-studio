@@ -45,3 +45,21 @@ test('release runtime uses the neutral Beta v43 branding contract', () => {
   assert.equal(existsSync(path.join(runtime, 'macos-workspace.css')), false);
   assert.equal(existsSync(path.join(runtime, 'macos-workspace.js')), false);
 });
+
+test('phone Import lens owns the middle navigation slot', () => {
+  const middleSlot = 'translate3d(calc(100% + 4px), 0, 0) !important';
+  assert.ok(
+    stylesheet.includes(`.header-nav.v20-header-nav .tabs:has(> .tab[data-view="import"].active) > .tab-indicator {\n    transform: ${middleSlot};`),
+  );
+  assert.ok(
+    stylesheet.includes(`.header-nav.v20-header-nav .tabs[data-mac-destination="import"] > .tab-indicator {\n    transform: ${middleSlot};`),
+  );
+  assert.equal(
+    stylesheet.includes(`.header-nav.v20-header-nav .tabs:has(> .tab[data-view="books"].active) > .tab-indicator {\n    transform: ${middleSlot};`),
+    false,
+  );
+  assert.equal(
+    stylesheet.includes(`.header-nav.v20-header-nav .tabs[data-mac-destination="books"] > .tab-indicator {\n    transform: ${middleSlot};`),
+    false,
+  );
+});
