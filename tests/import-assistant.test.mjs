@@ -1,0 +1,137 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import ImportAssistant from '../v20-import-assistant.js';
+
+test('source parser keeps a no-tab multiword term as one vocabulary row', () => {
+  const result = ImportAssistant.parseSourceText('teem with\nrelent\tv. become less severe');
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(result.rows.map(row => ({
+    sourceIndex: row.sourceIndex,
+    lineNumber: row.lineNumber,
+    word: row.word,
+    meaning: row.meaning,
+    needsMeaning: row.needsMeaning,
+    needsBridge: row.needsBridge,
+  })), [
+    { sourceIndex: 0, lineNumber: 1, word: 'teem with', meaning: '', needsMeaning: true, needsBridge: true },
+    { sourceIndex: 1, lineNumber: 2, word: 'relent', meaning: 'v. become less severe', needsMeaning: false, needsBridge: true },
+  ]);
+});
+
+test('source parser preserves a completed meaning bridge and example', () => {
+  const text = 'relent\tv. become less severe\uFF5CBridge: pressure lets up\uFF5CExample: The rain relented.';
+  const result = ImportAssistant.parseSourceText(text);
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.rows[0].meaning, 'v. become less severe');
+  assert.equal(result.rows[0].bridge, 'pressure lets up');
+  assert.equal(result.rows[0].example, 'The rain relented.');
+  assert.equal(result.rows[0].needsMeaning, false);
+  assert.equal(result.rows[0].needsBridge, false);
+});
+
+test('completed parser rejects word-only text but accepts formatted output', () => {
+  assert.deepEqual(ImportAssistant.parseCompletedText('teem with').items, []);
+  const result = ImportAssistant.parseCompletedText('teem with\tv. be full of\uFF5CBridge: a room teems with people');
+  assert.equal(result.errors.length, 0);
+  assert.equal(result.items[0].word, 'teem with');
+  assert.equal(result.items[0].meaning, 'v. be full of');
+  assert.equal(result.items[0].bridge, 'a room teems with people');
+});
+
+test('source parser reports an overlong supplied meaning instead of truncating it', () => {
+  const result = ImportAssistant.parseSourceText(`alpha\t${'x'.repeat(501)}`);
+  assert.deepEqual(result.rows, []);
+  assert.match(result.errors[0], /meaning exceeds 500 characters/i);
+});
+
+test('merge preserves supplied meaning and example while accepting a generated bridge', () => {
+  const source = ImportAssistant.parseSourceText(
+    'relent\tv. become less severe\uFF5CExample: The rain relented.\nteem with'
+  ).rows;
+  const merged = ImportAssistant.mergeGeneratedRows(source, [
+    { sourceIndex: 0, word: 'relent', meaning: 'AI rewrite must be ignored', bridge: 'pressure lets up' },
+    { sourceIndex: 1, word: 'teem with', meaning: 'v. be full of', bridge: 'a room teems with people' },
+  ]);
+  assert.equal(merged[0].meaning, 'v. become less severe');
+  assert.equal(merged[0].example, 'The rain relented.');
+  assert.equal(merged[0].bridge, 'pressure lets up');
+  assert.equal(merged[1].meaning, 'v. be full of');
+});
+
+for (const [name, generated, pattern] of [
+  ['duplicate index', [
+    { sourceIndex: 0, word: 'relent', meaning: '', bridge: 'one' },
+    { sourceIndex: 0, word: 'relent', meaning: '', bridge: 'two' },
+  ], /duplicate source index/i],
+  ['changed word', [
+    { sourceIndex: 0, word: 'different', meaning: '', bridge: 'one' },
+  ], /word did not match/i],
+  ['delimiter injection', [
+    { sourceIndex: 0, word: 'relent', meaning: '', bridge: 'one\uFF5CExample: injected' },
+  ], /delimiter/i],
+]) {
+  test(`merge rejects ${name}`, () => {
+    const source = ImportAssistant.parseSourceText('relent\tv. become less severe').rows;
+    assert.throws(() => ImportAssistant.mergeGeneratedRows(source, generated), pattern);
+  });
+}
+
+test('completion session resumes at the first unaccepted chunk and formats only when complete', () => {
+  const session = ImportAssistant.createCompletionSession('alpha\nbeta\ngamma', 'English', { chunkSize: 2 });
+  assert.deepEqual(ImportAssistant.nextCompletionChunk(session).map(row => row.word), ['alpha', 'beta']);
+  ImportAssistant.acceptCompletionChunk(session, [
+    { sourceIndex: 0, word: 'alpha', meaning: 'first letter', bridge: 'alpha starts the alphabet' },
+    { sourceIndex: 1, word: 'beta', meaning: 'second letter', bridge: 'beta follows alpha' },
+  ]);
+  assert.deepEqual(ImportAssistant.nextCompletionChunk(session).map(row => row.word), ['gamma']);
+  assert.throws(() => ImportAssistant.completedSessionText(session), /not complete/i);
+  ImportAssistant.acceptCompletionChunk(session, [
+    { sourceIndex: 2, word: 'gamma', meaning: 'third letter', bridge: 'gamma comes third' },
+  ]);
+  assert.equal(ImportAssistant.completionProgress(session).percent, 100);
+  assert.equal(
+    ImportAssistant.completedSessionText(session),
+    'alpha\tfirst letter\uFF5CBridge: alpha starts the alphabet\n' +
+    'beta\tsecond letter\uFF5CBridge: beta follows alpha\n' +
+    'gamma\tthird letter\uFF5CBridge: gamma comes third'
+  );
+});
+
+test('source fingerprint changes with text or selected language', () => {
+  const base = ImportAssistant.sourceFingerprint('alpha', 'English');
+  assert.notEqual(base, ImportAssistant.sourceFingerprint('beta', 'English'));
+  assert.notEqual(base, ImportAssistant.sourceFingerprint('alpha', 'Simplified Chinese'));
+});
+
+test('Auto language follows supplied meanings before browser language', () => {
+  const chinese = ImportAssistant.parseSourceText('relent\tv. \u53d8\u6e29\u548c\uff0c\u53d8\u5bbd\u5bb9').rows;
+  const empty = ImportAssistant.parseSourceText('relent').rows;
+  assert.equal(ImportAssistant.resolveOutputLanguage(chinese, 'Auto', 'en-US'), 'Simplified Chinese');
+  assert.equal(ImportAssistant.resolveOutputLanguage(empty, 'Auto', 'zh-CN'), 'Simplified Chinese');
+  assert.equal(ImportAssistant.resolveOutputLanguage(empty, 'Auto', 'en-US'), 'English');
+  assert.equal(ImportAssistant.resolveOutputLanguage(chinese, 'English', 'zh-CN'), 'English');
+});
+
+test('editor text classification distinguishes raw source from completed format', () => {
+  assert.equal(ImportAssistant.classifyEditorText(''), 'empty');
+  assert.equal(ImportAssistant.classifyEditorText('relent'), 'source');
+  assert.equal(ImportAssistant.classifyEditorText('relent\tv. become less severe'), 'source');
+  assert.equal(
+    ImportAssistant.classifyEditorText('relent\tv. become less severe\uFF5CBridge: pressure lets up'),
+    'completed'
+  );
+});
+
+test('merge validates generated fields even when a source field is already supplied', () => {
+  const source = ImportAssistant.parseSourceText('relent\tv. become less severe').rows;
+  assert.throws(() => ImportAssistant.mergeGeneratedRows(source, [
+    { sourceIndex: 0, word: 'relent', meaning: 'injected\uFF5CExample: value', bridge: 'pressure lets up' },
+  ]), /delimiter/i);
+});
+
+test('merge rejects a non-integer generated source index', () => {
+  const source = ImportAssistant.parseSourceText('relent').rows;
+  assert.throws(() => ImportAssistant.mergeGeneratedRows(source, [
+    { sourceIndex: null, word: 'relent', meaning: 'v. become less severe', bridge: 'pressure lets up' },
+  ]), /outside the source batch/i);
+});
