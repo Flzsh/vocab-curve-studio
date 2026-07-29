@@ -30,12 +30,14 @@ test('release runtime uses the neutral Beta v43 branding contract', () => {
   assert.match(html, /BETA V43/);
   assert.match(html, /studio-workspace\.css/);
   assert.match(html, /studio-workspace\.js/);
+  assert.match(html, /v20-import-assistant\.js/);
   assert.match(html, new RegExp(`studio-workspace\\.css\\?v=${EXPECTED_ASSET_SUFFIX.replaceAll('.', '\\.')}`));
   assert.match(html, new RegExp(`studio-workspace\\.js\\?v=${EXPECTED_ASSET_SUFFIX.replaceAll('.', '\\.')}`));
   assert.doesNotMatch(html, /macos-workspace/i);
   assert.match(worker, new RegExp(EXPECTED_CACHE));
   assert.match(worker, /studio-workspace\.css/);
   assert.match(worker, /studio-workspace\.js/);
+  assert.match(worker, /v20-import-assistant\.js/);
   assert.match(worker, /43\.0\.0-beta-studio\.13/);
   assert.doesNotMatch(worker, /macos-workspace/i);
   assert.match(adapter, /VocabCurveStudioWorkspace/);

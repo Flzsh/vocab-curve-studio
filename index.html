@@ -593,7 +593,38 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     </section>
     <section class="view" id="view-import">
       <div class="grid">
-        <div class="section panel col-7"><h2>Import batch</h2><p class="muted">word TAB meaning｜Bridge: ...｜Example: ...</p><div class="split" style="margin-top:12px"><div class="field"><label for="batchName">Batch name</label><input id="batchName" placeholder="SAT Batch 001"></div><div class="field"><label for="importMode">Import behavior</label><select id="importMode"><option value="merge">Merge/update existing words</option><option value="addOnly">Add new only</option><option value="replaceBook">Replace current book</option></select></div></div><div class="field"><label for="importText">Words</label><textarea id="importText" placeholder="precipitate&#9;v. 促成，加速｜Bridge: ...｜Example: ..."></textarea></div><div class="toolbar"><button class="btn btn-primary" id="importApplyBtn">Import batch</button><button class="btn" id="previewBtn">Preview</button><button class="btn" id="loadSampleBtn">Load sample 100</button><button class="btn" id="clearImportBtn">Clear</button></div><div class="drop" id="dropArea" style="margin-top:12px"><b>Drop .txt here</b><br><span class="tiny">or paste text above. Works offline.</span></div></div>
+        <div class="section panel col-7">
+          <h2>Import batch</h2>
+          <p class="muted">word TAB meaning｜Bridge: ...｜Example: ...</p>
+          <div class="split" style="margin-top:12px"><div class="field"><label for="batchName">Batch name</label><input id="batchName" placeholder="SAT Batch 001"></div><div class="field"><label for="importMode">Import behavior</label><select id="importMode"><option value="merge">Merge/update existing words</option><option value="addOnly">Add new only</option><option value="replaceBook">Replace current book</option></select></div></div>
+          <div class="import-ai-panel" id="importAiPanel">
+            <div class="import-ai-heading">
+              <div>
+                <span class="eyebrow">OPENROUTER ASSIST</span>
+                <h3>Complete missing fields</h3>
+              </div>
+              <span class="import-ai-model" id="importAiModel">Not connected</span>
+            </div>
+            <div class="import-ai-controls">
+              <label class="field" for="importAiLanguage">
+                <span>Meaning language</span>
+                <select id="importAiLanguage">
+                  <option value="Auto">Auto</option>
+                  <option value="English">English</option>
+                  <option value="Simplified Chinese">Simplified Chinese</option>
+                </select>
+              </label>
+              <button class="btn btn-primary" id="importAiCompleteBtn" type="button">Complete missing fields</button>
+            </div>
+            <div class="import-ai-status" id="importAiStatus" data-state="ready" aria-live="polite">
+              <div><b id="importAiStatusTitle">Ready</b><span id="importAiStatusText">Paste words or import text.</span></div>
+              <div class="studio-progress-track import-ai-progress" aria-hidden="true"><span id="importAiProgress"></span></div>
+            </div>
+          </div>
+          <div class="field"><label for="importText">Words or import format</label><textarea id="importText" placeholder="precipitate&#9;v. 促成，加速｜Bridge: ...｜Example: ..."></textarea></div>
+          <div class="toolbar"><button class="btn btn-primary" id="importApplyBtn">Import batch</button><button class="btn" id="previewBtn">Preview</button><button class="btn" id="loadSampleBtn">Load sample 100</button><button class="btn" id="importCopyBtn">Copy format</button><button class="btn" id="importDownloadBtn">Download .txt</button><button class="btn" id="clearImportBtn">Clear</button></div>
+          <div class="drop" id="dropArea" style="margin-top:12px"><b>Drop .txt here</b><br><span class="tiny">or paste text above. Works offline.</span></div>
+        </div>
         <div class="section panel col-5"><h2>Preview</h2><p class="muted" id="previewSummary">Paste a list to preview.</p><div class="preview-box" id="previewBox"></div><div class="import-transfer-note"><b>Moving data between devices?</b><span>Backups and current-book transfers now live together in Settings.</span><button class="btn btn-mini" data-go="settings">Open Transfer center</button></div></div>
       </div>
     </section>
@@ -787,6 +818,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 <script src="./v18-study.js?v=43.0.0-beta-studio.13"></script>
 <script src="./v19-ui.js?v=43.0.0-beta-studio.13"></script>
 <script src="./v20-interactive-review.js?v=43.0.0-beta-studio.13"></script>
+<script src="./v20-import-assistant.js?v=43.0.0-beta-studio.13"></script>
 <script src="./v20-pro-tutor.js?v=43.0.0-beta-studio.13"></script>
 <script>
 (() => {
@@ -805,6 +837,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const Study = window.V17Study;
   const V18Study = window.V18Study;
   const ProInteractiveReview = window.ProInteractiveReview;
+  const ImportAssistant = window.V20ImportAssistant;
   const ProTutor = window.V20ProTutor;
   const APP_VERSION = '43.0.0-beta';
   const PRO_TUTOR_SESSION_KEY = 'vocab-curve-studio:v20-openrouter-session-key';
@@ -932,7 +965,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     savePill:$('savePill'),saveConflictBanner:$('saveConflictBanner'),reloadSaveConflictBtn:$('reloadSaveConflictBtn'), rankTopPill:$('rankTopPill'), bookSelect:$('bookSelect'), tabs:$('tabs'), rankedTabs:$('rankedTabs'), tabIndicator:$('tabIndicator'), todayStrip:$('todayStrip'),
     queueTitle:$('queueTitle'), pickNewBtn:$('pickNewBtn'), speakBtn:$('speakBtn'), buryBtn:$('buryBtn'), undoBtn:$('undoBtn'), emptyState:$('emptyState'), emptyText:$('emptyText'), forceOneBtn:$('forceOneBtn'), cardShell:$('cardShell'), cardMode:$('cardMode'), studySectionStatus:$('studySectionStatus'), memoryChip:$('memoryChip'), frontTitle:$('frontTitle'), frontPrompt:$('frontPrompt'), typeInput:$('typeInput'), hintBtn:$('hintBtn'), showAnswerBtn:$('showAnswerBtn'), hintPanel:$('hintPanel'), answerPanel:$('answerPanel'), ratingDock:$('ratingDock'),
     capText:$('capText'), newProgress:$('newProgress'), reviewProgress:$('reviewProgress'), pauseNewBtn:$('pauseNewBtn'), boostReviewBtn:$('boostReviewBtn'), batchPicker:$('batchPicker'), shuffleNewBtn:$('shuffleNewBtn'), sectionPicker:$('sectionPicker'), sectionProgress:$('sectionProgress'), newCardList:$('newCardList'), priorityList:$('priorityList'), forecast:$('forecast'), currentMeta:$('currentMeta'),
-    batchName:$('batchName'), importMode:$('importMode'), importText:$('importText'), dropArea:$('dropArea'), importApplyBtn:$('importApplyBtn'), previewBtn:$('previewBtn'), loadSampleBtn:$('loadSampleBtn'), clearImportBtn:$('clearImportBtn'), previewSummary:$('previewSummary'), previewBox:$('previewBox'),
+    batchName:$('batchName'), importMode:$('importMode'), importText:$('importText'), dropArea:$('dropArea'), importApplyBtn:$('importApplyBtn'), previewBtn:$('previewBtn'), loadSampleBtn:$('loadSampleBtn'), clearImportBtn:$('clearImportBtn'), previewSummary:$('previewSummary'), previewBox:$('previewBox'), importAiPanel:$('importAiPanel'), importAiModel:$('importAiModel'), importAiLanguage:$('importAiLanguage'), importAiCompleteBtn:$('importAiCompleteBtn'), importAiStatus:$('importAiStatus'), importAiStatusTitle:$('importAiStatusTitle'), importAiStatusText:$('importAiStatusText'), importAiProgress:$('importAiProgress'), importCopyBtn:$('importCopyBtn'), importDownloadBtn:$('importDownloadBtn'),
     targetTotal:$('targetTotal'), targetDays:$('targetDays'), curveProfile:$('curveProfile'), planGrid:$('planGrid'), applyNewBtn:$('applyNewBtn'), applyReviewBtn:$('applyReviewBtn'), reviewOnlyDayBtn:$('reviewOnlyDayBtn'), planNotice:$('planNotice'), dailyNewRange:$('dailyNewRange'), dailyReviewRange:$('dailyReviewRange'), dailyNewValue:$('dailyNewValue'), dailyReviewValue:$('dailyReviewValue'), queueStyle:$('queueStyle'), protectBacklog:$('protectBacklog'), requireTypingInstant:$('requireTypingInstant'),
     newBookName:$('newBookName'), createBookBtn:$('createBookBtn'), bookGrid:$('bookGrid'), achievementFilter:$('achievementFilter'), achievementGrid:$('achievementGrid'), statGrid:$('statGrid'), hardWords:$('hardWords'), bookBars:$('bookBars'), deckSearch:$('deckSearch'), deckStateFilter:$('deckStateFilter'), deckTable:$('deckTable'), transferCenter:$('transferCenter'), transferScope:$('transferScope'), transferScopeDescription:$('transferScopeDescription'), transferDownloadBtn:$('transferDownloadBtn'), transferCopyBtn:$('transferCopyBtn'), transferText:$('transferText'), transferPasteBtn:$('transferPasteBtn'), transferFile:$('transferFile'), transferStatus:$('transferStatus'), rankStartBtn:$('rankStartBtn'), rankPlayerBadge:$('rankPlayerBadge'), rankBotBadge:$('rankBotBadge'), rankPlayerName:$('rankPlayerName'), rankBotName:$('rankBotName'), rankPlayerLabel:$('rankPlayerLabel'), rankBotLabel:$('rankBotLabel'), rankDisplay:$('rankDisplay'), rankSubDisplay:$('rankSubDisplay'), rankRecord:$('rankRecord'), rankStreak:$('rankStreak'), rankTimeLimit:$('rankTimeLimit'), rankLadder:$('rankLadder'), accountRankBadge:$('accountRankBadge'), rankAccountName:$('rankAccountName'), rankSaveNameBtn:$('rankSaveNameBtn'), rankHistory:$('rankHistory'), battleRoundLabel:$('battleRoundLabel'), battleInstantLabel:$('battleInstantLabel'), battleTimerFill:$('battleTimerFill'), battleWord:$('battleWord'), battleMeaning:$('battleMeaning'), battleRateGrid:$('battleRateGrid'), instantSmall:$('instantSmall'), battleUserScore:$('battleUserScore'), battleAiScore:$('battleAiScore'), battleUserLast:$('battleUserLast'), battleAiLast:$('battleAiLast'), battleNextBtn:$('battleNextBtn'), battleFinishBtn:$('battleFinishBtn'), saveHealth:$('saveHealth'), resetBookBtn:$('resetBookBtn'), resetAllBtn:$('resetAllBtn'),
     newPickerModal:$('newPickerModal'), closePickerBtn:$('closePickerBtn'), modalBatchPicker:$('modalBatchPicker'), modalSectionPicker:$('modalSectionPicker'), modalSectionProgress:$('modalSectionProgress'), modalPickerSearch:$('modalPickerSearch'), modalNewCardList:$('modalNewCardList'), toastZone:$('toastZone'), confirmModal:$('confirmModal'), confirmTitle:$('confirmTitle'), confirmText:$('confirmText'), confirmCancel:$('confirmCancel'), confirmOk:$('confirmOk')
@@ -948,6 +981,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   let studyQueuePlan = [];
   let activeRankTab = 'arena', activeProgressTab = 'glory', activeUtilityCategory = 'attack';
   let proTutorClient = null, proTutorQueuePlan = [], proTutorSetBuffer = [], pendingProTutorSetReview = null, proTutorStorageBlocked = false, proTutorOutcomeSaving = false;
+  let importCompletionSession = null;
   let proSetReviewUiState={session:null,review:null,cardsById:new Map(),local:false};
   const proTutorPending = new Map(), proTutorDecisions = new Map();
   function init(){ normalizeState(); bindEvents(); setupAttentionTracking(); hydrateInputs(); renderAll(); showView('study'); selectNextCard(false); setupTabIndicator(); updateSaveHealth(); registerServiceWorker(); }
@@ -1120,8 +1154,10 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     els.pickNewBtn.addEventListener('click',openNewPicker); els.speakBtn.addEventListener('click',()=>speak(current?.card?.word||'')); els.buryBtn.addEventListener('click',buryCurrent); els.undoBtn.addEventListener('click',undoLast); els.forceOneBtn.addEventListener('click',forceOneNew);
     els.showAnswerBtn.addEventListener('click',showAnswer); els.hintBtn.addEventListener('click',showHint); els.ratingDock.addEventListener('click',e=>{const b=e.target.closest('[data-rating]'); if(b) void rateCurrent(b.dataset.rating,'button');}); els.typeInput.addEventListener('input',()=>{});
     els.pauseNewBtn.addEventListener('click',()=>{const d=todayLog(); d.pauseNew=!d.pauseNew; saveState(); renderAll(); toast(d.pauseNew?'New paused':'New resumed', 'Today only.');}); els.boostReviewBtn.addEventListener('click',()=>{const d=todayLog(); d.boostReview=!d.boostReview; saveState(); renderAll(); toast(d.boostReview?'Review boost on':'Review boost off', d.boostReview?'Review cap temporarily doubled today.':'Back to normal cap.');}); els.batchPicker.addEventListener('change',()=>{state.settings.newBatchFilter=els.batchPicker.value; saveState(); renderAll(); selectNextCard(false);}); els.shuffleNewBtn.addEventListener('click',shuffleNewPick); els.newCardList.addEventListener('click',e=>{const b=e.target.closest('[data-new-card-id]'); if(b) chooseNewCard(b.dataset.newCardId);}); els.closePickerBtn.addEventListener('click',closeNewPicker); els.newPickerModal.addEventListener('click',e=>{if(e.target===els.newPickerModal) closeNewPicker();}); els.modalBatchPicker.addEventListener('change',()=>{state.settings.newBatchFilter=els.modalBatchPicker.value; saveState(); renderAll();}); els.modalPickerSearch.addEventListener('input',debounce(renderNewPicker,80)); els.modalNewCardList.addEventListener('click',e=>{const b=e.target.closest('[data-new-card-id]'); if(b) chooseNewCard(b.dataset.newCardId);});
-    els.importText.addEventListener('input',debounce(renderImportPreview,150)); els.previewBtn.addEventListener('click',renderImportPreview); els.loadSampleBtn.addEventListener('click',()=>{els.importText.value=SAMPLE_TEXT; if(!els.batchName.value.trim()) els.batchName.value=autoBatchName(); state.profile.flags.sampleLoaded=true; renderImportPreview(); saveState(); }); els.clearImportBtn.addEventListener('click',()=>{els.importText.value=''; renderImportPreview();}); els.importApplyBtn.addEventListener('click',applyImport);
-    els.dropArea.addEventListener('dragover',e=>{e.preventDefault(); els.dropArea.classList.add('drag');}); els.dropArea.addEventListener('dragleave',()=>els.dropArea.classList.remove('drag')); els.dropArea.addEventListener('drop',e=>{e.preventDefault(); els.dropArea.classList.remove('drag'); const f=e.dataTransfer.files?.[0]; if(f){const r=new FileReader(); r.onload=()=>{els.importText.value=String(r.result||''); if(!els.batchName.value.trim()) els.batchName.value=f.name.replace(/\.[^.]+$/,''); renderImportPreview();}; r.readAsText(f);}});
+    const renderImportPreviewDebounced=debounce(renderImportPreview,150);
+    els.importText.addEventListener('input',()=>{invalidateImportCompletionSession();renderImportPreviewDebounced();});els.previewBtn.addEventListener('click',renderImportPreview);els.loadSampleBtn.addEventListener('click',()=>{importCompletionSession=null;els.importText.value=SAMPLE_TEXT;if(!els.batchName.value.trim())els.batchName.value=autoBatchName();state.profile.flags.sampleLoaded=true;renderImportPreview();saveState();});els.clearImportBtn.addEventListener('click',()=>{importCompletionSession=null;els.importText.value='';renderImportPreview();});els.importApplyBtn.addEventListener('click',applyImport);
+    els.importAiCompleteBtn.addEventListener('click',()=>void completeImportWithOpenRouter());els.importCopyBtn.addEventListener('click',()=>void copyImportFormat());els.importDownloadBtn.addEventListener('click',downloadImportFormat);els.importAiLanguage.addEventListener('change',()=>{state.settings.importAiLanguage=importLanguage();invalidateImportCompletionSession();saveState('import-ai-language',true);renderImportPreview();});
+    els.dropArea.addEventListener('dragover',e=>{e.preventDefault(); els.dropArea.classList.add('drag');}); els.dropArea.addEventListener('dragleave',()=>els.dropArea.classList.remove('drag')); els.dropArea.addEventListener('drop',e=>{e.preventDefault(); els.dropArea.classList.remove('drag'); const f=e.dataTransfer.files?.[0]; if(f){const r=new FileReader(); r.onload=()=>{importCompletionSession=null;els.importText.value=String(r.result||''); if(!els.batchName.value.trim()) els.batchName.value=f.name.replace(/\.[^.]+$/,''); renderImportPreview();}; r.readAsText(f);}});
     [els.targetTotal,els.targetDays,els.curveProfile].forEach(el=>el.addEventListener('change',()=>{syncPlanner(); renderPlanner();})); els.applyNewBtn.addEventListener('click',()=>{const r=recommendedNumbers(); state.settings.dailyNewLimit=r.newDay; saveState(); hydrateInputs(); renderAll(); toast('Applied',`New/day = ${r.newDay}`);}); els.applyReviewBtn.addEventListener('click',()=>{const r=recommendedNumbers(); state.settings.dailyReviewLimit=r.reviewCap; saveState(); hydrateInputs(); renderAll(); toast('Applied',`Review cap = ${r.reviewCap}`);}); els.reviewOnlyDayBtn.addEventListener('click',()=>{todayLog().pauseNew=true; saveState(); renderAll(); toast('Review-only day','No new cards today.');});
     els.dailyNewRange.addEventListener('input',()=>{state.settings.dailyNewLimit=Number(els.dailyNewRange.value);hydrateInputs();renderAll();});els.dailyNewRange.addEventListener('change',()=>{state.settings.dailyNewLimit=Number(els.dailyNewRange.value);saveState('daily-limits',true);});els.dailyReviewRange.addEventListener('input',()=>{state.settings.dailyReviewLimit=Number(els.dailyReviewRange.value);hydrateInputs();renderAll();});els.dailyReviewRange.addEventListener('change',()=>{state.settings.dailyReviewLimit=Number(els.dailyReviewRange.value);saveState('daily-limits',true);});els.queueStyle.addEventListener('change',()=>{state.settings.queueStyle=els.queueStyle.value; saveState(); renderAll(); selectNextCard(false);}); els.protectBacklog.addEventListener('change',()=>{state.settings.protectBacklog=els.protectBacklog.checked; saveState(); renderAll();}); els.requireTypingInstant.addEventListener('change',()=>{state.settings.requireTypingInstant=els.requireTypingInstant.checked; saveState();}); els.lowPowerMode?.addEventListener('change',()=>{state.settings.lowPowerMode=!!els.lowPowerMode.checked;applyLowPowerMode();saveState('low-power-mode',true);});
     els.createBookBtn.addEventListener('click',()=>void createBook()); [els.deckSearch,els.deckStateFilter].forEach(el=>el.addEventListener('input',debounce(renderDeck,100)));
@@ -1185,7 +1221,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(enabled&&els.longTermSphere){els.longTermSphere.style.setProperty('--v20-sphere-x','0deg');els.longTermSphere.style.setProperty('--v20-sphere-y','0deg');}
     return enabled;
   }
-  function hydrateInputs(){ const s=state.settings; els.targetTotal.value=s.targetTotal; els.targetDays.value=s.targetDays; els.curveProfile.value=s.curve; els.dailyNewRange.value=s.dailyNewLimit; els.dailyReviewRange.value=s.dailyReviewLimit; els.dailyNewValue.textContent=s.dailyNewLimit; els.dailyReviewValue.textContent=effectiveReviewLimit(); els.queueStyle.value=s.queueStyle; els.protectBacklog.checked=!!s.protectBacklog; els.requireTypingInstant.checked=!!s.requireTypingInstant; if(els.lowPowerMode)els.lowPowerMode.checked=!!s.lowPowerMode; applyLowPowerMode(); renderBookSelect(); document.dispatchEvent(new CustomEvent('studio:controls-sync')); }
+  function hydrateInputs(){ const s=state.settings; els.targetTotal.value=s.targetTotal; els.targetDays.value=s.targetDays; els.curveProfile.value=s.curve; els.dailyNewRange.value=s.dailyNewLimit; els.dailyReviewRange.value=s.dailyReviewLimit; els.dailyNewValue.textContent=s.dailyNewLimit; els.dailyReviewValue.textContent=effectiveReviewLimit(); els.queueStyle.value=s.queueStyle; els.protectBacklog.checked=!!s.protectBacklog; els.requireTypingInstant.checked=!!s.requireTypingInstant; if(els.lowPowerMode)els.lowPowerMode.checked=!!s.lowPowerMode; if(els.importAiLanguage)els.importAiLanguage.value=s.importAiLanguage; applyLowPowerMode(); renderBookSelect(); document.dispatchEvent(new CustomEvent('studio:controls-sync')); }
   function renderBookSelect(){const cur=state.activeBookId; els.bookSelect.innerHTML=state.books.map(b=>`<option value="${escAttr(b.id)}" ${b.id===cur?'selected':''}>${esc(b.name)} · ${b.cards.filter(c=>!c.deleted).length}</option>`).join('');}
   function showView(name){
     const mobileOverflow = ['planner','books','achievements','stats','settings'].includes(name);
@@ -1649,8 +1685,163 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       hydrateInputs();renderAll();renderCard();toast('Undo failed',e.message||'Could not restore.');return false;
     }
   }
-  function parseImportText(text){ const lines=String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean); const items=[], errors=[]; for(let i=0;i<lines.length;i++){const line=lines[i]; let word='', rest=''; const tab=line.split(/\t+/); if(tab.length>=2){word=tab.shift().trim(); rest=tab.join('\t').trim();} else {const m=line.match(/^([^｜|:：\s]+)\s+(.+)$/); if(m){word=m[1].trim(); rest=m[2].trim();}} if(!word||!rest){errors.push(`Line ${i+1}: cannot find word + meaning`); continue;} let full=rest, bridge='', example=''; const b=rest.match(/(?:｜|\|)?\s*Bridge\s*[:：]\s*([\s\S]*?)(?=(?:｜|\|)?\s*Example\s*[:：]|$)/i); if(b) bridge=b[1].trim().replace(/[｜|]\s*$/,''); const e=rest.match(/(?:｜|\|)?\s*Example\s*[:：]\s*([\s\S]*)$/i); if(e) example=e[1].trim(); let meaning=rest.replace(/(?:｜|\|)?\s*Bridge\s*[:：][\s\S]*$/i,'').replace(/(?:｜|\|)?\s*Example\s*[:：][\s\S]*$/i,'').trim(); if(!meaning) meaning=full; items.push({word,meaning,fullMeaning:meaning,bridge,example,raw:line,norm:norm(word)}); } return {items,errors}; }
-  function renderImportPreview(){ const res=parseImportText(els.importText.value||''); els.previewSummary.textContent=res.items.length?`${res.items.length} words detected. ${res.errors.length?res.errors.length+' warnings.':'Looks good.'}`:'Paste a list to preview.'; els.previewBox.innerHTML=res.items.slice(0,40).map(x=>`<div class="preview-row"><strong>${esc(x.word)}</strong><div>${esc(x.meaning)}<br><span class="tiny">${esc(x.bridge||'no bridge')} · ${esc(x.example||'no example')}</span></div></div>`).join('')+(res.items.length>40?`<div class="tiny">... ${res.items.length-40} more</div>`:'')+(res.errors.length?`<hr><div class="tiny">${esc(res.errors.join('\n'))}</div>`:''); }
+  function parseImportText(text){
+    return ImportAssistant.parseCompletedText(text);
+  }
+  function importLanguage(){
+    return ['Auto','English','Simplified Chinese'].includes(els.importAiLanguage.value)
+      ? els.importAiLanguage.value
+      : 'Auto';
+  }
+  function importChunkEstimate(rows){
+    const count=Math.max(1,rows.length);
+    return {tokens:500+count*260,cost:Math.max(.001,count*.0015)};
+  }
+  function renderImportAiStatus(stateName,title,message,progress){
+    els.importAiStatus.dataset.state=stateName;
+    els.importAiStatusTitle.textContent=title;
+    els.importAiStatusText.textContent=message;
+    els.importAiProgress.style.width=`${clamp(Number(progress)||0,0,100)}%`;
+    els.importAiCompleteBtn.disabled=stateName==='working';
+    els.importAiCompleteBtn.textContent=stateName==='failed'?'Retry missing fields':'Complete missing fields';
+  }
+  function importSourceFingerprint(text=els.importText.value,selectedLanguage=importLanguage()){
+    const source=ImportAssistant.parseSourceText(text);
+    if(source.errors.length)return '';
+    const resolved=ImportAssistant.resolveOutputLanguage(source.rows,selectedLanguage,navigator.language);
+    return ImportAssistant.sourceFingerprint(text,resolved);
+  }
+  function importSessionMatchesEditor(session){
+    return !!session&&session.selectedLanguage===importLanguage()&&session.fingerprint===importSourceFingerprint();
+  }
+  function invalidateImportCompletionSession(){
+    if(importCompletionSession&&!importSessionMatchesEditor(importCompletionSession))importCompletionSession=null;
+  }
+  function renderImportPreview(){
+    const text=els.importText.value||'',source=ImportAssistant.parseSourceText(text),res=parseImportText(text);
+    els.previewSummary.textContent=res.items.length?`${res.items.length} words detected. ${res.errors.length?res.errors.length+' warnings.':'Looks good.'}`:'Paste a list to preview.';
+    els.previewBox.innerHTML=res.items.slice(0,40).map(x=>`<div class="preview-row"><strong>${esc(x.word)}</strong><div>${esc(x.meaning)}<br><span class="tiny">${esc(x.bridge||'no bridge')} · ${esc(x.example||'no example')}</span></div></div>`).join('')+(res.items.length>40?`<div class="tiny">... ${res.items.length-40} more</div>`:'')+(res.errors.length?`<hr><div class="tiny">${esc(res.errors.join('\n'))}</div>`:'');
+    if(importCompletionSession&&importSessionMatchesEditor(importCompletionSession)){
+      const progress=ImportAssistant.completionProgress(importCompletionSession);
+      if(importCompletionSession.pendingKey)return;
+      if(!progress.pending)return renderImportAiStatus('complete','Complete',`${progress.completed} missing row${progress.completed===1?'':'s'} completed.`,100);
+      if(els.importAiStatus.dataset.state==='failed')return;
+    }
+    if(source.errors.length){
+      const emptyOnly=source.errors.length===1&&source.errors[0]==='Paste at least one vocabulary line';
+      return renderImportAiStatus('ready',emptyOnly?'Ready':'Check source',emptyOnly?'Paste words or import text.':source.errors[0],0);
+    }
+    const missing=source.rows.filter(row=>row.needsMeaning||row.needsBridge).length;
+    renderImportAiStatus('ready','Ready',missing?`${source.rows.length} row${source.rows.length===1?'':'s'} · ${missing} need completion.`:`${source.rows.length} row${source.rows.length===1?'':'s'} already complete.`,missing?0:100);
+  }
+  async function completeImportWithOpenRouter(){
+    const text=String(els.importText.value||''),selectedLanguage=importLanguage(),source=ImportAssistant.parseSourceText(text);
+    if(source.errors.length){
+      renderImportAiStatus('failed','Check source',source.errors[0],0);
+      return;
+    }
+    const required=source.rows.filter(row=>row.needsMeaning||row.needsBridge);
+    if(!required.length){
+      renderImportAiStatus('complete','Already complete','Every row already has a meaning and bridge.',100);
+      return;
+    }
+    if(!isProTutorConnected()){
+      renderImportAiStatus('failed','Connect OpenRouter','Add a session-only key in Settings, then retry.',0);
+      return;
+    }
+    let session=importCompletionSession;
+    if(!session||!importSessionMatchesEditor(session)){
+      session=ImportAssistant.createCompletionSession(text,selectedLanguage,{chunkSize:12,browserLanguage:navigator.language});
+      session.bookId=String(activeBook()?.id||'');
+      importCompletionSession=session;
+    }
+    while(true){
+      if(importCompletionSession!==session||!importSessionMatchesEditor(session))return;
+      const chunk=ImportAssistant.nextCompletionChunk(session);
+      if(!chunk.length)break;
+      const progress=ImportAssistant.completionProgress(session);
+      renderImportAiStatus('working','Completing missing fields',`${progress.completed} of ${progress.total} completed.`,progress.percent);
+      const pendingKey=uid('import-ai');
+      const reservation=await reserveProTutorRequest({pendingKey,estimate:importChunkEstimate(chunk),operation:'import'});
+      if(!reservation){
+        if(importCompletionSession===session)renderImportAiStatus('failed','Completion paused',proTutorStorageBlocked?'Usage could not be saved. Reload before retrying.':'Another request is active or the daily budget was reached.',progress.percent);
+        return;
+      }
+      if(importCompletionSession!==session||!importSessionMatchesEditor(session)||String(activeBook()?.id||'')!==session.bookId){
+        recordProTutorBilledUsage({cancelled:true},false,reservation);
+        await persistProTutorState('openrouter-import-cancelled');
+        proTutorPending.delete(pendingKey);
+        renderProTutorChip();
+        renderProTutorSettings();
+        return;
+      }
+      session.pendingKey=pendingKey;
+      proTutorPending.set(pendingKey,'requesting');
+      renderProTutorChip();
+      renderProTutorSettings();
+      let usageRecorded=false;
+      try{
+        const result=await (proTutorClient||rebuildProTutorClient()).generateImportEntries({
+          language:session.language,
+          rows:chunk.map(row=>({sourceIndex:row.sourceIndex,word:row.word,meaning:row.meaning,needsMeaning:row.needsMeaning,needsBridge:row.needsBridge}))
+        },{model:proTutorSettings().model,timeoutMs:proTutorSettings().requestTimeoutMs});
+        recordProTutorBilledUsage(result.usage,true,reservation);
+        usageRecorded=true;
+        if(!await persistProTutorState('openrouter-import-result'))throw new Error('Usage could not be saved safely');
+        if(importCompletionSession!==session||!importSessionMatchesEditor(session))return;
+        ImportAssistant.acceptCompletionChunk(session,result.entries);
+        const accepted=ImportAssistant.completionProgress(session);
+        renderImportAiStatus('working','Completing missing fields',`${accepted.completed} of ${accepted.total} completed.`,accepted.percent);
+      }catch(error){
+        if(!usageRecorded){
+          recordProTutorBilledUsage(error?.openRouterUsage||{},false,reservation);
+          await persistProTutorState('openrouter-import-failed');
+        }
+        if(importCompletionSession===session&&importSessionMatchesEditor(session)){
+          const failedProgress=ImportAssistant.completionProgress(session);
+          renderImportAiStatus('failed','Completion paused',String(error?.message||error||'OpenRouter could not complete this chunk.').slice(0,220),failedProgress.percent);
+        }
+        return;
+      }finally{
+        proTutorPending.delete(pendingKey);
+        if(session.pendingKey===pendingKey)delete session.pendingKey;
+        renderProTutorChip();
+        renderProTutorSettings();
+      }
+    }
+    if(importCompletionSession!==session||!importSessionMatchesEditor(session)||String(activeBook()?.id||'')!==session.bookId)return;
+    els.importText.value=ImportAssistant.completedSessionText(session);
+    session.fingerprint=ImportAssistant.sourceFingerprint(els.importText.value,session.language);
+    renderImportPreview();
+    const complete=ImportAssistant.completionProgress(session);
+    renderImportAiStatus('complete','Complete',`${complete.completed} missing row${complete.completed===1?'':'s'} completed. Review the format before importing.`,100);
+  }
+  async function copyImportFormat(){
+    const text=String(els.importText.value||'');
+    if(!text)return toast('Nothing to copy','Paste or generate import text first.');
+    const description=ImportAssistant.classifyEditorText(text)==='completed'?'Completed import format':'Current source text';
+    try{
+      await navigator.clipboard.writeText(text);
+      toast('Format copied',`${description} is on your clipboard.`);
+    }catch(_error){
+      els.importText.focus();
+      els.importText.select();
+      toast('Copy unavailable','The text is selected so you can copy it manually.');
+    }
+  }
+  function downloadImportFormat(){
+    const text=String(els.importText.value||'');
+    if(!text)return toast('Nothing to download','Paste or generate import text first.');
+    const base=String(els.batchName.value||'vocab-import').trim().replace(/[<>:"/\\|?*\u0000-\u001f]+/g,'-').replace(/\s+/g,' ').slice(0,80)||'vocab-import';
+    const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));
+    const anchor=document.createElement('a');
+    anchor.href=url;
+    anchor.download=`${base}.txt`;
+    anchor.click();
+    setTimeout(()=>URL.revokeObjectURL(url),0);
+    const description=ImportAssistant.classifyEditorText(text)==='completed'?'completed import format':'current source text';
+    toast('Format downloaded',`${anchor.download} contains the ${description}.`);
+  }
   async function applyImport(){
     const res=parseImportText(els.importText.value);if(!res.items.length)return toast('Import failed','No valid words found.');if(!verifyWritableRevision('A newer save appeared before this import could start.'))return false;const stateBefore=cloneStateForRollback();cancelRankMatchForDataChange();
     const b=activeBook(),mode=els.importMode.value;
@@ -2747,6 +2938,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const previous=state.settings.proTutor&&typeof state.settings.proTutor==='object'?{...state.settings.proTutor}:{};
     if(previous.model===ProTutor.LEGACY_DEFAULT_MODEL)previous.model=ProTutor.DEFAULT_MODEL;
     state.settings.proTutor=ProTutor.normalizeSettings(previous);state.profile.proTutor=normalizeProTutorProfile(state.profile.proTutor||{});
+    state.settings.importAiLanguage=['Auto','English','Simplified Chinese'].includes(state.settings.importAiLanguage)?state.settings.importAiLanguage:'Auto';
     const settings=state.settings.proTutor,budget=ProTutor.budgetState(state.profile.proTutor.daily,{dailyTokenLimit:settings.dailyTokenLimit,dailyCostLimitUsd:settings.dailyCostLimitUsd,estimatedRequestTokens:0,estimatedRequestCostUsd:0});
     state.profile.proTutor.daily={day:budget.day,usedTokens:budget.usedTokens,usedCost:budget.usedCost};state.schemaVersion=Math.max(20,Number(state.schemaVersion)||0);
   }
@@ -2780,6 +2972,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
   function renderProTutorSettings(){
     if(!els.proTutorEnabled||!ProTutor)return;const settings=proTutorSettings(),profile=proTutorProfile(),connected=isProTutorConnected();
+    if(els.importAiModel){els.importAiModel.textContent=connected?settings.model:'Not connected';els.importAiModel.title=connected?settings.model:'Connect OpenRouter in Settings';}
     els.proTutorEnabled.checked=settings.enabled;els.proTutorMode.value=settings.interventionMode;els.proTutorThreshold.value=String(settings.assistanceThreshold);els.proTutorThresholdValue.textContent=`${settings.assistanceThreshold}%`;els.proTutorModel.value=settings.model;els.proTutorShareSemantic.checked=settings.shareSemanticData;els.proTutorDailyTokenLimit.value=String(settings.dailyTokenLimit);els.proTutorDailyCostLimit.value=Number(settings.dailyCostLimitUsd).toFixed(2);
     const thresholdHelp={shadow:'Only repeated or severe difficulty.',hybrid:'Balances memory, misses, hints, and recall speed.',immersive:'More frequent help, including first-time encoding.'};
     els.proTutorThresholdHelp.textContent=thresholdHelp[settings.interventionMode]||thresholdHelp.hybrid;document.querySelectorAll('[data-pro-tutor-mode]').forEach(button=>{const active=button.dataset.proTutorMode===settings.interventionMode;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
@@ -2871,18 +3064,18 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   async function reserveProTutorRequest(options={}){
     if(proTutorPending.size>0)return null;
     if(!verifyWritableRevision('Study data changed before the tutor request could be reserved.'))return null;
-    const profile=proTutorProfile(),settings=proTutorSettings(),estimate=proTutorRequestEstimate(),budget=ProTutor.budgetState(profile.daily,{dailyTokenLimit:settings.dailyTokenLimit,dailyCostLimitUsd:settings.dailyCostLimitUsd,estimatedRequestTokens:estimate.tokens,estimatedRequestCostUsd:estimate.cost});
+    const profile=proTutorProfile(),settings=proTutorSettings(),estimate=options.estimate||proTutorRequestEstimate(),operation=String(options.operation||'tutor'),budget=ProTutor.budgetState(profile.daily,{dailyTokenLimit:settings.dailyTokenLimit,dailyCostLimitUsd:settings.dailyCostLimitUsd,estimatedRequestTokens:estimate.tokens,estimatedRequestCostUsd:estimate.cost});
     if(proTutorStorageBlocked||!budget.allowed)return null;
-    const pendingKey=String(options.pendingKey||uid('pro-request')),profileBefore=JSON.parse(JSON.stringify(profile)),reservation={id:uid('pro-reserve'),pendingKey,day:budget.day,tokens:estimate.tokens,cost:estimate.cost};
+    const pendingKey=String(options.pendingKey||uid('pro-request')),profileBefore=JSON.parse(JSON.stringify(profile)),reservation={id:uid('pro-reserve'),pendingKey,operation,day:budget.day,tokens:estimate.tokens,cost:estimate.cost};
     proTutorPending.set(pendingKey,'reserving');renderProTutorChip();renderProTutorSettings();
-    profile.requests++;profile.daily={day:budget.day,usedTokens:budget.usedTokens+reservation.tokens,usedCost:budget.usedCost+reservation.cost};if(typeof options.prepare==='function')options.prepare(profile);
+    if(operation==='tutor')profile.requests++;profile.daily={day:budget.day,usedTokens:budget.usedTokens+reservation.tokens,usedCost:budget.usedCost+reservation.cost};if(typeof options.prepare==='function')options.prepare(profile);
     if(!await saveState('pro-tutor-reserve',true,true)){state.profile.proTutor=profileBefore;proTutorPending.delete(pendingKey);renderProTutorSettings();recordSessionMinutes(true);if(!saveMeta.stale)pauseProTutorForStorageFailure(options.plan||null);return null;}
     rebaseUndoProTutorState();return reservation;
   }
   function recordProTutorBilledUsage(usage={},valid=true,reservation=null){
     const profile=proTutorProfile(),settings=proTutorSettings(),budget=ProTutor.budgetState(profile.daily,{dailyTokenLimit:settings.dailyTokenLimit,dailyCostLimitUsd:settings.dailyCostLimitUsd,estimatedRequestTokens:0,estimatedRequestCostUsd:0}),tokens=Math.max(0,Number(usage.totalTokens)||0),cost=Math.max(0,Number(usage.cost)||0);
-    const sameReservationDay=reservation?.day===budget.day,hasMeasuredUsage=tokens>0||cost>0,reservedTokens=sameReservationDay&&hasMeasuredUsage?Math.max(0,Number(reservation.tokens)||0):0,reservedCost=sameReservationDay&&hasMeasuredUsage?Math.max(0,Number(reservation.cost)||0):0;
-    if(valid)profile.successes++;else if(hasMeasuredUsage)profile.paidFailures++;profile.totalTokens+=tokens;profile.totalCost+=cost;profile.daily={day:budget.day,usedTokens:Math.max(0,budget.usedTokens-reservedTokens)+tokens,usedCost:Math.max(0,budget.usedCost-reservedCost)+cost};
+    const sameReservationDay=reservation?.day===budget.day,hasMeasuredUsage=tokens>0||cost>0,releaseReservation=hasMeasuredUsage||usage.cancelled===true,reservedTokens=sameReservationDay&&releaseReservation?Math.max(0,Number(reservation.tokens)||0):0,reservedCost=sameReservationDay&&releaseReservation?Math.max(0,Number(reservation.cost)||0):0;
+    if(reservation?.operation!=='import'){if(valid)profile.successes++;else if(hasMeasuredUsage)profile.paidFailures++;}profile.totalTokens+=tokens;profile.totalCost+=cost;profile.daily={day:budget.day,usedTokens:Math.max(0,budget.usedTokens-reservedTokens)+tokens,usedCost:Math.max(0,budget.usedCost-reservedCost)+cost};
   }
   function settleProTutorPrediction(){return;}
   function isProTutorTargetRating(rating){return rating==='wrong'||rating==='partial';}
@@ -3480,7 +3673,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
   function invalidateStudyTransition(){studyTransitionId++;studyController?.cancel();document.body.classList.remove('study-motion-active');}
   function clearBookScopedProTutorState(){
-    proTutorSetBuffer=[];proTutorQueuePlan=[];pendingProTutorSetReview=null;proTutorOutcomeSaving=false;proTutorPending.clear();proTutorDecisions.clear();hideProTutorSetReview();renderProTutorChip();
+    proTutorSetBuffer=[];proTutorQueuePlan=[];pendingProTutorSetReview=null;proTutorOutcomeSaving=false;importCompletionSession=null;proTutorPending.clear();proTutorDecisions.clear();hideProTutorSetReview();renderProTutorChip();
   }
   function invalidateDataContext(){dataContextEpoch++;pendingCommittedStudyAdvance=null;invalidateStudyTransition();clearBookScopedProTutorState();undoSnapshot=null;}
 

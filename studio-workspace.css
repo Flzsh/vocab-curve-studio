@@ -31,6 +31,155 @@
   color-scheme: light dark;
 }
 
+/* Beta v43 — optional OpenRouter import completion. */
+.import-ai-panel {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--mac-separator) 72%, transparent);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--mac-surface) 86%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .62);
+  backdrop-filter: blur(18px) saturate(145%);
+}
+
+.import-ai-heading,
+.import-ai-controls,
+.import-ai-status > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.import-ai-heading h3 {
+  margin: 2px 0 0;
+}
+
+.import-ai-model {
+  max-width: min(48%, 320px);
+  overflow: hidden;
+  color: var(--mac-secondary);
+  font-size: 12px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.import-ai-controls > .field {
+  min-width: min(240px, 100%);
+  margin: 0;
+}
+
+.import-ai-controls :is(select, .btn),
+#importCopyBtn,
+#importDownloadBtn {
+  min-height: 44px;
+}
+
+.import-ai-status {
+  display: grid;
+  gap: 8px;
+  min-height: 52px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--mac-elevated) 86%, transparent);
+  transition: color 160ms ease, background-color 160ms ease, opacity 160ms ease;
+}
+
+.import-ai-status > div:first-child span {
+  color: var(--mac-secondary);
+  font-size: 12px;
+  text-align: right;
+}
+
+.import-ai-status[data-state="failed"] {
+  color: var(--red);
+}
+
+.import-ai-status[data-state="complete"] {
+  color: var(--green);
+}
+
+.studio-progress-track.import-ai-progress {
+  display: block;
+  width: 100%;
+  height: var(--studio-progress-height, 8px);
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--studio-progress-track, rgba(60, 60, 67, .13));
+}
+
+.import-ai-progress > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mac-context-a), var(--mac-context-b));
+  transition: width 220ms cubic-bezier(.2, .8, .2, 1);
+}
+
+@media (max-width: 640px) {
+  .import-ai-heading,
+  .import-ai-controls,
+  .import-ai-status > div:first-child {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .import-ai-model {
+    max-width: 100%;
+  }
+
+  .import-ai-controls > *,
+  .import-ai-controls .btn {
+    width: 100%;
+  }
+
+  .import-ai-status > div:first-child span {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .import-ai-panel,
+  .import-ai-status {
+    background: var(--mac-surface);
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .import-ai-panel,
+  .import-ai-status {
+    border: 2px solid currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .import-ai-panel,
+  .import-ai-panel *,
+  .import-ai-status,
+  .import-ai-progress > span {
+    animation: none !important;
+    transform: none !important;
+    transition: opacity 120ms linear, color 120ms linear, background-color 120ms linear !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .import-ai-panel,
+  .import-ai-status,
+  .import-ai-progress {
+    border: 1px solid CanvasText;
+  }
+
+  .import-ai-progress > span {
+    background: Highlight;
+  }
+}
+
 /* Alpha 20.6 interaction polish: transient menus and native-source settings controls. */
 .v20-library-more > div {
   position: fixed !important;
