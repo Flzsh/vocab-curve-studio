@@ -44,6 +44,49 @@ test('import completion sends strict structured output through the selected mode
   assert.equal(result.usage.cost, 0.002);
 });
 
+test('import completion accepts JSON-only content when parsed output is absent', async () => {
+  const client = ProTutor.createOpenRouterClient({
+    apiKey: 'sk-test-session-key',
+    fetchImpl: async () => ({
+      ok: true,
+      json: async () => ({
+        choices: [{ message: { content: JSON.stringify({
+          entries: [{ sourceIndex: 0, word: 'alpha', meaning: 'first letter', bridge: 'alpha starts the alphabet' }],
+        }) } }],
+      }),
+    }),
+  });
+
+  const result = await client.generateImportEntries({
+    language: 'English',
+    rows: [{ sourceIndex: 0, word: 'alpha', meaning: '', needsMeaning: true, needsBridge: true }],
+  });
+
+  assert.equal(result.entries[0].meaning, 'first letter');
+});
+
+for (const [name, content] of [
+  ['fenced JSON', '```json\n{"entries":[{"sourceIndex":0,"word":"alpha","meaning":"first letter","bridge":"alpha starts the alphabet"}]}\n```'],
+  ['prose-embedded JSON', 'Here is the completed row: {"entries":[{"sourceIndex":0,"word":"alpha","meaning":"first letter","bridge":"alpha starts the alphabet"}]}'],
+]) {
+  test(`import completion rejects ${name} when parsed output is absent`, async () => {
+    const client = ProTutor.createOpenRouterClient({
+      apiKey: 'sk-test-session-key',
+      fetchImpl: async () => ({
+        ok: true,
+        json: async () => ({ choices: [{ message: { content } }] }),
+      }),
+    });
+    await assert.rejects(
+      client.generateImportEntries({
+        language: 'English',
+        rows: [{ sourceIndex: 0, word: 'alpha', meaning: '', needsMeaning: true, needsBridge: true }],
+      }),
+      /invalid structured import response/i
+    );
+  });
+}
+
 for (const [name, entries, pattern] of [
   ['changed word', [{ sourceIndex: 0, word: 'wrong', meaning: 'meaning', bridge: 'bridge' }], /word did not match/i],
   ['missing meaning', [{ sourceIndex: 0, word: 'alpha', meaning: '', bridge: 'bridge' }], /meaning is required/i],

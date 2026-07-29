@@ -1409,6 +1409,16 @@
     });
   }
 
+  function parseImportCompletionContent(message){
+    if(message&&typeof message.parsed==='object'&&message.parsed&&!Array.isArray(message.parsed))return message.parsed;
+    if(!message||typeof message.content!=='string')throw new Error('OpenRouter returned invalid structured import response');
+    try{
+      const parsed=JSON.parse(message.content);
+      if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed))return parsed;
+    }catch(_error){}
+    throw new Error('OpenRouter returned invalid structured import response');
+  }
+
   function parseStructuredContent(message){
     if(message&&typeof message.parsed==='object'&&message.parsed&&!Array.isArray(message.parsed))return message.parsed;
     let content=message&&message.content;
@@ -1494,7 +1504,7 @@
       const requestId=text(data&&data.id,160);
       const returnedModel=text(data&&data.model||modelName,160);
       try{
-        const parsed=parseStructuredContent(data&&data.choices&&data.choices[0]&&data.choices[0].message);
+        const parsed=parseImportCompletionContent(data&&data.choices&&data.choices[0]&&data.choices[0].message);
         return {entries:validateImportCompletion(parsed,rows),usage,requestId,model:returnedModel};
       }catch(error){
         error.openRouterUsage=usage;
