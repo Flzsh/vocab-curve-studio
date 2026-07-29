@@ -23,8 +23,8 @@ test('source parser preserves a completed meaning bridge and example', () => {
   const result = ImportAssistant.parseSourceText(text);
   assert.deepEqual(result.errors, []);
   assert.equal(result.rows[0].meaning, 'v. become less severe');
-  assert.equal(result.rows[0].bridge, 'pressure lets up');
-  assert.equal(result.rows[0].example, 'The rain relented.');
+  assert.equal(result.rows[0].bridge, ' pressure lets up');
+  assert.equal(result.rows[0].example, ' The rain relented.');
   assert.equal(result.rows[0].needsMeaning, false);
   assert.equal(result.rows[0].needsBridge, false);
 });
@@ -35,7 +35,7 @@ test('completed parser rejects word-only text but accepts formatted output', () 
   assert.equal(result.errors.length, 0);
   assert.equal(result.items[0].word, 'teem with');
   assert.equal(result.items[0].meaning, 'v. be full of');
-  assert.equal(result.items[0].bridge, 'a room teems with people');
+  assert.equal(result.items[0].bridge, ' a room teems with people');
 });
 
 test('source parser reports an overlong supplied meaning instead of truncating it', () => {
@@ -53,7 +53,7 @@ test('merge preserves supplied meaning and example while accepting a generated b
     { sourceIndex: 1, word: 'teem with', meaning: 'v. be full of', bridge: 'a room teems with people' },
   ]);
   assert.equal(merged[0].meaning, 'v. become less severe');
-  assert.equal(merged[0].example, 'The rain relented.');
+  assert.equal(merged[0].example, ' The rain relented.');
   assert.equal(merged[0].bridge, 'pressure lets up');
   assert.equal(merged[1].meaning, 'v. be full of');
 });
@@ -134,4 +134,25 @@ test('merge rejects a non-integer generated source index', () => {
   assert.throws(() => ImportAssistant.mergeGeneratedRows(source, [
     { sourceIndex: null, word: 'relent', meaning: 'v. become less severe', bridge: 'pressure lets up' },
   ]), /outside the source batch/i);
+});
+
+test('source parser preserves supplied meaning and example whitespace', () => {
+  const source = ImportAssistant.parseSourceText(
+    'relent\t  v. become less severe  \uFF5CExample:  The rain relented.  '
+  ).rows;
+  assert.equal(source[0].meaning, '  v. become less severe  ');
+  assert.equal(source[0].example, '  The rain relented.  ');
+});
+
+test('completion formatting preserves supplied meaning and example whitespace', () => {
+  const source = ImportAssistant.parseSourceText(
+    'relent\t  v. become less severe  \uFF5CExample:  The rain relented.  '
+  ).rows;
+  const merged = ImportAssistant.mergeGeneratedRows(source, [
+    { sourceIndex: 0, word: 'relent', bridge: 'pressure lets up' },
+  ]);
+  assert.equal(
+    ImportAssistant.formatImportRows(merged),
+    'relent\t  v. become less severe  \uFF5CBridge: pressure lets up\uFF5CExample:  The rain relented.  '
+  );
 });

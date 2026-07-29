@@ -14,16 +14,15 @@
 
   function splitFields(rest) {
     const value = String(rest || '');
-    const bridgeMatch = value.match(/(?:\uFF5C|\|)?\s*Bridge\s*[:\uFF1A]\s*([\s\S]*?)(?=(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A]|$)/i);
-    const exampleMatch = value.match(/(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A]\s*([\s\S]*)$/i);
+    const bridgeMatch = value.match(/(?:\uFF5C|\|)?\s*Bridge\s*[:\uFF1A]([\s\S]*?)(?=(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A]|$)/i);
+    const exampleMatch = value.match(/(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A]([\s\S]*)$/i);
     const meaning = value
       .replace(/(?:\uFF5C|\|)?\s*Bridge\s*[:\uFF1A][\s\S]*$/i, '')
-      .replace(/(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A][\s\S]*$/i, '')
-      .trim();
+      .replace(/(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A][\s\S]*$/i, '');
     return {
       meaning,
-      bridge: bridgeMatch ? bridgeMatch[1].trim().replace(/[\uFF5C|]\s*$/, '') : '',
-      example: exampleMatch ? exampleMatch[1].trim() : '',
+      bridge: bridgeMatch ? bridgeMatch[1] : '',
+      example: exampleMatch ? exampleMatch[1] : '',
     };
   }
 
@@ -43,6 +42,11 @@
       const tabIndex = raw.indexOf('\t');
       const word = clean(tabIndex >= 0 ? raw.slice(0, tabIndex) : raw);
       const fields = splitFields(tabIndex >= 0 ? raw.slice(tabIndex + 1) : '');
+      const normalizedFields = {
+        meaning: clean(fields.meaning),
+        bridge: clean(fields.bridge),
+        example: clean(fields.example),
+      };
       if (!word) {
         errors.push(`Line ${zeroIndex + 1}: vocabulary is empty`);
         return;
@@ -52,7 +56,7 @@
         return;
       }
       for (const fieldName of ['meaning', 'bridge', 'example']) {
-        if (fields[fieldName].length > FIELD_LIMITS[fieldName]) {
+        if (normalizedFields[fieldName].length > FIELD_LIMITS[fieldName]) {
           errors.push(`Line ${zeroIndex + 1}: ${fieldName} exceeds ${FIELD_LIMITS[fieldName]} characters`);
           return;
         }
@@ -61,11 +65,11 @@
         sourceIndex: rows.length,
         lineNumber: zeroIndex + 1,
         word,
-        meaning: clean(fields.meaning),
-        bridge: clean(fields.bridge),
-        example: clean(fields.example),
-        needsMeaning: !fields.meaning.trim(),
-        needsBridge: !fields.bridge.trim(),
+        meaning: fields.meaning,
+        bridge: fields.bridge,
+        example: fields.example,
+        needsMeaning: !normalizedFields.meaning,
+        needsBridge: !normalizedFields.bridge,
       });
     });
     if (!rows.length && !errors.length) errors.push('Paste at least one vocabulary line');
@@ -77,7 +81,7 @@
     const items = [];
     const errors = source.errors[0] === 'Paste at least one vocabulary line' ? [] : source.errors.slice();
     source.rows.forEach(function(row) {
-      if (!row.meaning) {
+      if (!clean(row.meaning)) {
         errors.push(`Line ${row.lineNumber}: cannot find word + meaning`);
         return;
       }
@@ -138,8 +142,8 @@
       if (!entry) throw new RangeError(`Generated response is missing source index ${row.sourceIndex}`);
       return {
         ...row,
-        meaning: row.meaning || assertGeneratedField(entry.meaning, 'meaning', true),
-        bridge: row.bridge || assertGeneratedField(entry.bridge, 'bridge', true),
+        meaning: row.needsMeaning ? assertGeneratedField(entry.meaning, 'meaning', true) : row.meaning,
+        bridge: row.needsBridge ? assertGeneratedField(entry.bridge, 'bridge', true) : row.bridge,
       };
     });
   }
@@ -147,8 +151,8 @@
   function formatImportRows(rows) {
     return rows.map(function(row) {
       let line = `${row.word}\t${row.meaning}`;
-      if (row.bridge) line += `\uFF5CBridge: ${row.bridge}`;
-      if (row.example) line += `\uFF5CExample: ${row.example}`;
+      if (row.bridge) line += `\uFF5CBridge:${/^\s/.test(row.bridge) ? '' : ' '}${row.bridge}`;
+      if (row.example) line += `\uFF5CExample:${/^\s/.test(row.example) ? '' : ' '}${row.example}`;
       return line;
     }).join('\n');
   }
@@ -220,8 +224,8 @@
       return {
         sourceIndex: row.sourceIndex,
         word: row.word,
-        meaning: row.meaning || assertGeneratedField(entry.meaning, 'meaning', true),
-        bridge: row.bridge || assertGeneratedField(entry.bridge, 'bridge', true),
+        meaning: row.needsMeaning ? assertGeneratedField(entry.meaning, 'meaning', true) : row.meaning,
+        bridge: row.needsBridge ? assertGeneratedField(entry.bridge, 'bridge', true) : row.bridge,
       };
     });
   }
