@@ -254,6 +254,23 @@
     return formatImportRows(mergeGeneratedRows(session.sourceRows, Array.from(session.results.values())));
   }
 
+  function shouldBlockOpenRouterInteraction(pendingEntries, controlId) {
+    const entries = Array.from(pendingEntries || []);
+    if (!entries.length) return false;
+    const onlyImport = entries.every(function(entry) {
+      return String(entry && typeof entry === 'object' ? entry.operation : entry) === 'import';
+    });
+    return !(onlyImport && String(controlId || '') === 'clearImportBtn');
+  }
+
+  function completionSessionMatches(session, context) {
+    const value = context || {};
+    return !!session
+      && session.selectedLanguage === value.selectedLanguage
+      && session.fingerprint === value.fingerprint
+      && String(session.bookId || '') === String(value.bookId || '');
+  }
+
   return {
     FIELD_LIMITS,
     parseSourceText,
@@ -268,5 +285,7 @@
     acceptCompletionChunk,
     completionProgress,
     completedSessionText,
+    shouldBlockOpenRouterInteraction,
+    completionSessionMatches,
   };
 });

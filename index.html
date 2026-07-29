@@ -1124,18 +1124,19 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     invalidateDataContext();state=snapshot;current=null;answerShown=false;hintCount=0;pendingSectionHandoff=null;hydrateInputs();renderAll();selectNextCard(false);toast(`${title} failed`,'Your previous saved data is still active.');return false;
   }
   function guardStaleInteraction(event){
-    const transactionBusy=!!pendingStateTransaction||pendingSaveCount>0,tutorRequestBusy=proTutorPending.size>0,studyAdvanceBusy=committedStudyAdvanceRunning||!!pendingCommittedStudyAdvance,ratingBusy=studyRatingInFlight;
-    if(!saveMeta.stale&&!transactionBusy&&!tutorRequestBusy&&!studyAdvanceBusy&&!ratingBusy)return;
+    const transactionBusy=!!pendingStateTransaction||pendingSaveCount>0,openRouterRequestBusy=proTutorPending.size>0,studyAdvanceBusy=committedStudyAdvanceRunning||!!pendingCommittedStudyAdvance,ratingBusy=studyRatingInFlight;
+    if(!saveMeta.stale&&!transactionBusy&&!openRouterRequestBusy&&!studyAdvanceBusy&&!ratingBusy)return;
     const control=event.target?.closest?.('button,input,select,textarea,[contenteditable="true"]');
     if(saveMeta.stale&&control&&staleAllowedControl(control))return;
-    if((ratingBusy||studyAdvanceBusy)&&!saveMeta.stale&&!transactionBusy&&!tutorRequestBusy&&control?.matches?.('[data-view],[data-go]'))return;
+    if(!saveMeta.stale&&openRouterRequestBusy&&!ImportAssistant.shouldBlockOpenRouterInteraction(proTutorPending.values(),control?.id))return;
+    if((ratingBusy||studyAdvanceBusy)&&!saveMeta.stale&&!transactionBusy&&!openRouterRequestBusy&&control?.matches?.('[data-view],[data-go]'))return;
     if(event.type==='keydown'){
       if(control&&(event.key==='Tab'||event.key==='Escape'))return;
       if(!control&&!['1','2','3','4',' ','Enter','h','H'].includes(event.key))return;
     }else if(!control)return;
     event.preventDefault();event.stopImmediatePropagation();
     if(event.type==='input'||event.type==='change')requestAnimationFrame(()=>hydrateInputs());
-    if(saveMeta.stale)notifySaveConflict();else if(tutorRequestBusy)toast('Tutor request in progress','Wait for the current OpenRouter request to finish.');else if(studyAdvanceBusy||ratingBusy)toast('Finishing this card','The next flashcard will be ready in a moment.');else setSavePill('dirty','Saving…');
+    if(saveMeta.stale)notifySaveConflict();else if(openRouterRequestBusy)toast('OpenRouter request in progress','Wait for the current request to finish, or clear an active Import completion.');else if(studyAdvanceBusy||ratingBusy)toast('Finishing this card','The next flashcard will be ready in a moment.');else setSavePill('dirty','Saving…');
   }
   function handleExternalSave(event){
     if(event.key!==STORAGE_KEY)return;
@@ -1712,7 +1713,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     return ImportAssistant.sourceFingerprint(text,resolved);
   }
   function importSessionMatchesEditor(session){
-    return !!session&&session.selectedLanguage===importLanguage()&&session.fingerprint===importSourceFingerprint();
+    return ImportAssistant.completionSessionMatches(session,{selectedLanguage:importLanguage(),fingerprint:importSourceFingerprint(),bookId:String(activeBook()?.id||'')});
   }
   function invalidateImportCompletionSession(){
     if(importCompletionSession&&!importSessionMatchesEditor(importCompletionSession))importCompletionSession=null;
@@ -1768,15 +1769,17 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
         return;
       }
       if(importCompletionSession!==session||!importSessionMatchesEditor(session)||String(activeBook()?.id||'')!==session.bookId){
+        const obsoleteSessionStillVisible=importCompletionSession===session;
         recordProTutorBilledUsage({cancelled:true},false,reservation);
         await persistProTutorState('openrouter-import-cancelled');
         proTutorPending.delete(pendingKey);
         renderProTutorChip();
         renderProTutorSettings();
+        if(obsoleteSessionStillVisible){importCompletionSession=null;renderImportPreview();}
         return;
       }
       session.pendingKey=pendingKey;
-      proTutorPending.set(pendingKey,'requesting');
+      proTutorPending.set(pendingKey,{operation:'import',state:'requesting'});
       renderProTutorChip();
       renderProTutorSettings();
       let usageRecorded=false;
@@ -3067,7 +3070,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const profile=proTutorProfile(),settings=proTutorSettings(),estimate=options.estimate||proTutorRequestEstimate(),operation=String(options.operation||'tutor'),budget=ProTutor.budgetState(profile.daily,{dailyTokenLimit:settings.dailyTokenLimit,dailyCostLimitUsd:settings.dailyCostLimitUsd,estimatedRequestTokens:estimate.tokens,estimatedRequestCostUsd:estimate.cost});
     if(proTutorStorageBlocked||!budget.allowed)return null;
     const pendingKey=String(options.pendingKey||uid('pro-request')),profileBefore=JSON.parse(JSON.stringify(profile)),reservation={id:uid('pro-reserve'),pendingKey,operation,day:budget.day,tokens:estimate.tokens,cost:estimate.cost};
-    proTutorPending.set(pendingKey,'reserving');renderProTutorChip();renderProTutorSettings();
+    proTutorPending.set(pendingKey,{operation,state:'reserving'});renderProTutorChip();renderProTutorSettings();
     if(operation==='tutor')profile.requests++;profile.daily={day:budget.day,usedTokens:budget.usedTokens+reservation.tokens,usedCost:budget.usedCost+reservation.cost};if(typeof options.prepare==='function')options.prepare(profile);
     if(!await saveState('pro-tutor-reserve',true,true)){state.profile.proTutor=profileBefore;proTutorPending.delete(pendingKey);renderProTutorSettings();recordSessionMinutes(true);if(!saveMeta.stale)pauseProTutorForStorageFailure(options.plan||null);return null;}
     rebaseUndoProTutorState();return reservation;
@@ -3248,7 +3251,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(!reservation){if(proTutorPlanIsCurrent(plan)){pendingProTutorSetReview=null;hideProTutorSetReview();renderProTutorSettings();resumeAfterProTutorAbort(plan);}return;}
     const pendingKey=reservation.pendingKey;
     if(!proTutorPlanIsCurrent(plan)){proTutorPending.delete(pendingKey);renderProTutorSettings();recordSessionMinutes(true);return;}
-    profile=proTutorProfile();proTutorPending.set(pendingKey,'requesting');renderProTutorChip();
+    profile=proTutorProfile();proTutorPending.set(pendingKey,{operation:reservation.operation,state:'requesting'});renderProTutorChip();
     try{
       let result;
       try{result=await (proTutorClient||rebuildProTutorClient()).planSetReview(plan.payload,{model:proTutorSettings().model,timeoutMs:proTutorSettings().requestTimeoutMs});}

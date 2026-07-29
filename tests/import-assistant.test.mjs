@@ -156,3 +156,33 @@ test('completion formatting preserves supplied meaning and example whitespace', 
     'relent\t  v. become less severe  \uFF5CBridge: pressure lets up\uFF5CExample:  The rain relented.  '
   );
 });
+
+test('OpenRouter interaction policy allows only Import Clear during import activity', () => {
+  assert.equal(
+    ImportAssistant.shouldBlockOpenRouterInteraction([{ operation: 'import', state: 'requesting' }], 'clearImportBtn'),
+    false
+  );
+  assert.equal(
+    ImportAssistant.shouldBlockOpenRouterInteraction([{ operation: 'import', state: 'reserving' }], 'importText'),
+    true
+  );
+  assert.equal(
+    ImportAssistant.shouldBlockOpenRouterInteraction([{ operation: 'tutor', state: 'requesting' }], 'clearImportBtn'),
+    true
+  );
+});
+
+test('completion session reuse rejects a different active book', () => {
+  const session = ImportAssistant.createCompletionSession('alpha', 'English');
+  session.bookId = 'book-a';
+  assert.equal(ImportAssistant.completionSessionMatches(session, {
+    selectedLanguage: 'English',
+    fingerprint: session.fingerprint,
+    bookId: 'book-a',
+  }), true);
+  assert.equal(ImportAssistant.completionSessionMatches(session, {
+    selectedLanguage: 'English',
+    fingerprint: session.fingerprint,
+    bookId: 'book-b',
+  }), false);
+});
