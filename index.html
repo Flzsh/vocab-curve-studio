@@ -1793,7 +1793,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
         if(!await persistProTutorState('openrouter-import-result'))throw new Error('Usage could not be saved safely');
         const disposition=ImportAssistant.completionResultDisposition(session,{activeSession:importCompletionSession,selectedLanguage:importLanguage(),fingerprint:importSourceFingerprint(),bookId:String(activeBook()?.id||'')});
         if(importCompletionSession!==session||!disposition.apply){
-          if(disposition.reason==='stale-input')renderImportAiStatus('stale','Input changed','Your edits were kept. The finished result was not applied.',0);
+          if(importCompletionSession===session&&disposition.reason==='stale-input')renderImportAiStatus('stale','Input changed','Your edits were kept. The finished result was not applied.',0);
           return;
         }
         ImportAssistant.acceptCompletionChunk(session,result.entries);
@@ -1840,14 +1840,16 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const text=String(els.importText.value||'');
     if(!text)return toast('Nothing to download','Paste or generate import text first.');
     const base=String(els.batchName.value||'vocab-import').trim().replace(/[<>:"/\\|?*\u0000-\u001f]+/g,'-').replace(/\s+/g,' ').slice(0,80)||'vocab-import';
-    const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));
-    const anchor=document.createElement('a');
-    anchor.href=url;
-    anchor.download=`${base}.txt`;
-    anchor.click();
-    setTimeout(()=>URL.revokeObjectURL(url),0);
+    let filename='';
+    try{
+      filename=ImportAssistant.activateTextDownload(text,`${base}.txt`,{document,URL,Blob});
+    }catch(error){
+      console.warn('Import format download failed',error);
+      toast('Download unavailable','The browser could not start the file download. Use Copy format and save it manually.');
+      return;
+    }
     const description=ImportAssistant.classifyEditorText(text)==='completed'?'completed import format':'current source text';
-    toast('Format downloaded',`${anchor.download} contains the ${description}.`);
+    toast('Format downloaded',`${filename} contains the ${description}.`);
   }
   async function applyImport(){
     const res=parseImportText(els.importText.value);if(!res.items.length)return toast('Import failed','No valid words found.');if(!verifyWritableRevision('A newer save appeared before this import could start.'))return false;const stateBefore=cloneStateForRollback();cancelRankMatchForDataChange();
@@ -2973,7 +2975,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(!els.proTutorChip)return;const settings=proTutorSettings(),connected=isProTutorConnected(),working=proTutorPending.size>0;
     if(!settings.enabled){els.proTutorChip.dataset.state='off';els.proTutorChip.textContent='Pro off';return;}
     if(proTutorStorageBlocked){els.proTutorChip.dataset.state='offline';els.proTutorChip.textContent='Pro paused — save unavailable';return;}
-    if(working){els.proTutorChip.dataset.state='working';els.proTutorChip.textContent='Pro reviewing';return;}
+    if(working){els.proTutorChip.dataset.state='working';els.proTutorChip.textContent=ImportAssistant.openRouterPendingLabel(proTutorPending.values());return;}
     if(!connected){els.proTutorChip.dataset.state='offline';els.proTutorChip.textContent='Pro needs OpenRouter';return;}
     els.proTutorChip.dataset.state=settings.interventionMode;els.proTutorChip.textContent=`Pro ${settings.interventionMode}`;
   }

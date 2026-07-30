@@ -14,16 +14,19 @@
 
   function splitFields(rest) {
     const value = String(rest || '');
-    const bridgeMatch = value.match(/(?:\uFF5C|\|)?\s*Bridge\s*[:\uFF1A]([\s\S]*?)(?=(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A]|$)/i);
-    const exampleMatch = value.match(/(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A]([\s\S]*)$/i);
-    const meaning = value
-      .replace(/(?:\uFF5C|\|)?\s*Bridge\s*[:\uFF1A][\s\S]*$/i, '')
-      .replace(/(?:\uFF5C|\|)?\s*Example\s*[:\uFF1A][\s\S]*$/i, '');
-    return {
-      meaning,
-      bridge: bridgeMatch ? bridgeMatch[1] : '',
-      example: exampleMatch ? exampleMatch[1] : '',
-    };
+    const markerPattern = /(?:\uFF5C|\|)\s*(Bridge|Example)\s*[:\uFF1A]/gi;
+    const markers = [];
+    let match;
+    while ((match = markerPattern.exec(value))) {
+      markers.push({ field: match[1].toLowerCase(), index: match.index, contentStart: markerPattern.lastIndex });
+    }
+    if (!markers.length) return { meaning: value, bridge: '', example: '' };
+    const fields = { meaning: value.slice(0, markers[0].index), bridge: '', example: '' };
+    markers.forEach(function(marker, index) {
+      const next = markers[index + 1];
+      fields[marker.field] = value.slice(marker.contentStart, next ? next.index : value.length);
+    });
+    return fields;
   }
 
   function normalizeWord(value) {
@@ -263,6 +266,41 @@
     return !(onlyImport && String(controlId || '') === 'clearImportBtn');
   }
 
+  function openRouterPendingLabel(pendingEntries) {
+    const entries = Array.from(pendingEntries || []);
+    if (!entries.length) return '';
+    return entries.every(function(entry) {
+      return String(entry && typeof entry === 'object' ? entry.operation : entry) === 'import';
+    }) ? 'Import completing' : 'Pro reviewing';
+  }
+
+  function activateTextDownload(text, filename, environment) {
+    const dependencies = environment || {};
+    const documentRef = dependencies.document || (typeof document !== 'undefined' ? document : null);
+    const URLRef = dependencies.URL || (typeof URL !== 'undefined' ? URL : null);
+    const BlobRef = dependencies.Blob || (typeof Blob !== 'undefined' ? Blob : null);
+    let anchor = null;
+    let url = '';
+    try {
+      url = URLRef.createObjectURL(new BlobRef([String(text || '')], { type: 'text/plain;charset=utf-8' }));
+      anchor = documentRef.createElement('a');
+      anchor.href = url;
+      anchor.download = String(filename || 'vocab-import.txt');
+      documentRef.body.appendChild(anchor);
+      anchor.click();
+      return anchor.download;
+    } finally {
+      try {
+        if (anchor && anchor.parentNode) {
+          if (typeof anchor.remove === 'function') anchor.remove();
+          else if (typeof anchor.parentNode.removeChild === 'function') anchor.parentNode.removeChild(anchor);
+        }
+      } finally {
+        if (url && URLRef && typeof URLRef.revokeObjectURL === 'function') URLRef.revokeObjectURL(url);
+      }
+    }
+  }
+
   function completionSessionMatches(session, context) {
     const value = context || {};
     return !!session
@@ -273,7 +311,7 @@
 
   function completionResultDisposition(session, context) {
     const value = context || {};
-    if (value.activeSession && value.activeSession !== session) {
+    if (value.activeSession !== session) {
       return { apply: false, reason: 'superseded' };
     }
     if (!session || session.fingerprint !== value.fingerprint) {
@@ -299,6 +337,8 @@
     completionProgress,
     completedSessionText,
     shouldBlockOpenRouterInteraction,
+    openRouterPendingLabel,
+    activateTextDownload,
     completionSessionMatches,
     completionResultDisposition,
   };

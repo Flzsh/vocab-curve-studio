@@ -144,6 +144,49 @@ test('source parser preserves supplied meaning and example whitespace', () => {
   assert.equal(source[0].example, '  The rain relented.  ');
 });
 
+for (const fixture of [
+  {
+    name: 'ASCII delimiter with mixed-language literal labels and reserved punctuation',
+    text: 'literal\t  释义 Bridge: 原样；Example: (also literal) / [x] {y}?!  |Bridge:  联想 Example: 仍是联想；#1  |Example:  Final example: 保留。  ',
+    meaning: '  释义 Bridge: 原样；Example: (also literal) / [x] {y}?!  ',
+    bridge: '  联想 Example: 仍是联想；#1  ',
+    example: '  Final example: 保留。  ',
+  },
+  {
+    name: 'fullwidth delimiter with literal markers and reserved punctuation',
+    text: 'literal\t  Meaning Bridge: literal; Example: literal <>&"\'  ｜Bridge:  桥接 Bridge: literal / ? *  ｜Example:  例句 Example: literal。  ',
+    meaning: '  Meaning Bridge: literal; Example: literal <>&"\'  ',
+    bridge: '  桥接 Bridge: literal / ? *  ',
+    example: '  例句 Example: literal。  ',
+  },
+]) {
+  test(`parser and formatter round-trip ${fixture.name}`, () => {
+    const parsed = ImportAssistant.parseSourceText(fixture.text);
+    assert.deepEqual(parsed.errors, []);
+    assert.equal(parsed.rows[0].meaning, fixture.meaning);
+    assert.equal(parsed.rows[0].bridge, fixture.bridge);
+    assert.equal(parsed.rows[0].example, fixture.example);
+    assert.equal(ImportAssistant.formatImportRows(parsed.rows), fixture.text.replaceAll('|', '\uFF5C'));
+  });
+}
+
+for (const generatedBridge of [
+  'Remember Bridge: as literal text; Example: never metadata.',
+  '混合联想 Example: 只是文字；Bridge: 也只是文字。?! #1',
+]) {
+  test(`generated bridge with literal metadata labels round-trips without creating an example: ${generatedBridge}`, () => {
+    const source = ImportAssistant.parseSourceText('literal\t  supplied meaning  ').rows;
+    const merged = ImportAssistant.mergeGeneratedRows(source, [
+      { sourceIndex: 0, word: 'literal', bridge: generatedBridge },
+    ]);
+    const formatted = ImportAssistant.formatImportRows(merged);
+    const reparsed = ImportAssistant.parseSourceText(formatted);
+    assert.equal(reparsed.rows[0].meaning, '  supplied meaning  ');
+    assert.equal(reparsed.rows[0].bridge, ` ${generatedBridge}`);
+    assert.equal(reparsed.rows[0].example, '');
+  });
+}
+
 test('completion formatting preserves supplied meaning and example whitespace', () => {
   const source = ImportAssistant.parseSourceText(
     'relent\t  v. become less severe  \uFF5CExample:  The rain relented.  '
@@ -191,12 +234,27 @@ test('completion result disposition rejects a changed editor fingerprint as stal
   const session = ImportAssistant.createCompletionSession('alpha', 'English');
   session.bookId = 'book-a';
   assert.deepEqual(ImportAssistant.completionResultDisposition?.(session, {
+    activeSession: session,
     selectedLanguage: 'English',
     fingerprint: 'edited-source-fingerprint',
     bookId: 'book-a',
   }), {
     apply: false,
     reason: 'stale-input',
+  });
+});
+
+test('delayed completion success after Clear is cancelled without stale-input feedback', () => {
+  const cleared = ImportAssistant.createCompletionSession('alpha', 'English');
+  cleared.bookId = 'book-a';
+  assert.deepEqual(ImportAssistant.completionResultDisposition(cleared, {
+    activeSession: null,
+    selectedLanguage: 'English',
+    fingerprint: ImportAssistant.sourceFingerprint('', 'English'),
+    bookId: 'book-a',
+  }), {
+    apply: false,
+    reason: 'superseded',
   });
 });
 
@@ -214,4 +272,136 @@ test('completion result disposition suppresses a request superseded by a newer a
     apply: false,
     reason: 'superseded',
   });
+});
+
+test('text download activation removes its temporary anchor and revokes its URL after success', () => {
+  const actions = [];
+  const body = {
+    appendChild(anchor) {
+      actions.push('append');
+      anchor.parentNode = body;
+    },
+    removeChild(anchor) {
+      actions.push('remove');
+      anchor.parentNode = null;
+    },
+  };
+  const document = {
+    body,
+    createElement(tag) {
+      assert.equal(tag, 'a');
+      return {
+        parentNode: null,
+        click() { actions.push('click'); },
+      };
+    },
+  };
+  const URLApi = {
+    createObjectURL(blob) {
+      assert.equal(blob.parts[0], 'alpha');
+      actions.push('create');
+      return 'blob:test';
+    },
+    revokeObjectURL(url) {
+      assert.equal(url, 'blob:test');
+      actions.push('revoke');
+    },
+  };
+  function BlobFake(parts, options) {
+    this.parts = parts;
+    this.options = options;
+  }
+
+  const filename = ImportAssistant.activateTextDownload('alpha', 'vocab.txt', { document, URL: URLApi, Blob: BlobFake });
+  assert.equal(filename, 'vocab.txt');
+  assert.deepEqual(actions, ['create', 'append', 'click', 'remove', 'revoke']);
+});
+
+test('text download activation cleans up before rethrowing an activation failure', () => {
+  const actions = [];
+  const body = {
+    appendChild(anchor) {
+      actions.push('append');
+      anchor.parentNode = body;
+    },
+    removeChild(anchor) {
+      actions.push('remove');
+      anchor.parentNode = null;
+    },
+  };
+  const document = {
+    body,
+    createElement() {
+      return {
+        parentNode: null,
+        click() {
+          actions.push('click');
+          throw new Error('downloads blocked');
+        },
+      };
+    },
+  };
+  const URLApi = {
+    createObjectURL() {
+      actions.push('create');
+      return 'blob:test';
+    },
+    revokeObjectURL() {
+      actions.push('revoke');
+    },
+  };
+
+  assert.throws(
+    () => ImportAssistant.activateTextDownload('alpha', 'vocab.txt', {
+      document,
+      URL: URLApi,
+      Blob: function BlobFake() {},
+    }),
+    /downloads blocked/
+  );
+  assert.deepEqual(actions, ['create', 'append', 'click', 'remove', 'revoke']);
+});
+
+test('text download activation still revokes its URL when anchor removal fails', () => {
+  const actions = [];
+  const body = {
+    appendChild(anchor) {
+      anchor.parentNode = body;
+    },
+    removeChild() {
+      actions.push('remove');
+      throw new Error('anchor removal blocked');
+    },
+  };
+  const document = {
+    body,
+    createElement() {
+      return { parentNode: null, click() { actions.push('click'); } };
+    },
+  };
+  const URLApi = {
+    createObjectURL() { return 'blob:test'; },
+    revokeObjectURL() { actions.push('revoke'); },
+  };
+
+  assert.throws(
+    () => ImportAssistant.activateTextDownload('alpha', 'vocab.txt', {
+      document,
+      URL: URLApi,
+      Blob: function BlobFake() {},
+    }),
+    /anchor removal blocked/
+  );
+  assert.deepEqual(actions, ['click', 'remove', 'revoke']);
+});
+
+test('pending OpenRouter label distinguishes Import completion from Pro Tutor review', () => {
+  assert.equal(
+    ImportAssistant.openRouterPendingLabel([{ operation: 'import', state: 'requesting' }]),
+    'Import completing'
+  );
+  assert.equal(
+    ImportAssistant.openRouterPendingLabel([{ operation: 'tutor', state: 'requesting' }]),
+    'Pro reviewing'
+  );
 });

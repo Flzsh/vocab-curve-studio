@@ -140,6 +140,21 @@
     });
   }
 
+  function consumeSelectKeyEvent(event, open) {
+    if (!event) return false;
+    var key = event.key;
+    var printable = key && key.length === 1 && !event.altKey && !event.ctrlKey && !event.metaKey;
+    var consumed = key === 'Enter'
+      || key === ' '
+      || ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(key)
+      || (key === 'Escape' && Boolean(open))
+      || printable;
+    if (!consumed) return false;
+    if (typeof event.preventDefault === 'function') event.preventDefault();
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    return true;
+  }
+
   function enabledIndexes(records) {
     return (Array.isArray(records) ? records : []).map(function(record, index) {
       return record.disabled ? -1 : index;
@@ -936,8 +951,7 @@
       var key = event.key;
       if (key === 'Escape') {
         if (record.open) {
-          if (typeof event.preventDefault === 'function') event.preventDefault();
-          if (typeof event.stopPropagation === 'function') event.stopPropagation();
+          consumeSelectKeyEvent(event, record.open);
           closeActiveSelect({ returnFocus: true });
         }
         return;
@@ -947,24 +961,24 @@
         return;
       }
       if (key === 'Enter' || key === ' ') {
-        if (typeof event.preventDefault === 'function') event.preventDefault();
+        consumeSelectKeyEvent(event, record.open);
         if (record.open) commitSelectOption(record, record.activeIndex);
         else openSelect(record);
         return;
       }
       if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(key)) {
-        if (typeof event.preventDefault === 'function') event.preventDefault();
+        consumeSelectKeyEvent(event, record.open);
         if (!record.open) openSelect(record);
         setSelectActive(record, nextEnabledOptionIndex(record.options, record.activeIndex, key));
         return;
       }
       if (key && key.length === 1 && !event.altKey && !event.ctrlKey && !event.metaKey) {
+        consumeSelectKeyEvent(event, record.open);
         typeaheadBuffer += key;
         resetTypeaheadSoon();
         if (!record.open) openSelect(record);
         var match = typeaheadOptionIndex(record.options, record.activeIndex, typeaheadBuffer);
         if (match >= 0) {
-          if (typeof event.preventDefault === 'function') event.preventDefault();
           setSelectActive(record, match);
         }
       }
@@ -1322,6 +1336,7 @@
     nextComboboxIndex: nextComboboxIndex,
     snapshotSelectOptions: snapshotSelectOptions,
     selectedOptionIndex: selectedOptionIndex,
+    consumeSelectKeyEvent: consumeSelectKeyEvent,
     nextEnabledOptionIndex: nextEnabledOptionIndex,
     typeaheadOptionIndex: typeaheadOptionIndex,
     selectMutationIsRelevant: selectMutationIsRelevant,

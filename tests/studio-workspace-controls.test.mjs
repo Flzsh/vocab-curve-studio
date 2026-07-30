@@ -93,6 +93,46 @@ test('typeahead finds the next enabled prefix match', () => {
   assert.equal(Workspace.typeaheadOptionIndex(records, 0, 'mixed'), -1);
 });
 
+for (const fixture of [
+  { key: 'Enter', open: false },
+  { key: ' ', open: false },
+  { key: 'ArrowDown', open: false },
+  { key: 'ArrowUp', open: true },
+  { key: 'Home', open: true },
+  { key: 'End', open: true },
+  { key: 'Escape', open: true },
+  { key: 'r', open: true },
+]) {
+  test(`combobox-consumed ${JSON.stringify(fixture.key)} prevents default and stops event propagation`, () => {
+    const calls = [];
+    const event = {
+      key: fixture.key,
+      altKey: false,
+      ctrlKey: false,
+      metaKey: false,
+      preventDefault() { calls.push('preventDefault'); },
+      stopPropagation() { calls.push('stopPropagation'); },
+    };
+
+    assert.equal(Workspace.consumeSelectKeyEvent(event, fixture.open), true);
+    assert.deepEqual(calls, ['preventDefault', 'stopPropagation']);
+  });
+}
+
+test('combobox leaves Tab, closed Escape, and modified printable keys to native propagation', () => {
+  for (const event of [
+    { key: 'Tab' },
+    { key: 'Escape' },
+    { key: 'r', ctrlKey: true },
+  ]) {
+    let stopped = false;
+    event.preventDefault = () => { throw new Error('must not prevent native fallback'); };
+    event.stopPropagation = () => { stopped = true; };
+    assert.equal(Workspace.consumeSelectKeyEvent(event, false), false);
+    assert.equal(stopped, false);
+  }
+});
+
 test('selected option index returns minus one for an unknown value', () => {
   assert.equal(Workspace.selectedOptionIndex(records, 'newFirst'), 2);
   assert.equal(Workspace.selectedOptionIndex(records, 'missing'), -1);
