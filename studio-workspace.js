@@ -122,6 +122,53 @@
     return index;
   }
 
+  function snapshotSelectOptions(selectLike) {
+    return Array.prototype.slice.call(selectLike && selectLike.options || []).map(function(option, index) {
+      return {
+        index: index,
+        value: String(option.value),
+        label: String(option.textContent || option.label || option.value),
+        disabled: Boolean(option.disabled),
+      };
+    });
+  }
+
+  function selectedOptionIndex(records, value) {
+    var target = String(value);
+    return (Array.isArray(records) ? records : []).findIndex(function(record) {
+      return String(record.value) === target;
+    });
+  }
+
+  function enabledIndexes(records) {
+    return (Array.isArray(records) ? records : []).map(function(record, index) {
+      return record.disabled ? -1 : index;
+    }).filter(function(index) { return index >= 0; });
+  }
+
+  function nextEnabledOptionIndex(records, current, key) {
+    var enabled = enabledIndexes(records);
+    if (!enabled.length) return -1;
+    if (key === 'Home') return enabled[0];
+    if (key === 'End') return enabled[enabled.length - 1];
+    var position = enabled.indexOf(current);
+    if (position < 0) position = 0;
+    if (key === 'ArrowDown') return enabled[(position + 1) % enabled.length];
+    if (key === 'ArrowUp') return enabled[(position - 1 + enabled.length) % enabled.length];
+    return enabled[position];
+  }
+
+  function typeaheadOptionIndex(records, current, query) {
+    var needle = String(query || '').trim().toLocaleLowerCase();
+    if (!needle) return -1;
+    var source = Array.isArray(records) ? records : [];
+    for (var offset = 1; offset <= source.length; offset += 1) {
+      var index = (Math.max(-1, current) + offset) % source.length;
+      if (!source[index].disabled && String(source[index].label).toLocaleLowerCase().startsWith(needle)) return index;
+    }
+    return -1;
+  }
+
   function rangeFillPercentage(value, minimum, maximum) {
     var min = finiteNumber(minimum, 0);
     var max = finiteNumber(maximum, min);
@@ -951,6 +998,10 @@
     springStep: springStep,
     popoverPlacement: popoverPlacement,
     nextComboboxIndex: nextComboboxIndex,
+    snapshotSelectOptions: snapshotSelectOptions,
+    selectedOptionIndex: selectedOptionIndex,
+    nextEnabledOptionIndex: nextEnabledOptionIndex,
+    typeaheadOptionIndex: typeaheadOptionIndex,
     rangeFillPercentage: rangeFillPercentage,
     boot: boot
   });
