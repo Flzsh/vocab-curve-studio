@@ -1791,7 +1791,11 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
         recordProTutorBilledUsage(result.usage,true,reservation);
         usageRecorded=true;
         if(!await persistProTutorState('openrouter-import-result'))throw new Error('Usage could not be saved safely');
-        if(importCompletionSession!==session||!importSessionMatchesEditor(session))return;
+        const disposition=ImportAssistant.completionResultDisposition(session,{selectedLanguage:importLanguage(),fingerprint:importSourceFingerprint(),bookId:String(activeBook()?.id||'')});
+        if(importCompletionSession!==session||!disposition.apply){
+          if(disposition.reason==='stale-input')renderImportAiStatus('stale','Input changed','Your edits were kept. The finished result was not applied.',0);
+          return;
+        }
         ImportAssistant.acceptCompletionChunk(session,result.entries);
         const accepted=ImportAssistant.completionProgress(session);
         renderImportAiStatus('working','Completing missing fields',`${accepted.completed} of ${accepted.total} completed.`,accepted.percent);

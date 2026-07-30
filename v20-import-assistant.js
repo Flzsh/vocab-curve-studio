@@ -271,6 +271,16 @@
       && String(session.bookId || '') === String(value.bookId || '');
   }
 
+  function completionResultDisposition(session, context) {
+    const value = context || {};
+    if (!session || session.fingerprint !== value.fingerprint) {
+      return { apply: false, reason: 'stale-input' };
+    }
+    return completionSessionMatches(session, value)
+      ? { apply: true, reason: '' }
+      : { apply: false, reason: 'stale-context' };
+  }
+
   return {
     FIELD_LIMITS,
     parseSourceText,
@@ -287,5 +297,6 @@
     completedSessionText,
     shouldBlockOpenRouterInteraction,
     completionSessionMatches,
+    completionResultDisposition,
   };
 });

@@ -186,3 +186,16 @@ test('completion session reuse rejects a different active book', () => {
     bookId: 'book-b',
   }), false);
 });
+
+test('completion result disposition rejects a changed editor fingerprint as stale input', () => {
+  const session = ImportAssistant.createCompletionSession('alpha', 'English');
+  session.bookId = 'book-a';
+  assert.deepEqual(ImportAssistant.completionResultDisposition?.(session, {
+    selectedLanguage: 'English',
+    fingerprint: 'edited-source-fingerprint',
+    bookId: 'book-a',
+  }), {
+    apply: false,
+    reason: 'stale-input',
+  });
+});
