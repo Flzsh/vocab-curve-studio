@@ -349,6 +349,25 @@
     return hiddenFromTopLayer;
   }
 
+  function selectOptionScrollTop(listboxRect, optionRect, currentScrollTop, maximumScrollTop) {
+    var current = Math.max(0, finiteNumber(currentScrollTop, 0));
+    var maximum = Math.max(0, finiteNumber(maximumScrollTop, current));
+    var next = current;
+    if (optionRect && listboxRect && finiteNumber(optionRect.top, 0) < finiteNumber(listboxRect.top, 0)) {
+      next -= finiteNumber(listboxRect.top, 0) - finiteNumber(optionRect.top, 0);
+    } else if (optionRect && listboxRect && finiteNumber(optionRect.bottom, 0) > finiteNumber(listboxRect.bottom, 0)) {
+      next += finiteNumber(optionRect.bottom, 0) - finiteNumber(listboxRect.bottom, 0);
+    }
+    return Math.min(maximum, Math.max(0, next));
+  }
+
+  function scrollOriginatesInSelectListbox(record, event) {
+    var target = event && event.target;
+    return Boolean(record && record.open && record.listbox && target &&
+      (target === record.listbox ||
+        (typeof record.listbox.contains === 'function' && record.listbox.contains(target))));
+  }
+
   function boot(documentRef) {
     if (!documentRef || !documentRef.body) return null;
     if (OWNERS.has(documentRef)) return OWNERS.get(documentRef);
@@ -904,7 +923,15 @@
       });
       var active = record.options[index];
       setAttributeIfChanged(record.trigger, 'aria-activedescendant', active.button.id);
-      if (typeof active.button.scrollIntoView === 'function') active.button.scrollIntoView({ block: 'nearest' });
+      if (typeof record.listbox.getBoundingClientRect === 'function' &&
+          typeof active.button.getBoundingClientRect === 'function') {
+        record.listbox.scrollTop = selectOptionScrollTop(
+          record.listbox.getBoundingClientRect(),
+          active.button.getBoundingClientRect(),
+          record.listbox.scrollTop,
+          Math.max(0, finiteNumber(record.listbox.scrollHeight, 0) - finiteNumber(record.listbox.clientHeight, 0)),
+        );
+      }
     }
 
     function positionSelect(record) {
@@ -1271,7 +1298,8 @@
       if (activeSelectRecord && !activeSelectRecord.shell.contains(target) && !activeSelectRecord.listbox.contains(target)) closeActiveSelect({ preserveFocus: true });
     }
 
-    function dismissSurfaceScroll() {
+    function dismissSurfaceScroll(event) {
+      if (scrollOriginatesInSelectListbox(activeSelectRecord, event)) return;
       if (openLibraryMenu) closeActiveLibraryMenu({ returnFocus: true });
       closeActiveSelect();
     }
@@ -1387,6 +1415,8 @@
     restoreNativeSelectState: restoreNativeSelectState,
     rollbackSelectEnhancement: rollbackSelectEnhancement,
     rangeFillPercentage: rangeFillPercentage,
+    selectOptionScrollTop: selectOptionScrollTop,
+    scrollOriginatesInSelectListbox: scrollOriginatesInSelectListbox,
     boot: boot
   });
 });

@@ -279,6 +279,31 @@ test('manual select popover reveals before show and hides after close', () => {
   assert.deepEqual(calls, ['hidden:false', 'show:false', 'hide:false', 'hidden:true']);
 });
 
+test('active option scrolling is local, bounded, and stable when already visible', () => {
+  assert.equal(Workspace.selectOptionScrollTop({ top: 100, bottom: 300 }, { top: 80, bottom: 120 }, 50, 400), 30);
+  assert.equal(Workspace.selectOptionScrollTop({ top: 100, bottom: 300 }, { top: 280, bottom: 330 }, 50, 400), 80);
+  assert.equal(Workspace.selectOptionScrollTop({ top: 100, bottom: 300 }, { top: 140, bottom: 180 }, 50, 400), 50);
+  assert.equal(Workspace.selectOptionScrollTop({ top: 100, bottom: 300 }, { top: 0, bottom: 20 }, 10, 15), 0);
+});
+
+test('only scrolling inside the open listbox bypasses select dismissal', () => {
+  const child = {};
+  const listbox = {
+    contains(target) { return target === child; },
+  };
+  const record = { open: true, listbox };
+
+  assert.equal(Workspace.scrollOriginatesInSelectListbox(record, { target: listbox }), true);
+  assert.equal(Workspace.scrollOriginatesInSelectListbox(record, { target: child }), true);
+  assert.equal(Workspace.scrollOriginatesInSelectListbox(record, { target: {} }), false);
+  assert.equal(Workspace.scrollOriginatesInSelectListbox({ open: false, listbox }, { target: child }), false);
+});
+
+test('combobox active option visibility never scrolls the page', () => {
+  assert.doesNotMatch(workspaceSource, /\.scrollIntoView\(/);
+  assert.match(workspaceSource, /scrollOriginatesInSelectListbox\(activeSelectRecord, event\)/);
+});
+
 test('failed or unsupported top-layer enhancement retains a hidden listbox', () => {
   const unsupported = { hidden: true };
   const failed = {
