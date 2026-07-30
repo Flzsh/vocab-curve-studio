@@ -316,6 +316,39 @@
     return Math.round(clamp((finiteNumber(value, min) - min) / (max - min), 0, 1) * 10000) / 100;
   }
 
+  function supportsSelectPopover(element) {
+    return Boolean(element &&
+      typeof element.showPopover === 'function' &&
+      typeof element.hidePopover === 'function');
+  }
+
+  function showSelectPopover(element) {
+    if (!supportsSelectPopover(element)) return false;
+    element.hidden = false;
+    try {
+      element.showPopover();
+      return true;
+    } catch (error) {
+      element.hidden = true;
+      return false;
+    }
+  }
+
+  function hideSelectPopover(element) {
+    if (!element) return false;
+    var hiddenFromTopLayer = false;
+    if (typeof element.hidePopover === 'function') {
+      try {
+        element.hidePopover();
+        hiddenFromTopLayer = true;
+      } catch (error) {
+        hiddenFromTopLayer = false;
+      }
+    }
+    element.hidden = true;
+    return hiddenFromTopLayer;
+  }
+
   function boot(documentRef) {
     if (!documentRef || !documentRef.body) return null;
     if (OWNERS.has(documentRef)) return OWNERS.get(documentRef);
@@ -780,7 +813,7 @@
       var settings = options && typeof options === 'object' ? options : {};
       var record = activeSelectRecord;
       record.open = false;
-      record.listbox.hidden = true;
+      hideSelectPopover(record.listbox);
       setAttributeIfChanged(record.trigger, 'aria-expanded', 'false');
       removeAttributeIfPresent(record.trigger, 'aria-activedescendant');
       activeSelectRecord = null;
@@ -905,20 +938,21 @@
     }
 
     function openSelect(record) {
-      if (!record || record.trigger.disabled) return;
+      if (!record || record.trigger.disabled) return false;
       if (activeSelectRecord && activeSelectRecord !== record) closeActiveSelect();
       closeActiveLibraryMenu();
       syncSelect(record);
+      if (!showSelectPopover(record.listbox)) return false;
       record.open = true;
       activeSelectRecord = record;
-      record.listbox.hidden = false;
       setAttributeIfChanged(record.trigger, 'aria-expanded', 'true');
+      positionSelect(record);
       var activeIndex = record.activeIndex;
       if (activeIndex < 0 || !record.options[activeIndex] || record.options[activeIndex].disabled) {
         activeIndex = nextEnabledOptionIndex(record.options, -1, 'Home');
       }
       setSelectActive(record, activeIndex);
-      positionSelect(record);
+      return true;
     }
 
     function commitSelectOption(record, index) {
@@ -1018,6 +1052,8 @@
         var visibleLabel = documentRef.createElement('span');
         var disclosure = documentRef.createElement('span');
         var listbox = documentRef.createElement('div');
+        if (!supportsSelectPopover(listbox)) return null;
+        setAttributeIfChanged(listbox, 'popover', 'manual');
         var listboxId = nextGeneratedId('studio-combobox-listbox');
         shell.className = 'studio-combobox';
         trigger.type = 'button';
@@ -1333,6 +1369,9 @@
     paletteFor: paletteFor,
     springStep: springStep,
     popoverPlacement: popoverPlacement,
+    supportsSelectPopover: supportsSelectPopover,
+    showSelectPopover: showSelectPopover,
+    hideSelectPopover: hideSelectPopover,
     nextComboboxIndex: nextComboboxIndex,
     snapshotSelectOptions: snapshotSelectOptions,
     selectedOptionIndex: selectedOptionIndex,

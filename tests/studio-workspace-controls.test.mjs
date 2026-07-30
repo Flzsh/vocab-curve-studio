@@ -260,3 +260,48 @@ test('range percentage handles minimum midpoint maximum and invalid spans', () =
   assert.equal(Workspace.rangeFillPercentage(600, 20, 600), 100);
   assert.equal(Workspace.rangeFillPercentage(10, 10, 10), 0);
 });
+
+test('manual select popover reveals before show and hides after close', () => {
+  const calls = [];
+  let hidden = true;
+  const listbox = {
+    get hidden() { return hidden; },
+    set hidden(value) { hidden = Boolean(value); calls.push(`hidden:${hidden}`); },
+    showPopover() { calls.push(`show:${hidden}`); },
+    hidePopover() { calls.push(`hide:${hidden}`); },
+  };
+
+  assert.equal(Workspace.supportsSelectPopover(listbox), true);
+  assert.equal(Workspace.showSelectPopover(listbox), true);
+  assert.deepEqual(calls, ['hidden:false', 'show:false']);
+
+  assert.equal(Workspace.hideSelectPopover(listbox), true);
+  assert.deepEqual(calls, ['hidden:false', 'show:false', 'hide:false', 'hidden:true']);
+});
+
+test('failed or unsupported top-layer enhancement retains a hidden listbox', () => {
+  const unsupported = { hidden: true };
+  const failed = {
+    hidden: true,
+    showPopover() { throw new Error('not allowed'); },
+    hidePopover() {},
+  };
+
+  assert.equal(Workspace.supportsSelectPopover(unsupported), false);
+  assert.equal(Workspace.showSelectPopover(unsupported), false);
+  assert.equal(unsupported.hidden, true);
+  assert.equal(Workspace.showSelectPopover(failed), false);
+  assert.equal(failed.hidden, true);
+});
+
+test('global combobox uses a manual top-layer listbox before positioning', () => {
+  assert.match(workspaceSource, /setAttributeIfChanged\(listbox, 'popover', 'manual'\)/);
+  assert.match(workspaceSource, /if \(!supportsSelectPopover\(listbox\)\) return null/);
+  const openSource = workspaceSource.slice(
+    workspaceSource.indexOf('function openSelect(record)'),
+    workspaceSource.indexOf('function commitSelectOption(record, index)'),
+  );
+  assert.ok(openSource.indexOf('showSelectPopover(record.listbox)') < openSource.indexOf('positionSelect(record)'));
+  assert.match(workspaceCss, /inset:\s*auto/);
+  assert.match(workspaceCss, /margin:\s*0/);
+});
