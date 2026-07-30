@@ -60,6 +60,92 @@ function fakeNode(tagName) {
   return node;
 }
 
+function createComboboxHarness({ popoverFails = false } = {}) {
+  const windowListeners = new Map();
+
+  function domNode(tagName) {
+    const node = fakeNode(tagName);
+    const listeners = new Map();
+    const styleValues = new Map();
+    node.dataset = {};
+    node.disabled = false;
+    node.hidden = false;
+    node.style = {
+      setProperty(name, value) { styleValues.set(name, String(value)); },
+      getPropertyValue(name) { return styleValues.get(name) || ''; },
+    };
+    node.classList.toggle = function toggle(value, force) {
+      const enabled = force === undefined ? !this.values.has(value) : Boolean(force);
+      if (enabled) this.values.add(value);
+      else this.values.delete(value);
+      return enabled;
+    };
+    node.addEventListener = (type, listener) => {
+      if (!listeners.has(type)) listeners.set(type, []);
+      listeners.get(type).push(listener);
+    };
+    node.emit = (type, event = {}) => {
+      for (const listener of listeners.get(type) || []) listener({ target: node, ...event });
+    };
+    node.contains = (target) => target === node || node.children.some((child) => child.contains?.(target));
+    node.closest = () => null;
+    node.focus = () => {};
+    node.getBoundingClientRect = () => ({ left: 100, right: 340, top: 100, bottom: 140, width: 240, height: 40 });
+    node.showPopover = () => {
+      if (popoverFails) throw new Error('popover unavailable');
+      node.popoverOpen = true;
+    };
+    node.hidePopover = () => { node.popoverOpen = false; };
+    node.matches = (selector) => selector === ':popover-open' && Boolean(node.popoverOpen);
+    return node;
+  }
+
+  const body = domNode('body');
+  const parent = domNode('div');
+  const select = domNode('select');
+  select.value = 'alpha';
+  select.options = [
+    { value: 'alpha', textContent: 'Alpha', disabled: false },
+    { value: 'beta', textContent: 'Beta', disabled: false },
+  ];
+  select.labels = [];
+  parent.appendChild(select);
+  body.appendChild(parent);
+
+  const windowRef = {
+    innerWidth: 1440,
+    innerHeight: 900,
+    addEventListener(type, listener) {
+      if (!windowListeners.has(type)) windowListeners.set(type, []);
+      windowListeners.get(type).push(listener);
+    },
+    emit(type) {
+      for (const listener of windowListeners.get(type) || []) listener({ type });
+    },
+  };
+  const documentRef = {
+    body,
+    defaultView: windowRef,
+    activeElement: null,
+    getElementById() { return null; },
+    querySelector() { return null; },
+    querySelectorAll(selector) { return selector === 'select' ? [select] : []; },
+    createElement: domNode,
+    addEventListener() {},
+    contains(node) { return body.contains(node); },
+  };
+  const controller = Workspace.boot(documentRef);
+  const shell = select.nextSibling;
+  return {
+    controller,
+    documentRef,
+    listbox: shell.children[1],
+    select,
+    trigger: shell.children[0],
+    windowRef,
+  };
+}
+
 const records = [
   { value: 'reviewFirst', label: 'Reviews before new', disabled: false },
   { value: 'mixed', label: 'Mixed reviews + new', disabled: true },
@@ -329,4 +415,47 @@ test('global combobox uses a manual top-layer listbox before positioning', () =>
   assert.ok(openSource.indexOf('showSelectPopover(record.listbox)') < openSource.indexOf('positionSelect(record)'));
   assert.match(workspaceCss, /inset:\s*auto/);
   assert.match(workspaceCss, /margin:\s*0/);
+});
+
+test('every resize dismisses an open combobox even when the viewport remains wide', () => {
+  const { listbox, trigger, windowRef } = createComboboxHarness();
+  trigger.emit('click');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+  assert.equal(listbox.hidden, false);
+  assert.equal(listbox.matches(':popover-open'), true);
+
+  windowRef.innerWidth = 1360;
+  windowRef.innerHeight = 860;
+  windowRef.emit('resize');
+
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(listbox.hidden, true);
+  assert.equal(listbox.matches(':popover-open'), false);
+});
+
+test('failed popover opening through navigation keys leaves no active descendant', () => {
+  const { trigger } = createComboboxHarness({ popoverFails: true });
+  trigger.emit('keydown', {
+    key: 'ArrowDown',
+    preventDefault() {},
+    stopPropagation() {},
+  });
+
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(trigger.hasAttribute('aria-activedescendant'), false);
+});
+
+test('failed popover opening through typeahead leaves no active descendant', () => {
+  const { trigger } = createComboboxHarness({ popoverFails: true });
+  trigger.emit('keydown', {
+    key: 'b',
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    preventDefault() {},
+    stopPropagation() {},
+  });
+
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(trigger.hasAttribute('aria-activedescendant'), false);
 });

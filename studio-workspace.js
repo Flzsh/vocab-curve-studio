@@ -1029,7 +1029,7 @@
       }
       if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(key)) {
         consumeSelectKeyEvent(event, record.open);
-        if (!record.open) openSelect(record);
+        if (!record.open && !openSelect(record)) return;
         setSelectActive(record, nextEnabledOptionIndex(record.options, record.activeIndex, key));
         return;
       }
@@ -1037,7 +1037,7 @@
         consumeSelectKeyEvent(event, record.open);
         typeaheadBuffer += key;
         resetTypeaheadSoon();
-        if (!record.open) openSelect(record);
+        if (!record.open && !openSelect(record)) return;
         var match = typeaheadOptionIndex(record.options, record.activeIndex, typeaheadBuffer);
         if (match >= 0) {
           setSelectActive(record, match);
@@ -1322,8 +1322,7 @@
       else syncPanelExposure(Boolean(body.classList && body.classList.contains('mac-inspector-open')));
       lastViewportMode = nextViewportMode;
       positionActiveLibraryMenu();
-      if (activeSelectRecord && nextViewportMode !== 'wide') closeActiveSelect();
-      else if (activeSelectRecord) positionSelect(activeSelectRecord);
+      if (activeSelectRecord) closeActiveSelect();
       queueUpdate();
     }
 

@@ -25,7 +25,7 @@ test('release runtime uses the neutral Beta v43 branding contract', () => {
   assert.equal(buildInfo.version, EXPECTED_VERSION);
   assert.equal(buildInfo.workspaceRevision, 15);
   assert.equal(manifest.name, EXPECTED_NAME);
-  assert.match(manifest.start_url, /43\.0\.0-beta/);
+  assert.equal(manifest.start_url, `./index.html?v=${EXPECTED_ASSET_SUFFIX}`);
   assert.match(html, /<title>Vocab Curve Studio Beta v43<\/title>/);
   assert.match(html, /BETA V43/);
   assert.match(html, /studio-workspace\.css/);
