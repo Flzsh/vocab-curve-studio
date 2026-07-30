@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const EXPECTED_NAME = 'Vocab Curve Studio Beta v43';
 const EXPECTED_VERSION = '43.0.0-beta';
-const EXPECTED_CACHE = 'vocab-curve-beta-v43-studio-workspace-v14';
-const EXPECTED_ASSET_SUFFIX = '43.0.0-beta-studio.14';
+const EXPECTED_CACHE = 'vocab-curve-beta-v43-studio-workspace-v15';
+const EXPECTED_ASSET_SUFFIX = '43.0.0-beta-studio.15';
 const EXPECTED_CSS = './studio-workspace.css';
 const EXPECTED_JS = './studio-workspace.js';
 
@@ -23,7 +23,7 @@ const stylesheet = readFileSync(path.join(runtime, EXPECTED_CSS.slice(2)), 'utf8
 test('release runtime uses the neutral Beta v43 branding contract', () => {
   assert.equal(buildInfo.name, EXPECTED_NAME);
   assert.equal(buildInfo.version, EXPECTED_VERSION);
-  assert.equal(buildInfo.workspaceRevision, 14);
+  assert.equal(buildInfo.workspaceRevision, 15);
   assert.equal(manifest.name, EXPECTED_NAME);
   assert.match(manifest.start_url, /43\.0\.0-beta/);
   assert.match(html, /<title>Vocab Curve Studio Beta v43<\/title>/);
@@ -38,7 +38,7 @@ test('release runtime uses the neutral Beta v43 branding contract', () => {
   assert.match(worker, /studio-workspace\.css/);
   assert.match(worker, /studio-workspace\.js/);
   assert.match(worker, /v20-import-assistant\.js/);
-  assert.match(worker, /43\.0\.0-beta-studio\.14/);
+  assert.match(worker, /43\.0\.0-beta-studio\.15/);
   assert.doesNotMatch(worker, /macos-workspace/i);
   assert.match(adapter, /VocabCurveStudioWorkspace/);
   assert.match(adapter, /studio-workspace/);
