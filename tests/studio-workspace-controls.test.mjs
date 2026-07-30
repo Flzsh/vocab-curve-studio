@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import Workspace from '../studio-workspace.js';
+
+const workspaceSource = await readFile(new URL('../studio-workspace.js', import.meta.url), 'utf8');
+const workspaceCss = await readFile(new URL('../studio-workspace.css', import.meta.url), 'utf8');
 
 const records = [
   { value: 'reviewFirst', label: 'Reviews before new', disabled: false },
@@ -38,4 +42,20 @@ test('typeahead finds the next enabled prefix match', () => {
 test('selected option index returns minus one for an unknown value', () => {
   assert.equal(Workspace.selectedOptionIndex(records, 'newFirst'), 2);
   assert.equal(Workspace.selectedOptionIndex(records, 'missing'), -1);
+});
+
+test('workspace owns every eligible select through one generic registry', () => {
+  assert.match(workspaceSource, /var selectRecords = new WeakMap\(\)/);
+  assert.match(workspaceSource, /function enhanceSelect\(select\)/);
+  assert.match(workspaceSource, /function enhanceSelects\(rootNode\)/);
+  assert.match(workspaceSource, /function syncSelect\(record\)/);
+  assert.match(workspaceSource, /controller\.closeActiveSelect = closeActiveSelect/);
+  assert.doesNotMatch(workspaceSource, /function enhanceQueueSelect|var queueCombobox/);
+});
+
+test('global combobox styling replaces queue-specific styling', () => {
+  assert.match(workspaceCss, /\.studio-combobox-trigger/);
+  assert.match(workspaceCss, /\.studio-combobox-listbox/);
+  assert.match(workspaceCss, /data-studio-sheet="true"/);
+  assert.doesNotMatch(workspaceCss, /\.mac-queue-/);
 });

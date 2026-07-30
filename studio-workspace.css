@@ -377,7 +377,7 @@ body.mac-library-menu-open .v20-study-set-card {
   opacity: .45;
 }
 
-.mac-native-select {
+.studio-native-select {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
@@ -388,12 +388,12 @@ body.mac-library-menu-open .v20-study-set-card {
   white-space: nowrap !important;
 }
 
-.mac-queue-combobox {
+.studio-combobox {
   position: relative;
   width: 100%;
 }
 
-.mac-queue-trigger {
+.studio-combobox-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -406,29 +406,37 @@ body.mac-library-menu-open .v20-study-set-card {
   border: 1px solid var(--mac-separator);
   border-radius: 12px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+  transform-origin: var(--studio-menu-origin-x, 50%) var(--studio-menu-origin-y, 0%);
 }
 
-.mac-queue-trigger[aria-expanded="true"] {
+.studio-combobox-trigger[aria-expanded="true"] {
   border-color: var(--mac-focus);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--mac-focus) 18%, transparent);
 }
 
-.mac-queue-disclosure {
-  color: var(--mac-secondary);
-  transition: transform 180ms cubic-bezier(.2, .8, .2, 1);
+.studio-combobox-trigger:focus-visible {
+  outline: 2px solid var(--mac-focus);
+  outline-offset: 2px;
 }
 
-.mac-queue-trigger[aria-expanded="true"] .mac-queue-disclosure {
+.studio-combobox-disclosure {
+  color: var(--mac-secondary);
+  transition: transform 150ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.studio-combobox-trigger[aria-expanded="true"] .studio-combobox-disclosure {
   transform: rotate(180deg);
 }
 
-.mac-queue-listbox {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 1100;
+.studio-combobox-listbox {
+  position: fixed;
+  left: var(--studio-menu-left, 12px);
+  top: var(--studio-menu-top, 12px);
+  z-index: 1200;
   display: grid;
-  width: 100%;
+  width: var(--studio-menu-width, min(320px, calc(100vw - 24px)));
+  max-height: min(360px, calc(100dvh - 24px));
+  overflow: auto;
   padding: 5px;
   color: var(--mac-text);
   background: color-mix(in srgb, var(--mac-elevated) 94%, var(--mac-surface));
@@ -437,14 +445,37 @@ body.mac-library-menu-open .v20-study-set-card {
   box-shadow: 0 18px 50px rgba(0, 0, 0, .16);
   -webkit-backdrop-filter: blur(24px) saturate(165%);
   backdrop-filter: blur(24px) saturate(165%);
-  animation: mac-listbox-in 150ms cubic-bezier(.2, .82, .2, 1);
+  filter: blur(0);
+  opacity: 1;
+  transform: scale(1);
+  transform-origin: var(--studio-menu-origin-x, 50%) var(--studio-menu-origin-y, 0%);
+  transition:
+    display 150ms allow-discrete,
+    opacity 150ms cubic-bezier(.2, .8, .2, 1),
+    transform 150ms cubic-bezier(.2, .8, .2, 1),
+    filter 150ms cubic-bezier(.2, .8, .2, 1);
 }
 
-.mac-queue-listbox[hidden] {
-  display: none !important;
+.studio-combobox-listbox[data-studio-side="above"] {
+  --studio-menu-origin-y: 100%;
 }
 
-.mac-queue-option {
+.studio-combobox-listbox[hidden] {
+  display: none;
+  filter: blur(4px);
+  opacity: 0;
+  transform: scale(.98);
+}
+
+@starting-style {
+  .studio-combobox-listbox:not([hidden]) {
+    filter: blur(4px);
+    opacity: 0;
+    transform: scale(.98);
+  }
+}
+
+.studio-combobox-option {
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr);
   gap: 7px;
@@ -459,18 +490,28 @@ body.mac-library-menu-open .v20-study-set-card {
   border-radius: 9px;
 }
 
-.mac-queue-option:is(:hover, .active) {
+.studio-combobox-option:is(:hover, .active) {
   background: color-mix(in srgb, var(--mac-blue) 11%, transparent);
 }
 
-.mac-queue-option.selected .mac-queue-check {
+.studio-combobox-option:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+.studio-combobox-option.selected .studio-combobox-check {
   color: var(--mac-blue);
   font-weight: 800;
 }
 
-@keyframes mac-listbox-in {
-  from { opacity: 0; transform: translateY(-4px) scale(.985); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.studio-combobox[data-studio-sheet="true"] .studio-combobox-listbox {
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  top: auto;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  width: auto;
+  max-height: min(60dvh, 420px);
+  transform-origin: 50% 100%;
 }
 
 /* Study keeps color atmospheric and reading surfaces quiet and opaque. */
@@ -541,7 +582,6 @@ body.study-mode .v20-study-answer-region .answer-example {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mac-queue-listbox,
   .v20-library-more > div,
   #protectBacklog,
   #requireTypingInstant,
@@ -553,6 +593,17 @@ body.study-mode .v20-study-answer-region .answer-example {
     animation: none !important;
     transition: none !important;
   }
+
+  .studio-combobox-listbox {
+    filter: none !important;
+    transform: none !important;
+    transition: display 120ms allow-discrete, opacity 120ms linear !important;
+  }
+
+  .studio-combobox-disclosure {
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 @media (prefers-reduced-transparency: reduce) {
@@ -560,7 +611,7 @@ body.study-mode .v20-study-answer-region .answer-example {
     display: none !important;
   }
 
-  .mac-queue-listbox,
+  .studio-combobox-listbox,
   .v20-library-more > div {
     background: color-mix(in srgb, var(--mac-surface) 100%, transparent) !important;
     -webkit-backdrop-filter: none !important;
@@ -575,8 +626,8 @@ body.study-mode .v20-study-answer-region .answer-example {
     box-shadow: none !important;
   }
 
-  .mac-queue-trigger,
-  .mac-queue-listbox,
+  .studio-combobox-trigger,
+  .studio-combobox-listbox,
   .v20-library-more > div {
     border: 2px solid currentColor !important;
     -webkit-backdrop-filter: none !important;
@@ -3033,27 +3084,27 @@ body.low-power .app[aria-busy="true"] .save-pill{animation:none}
     radial-gradient(circle at 16px 50%, currentColor 0 2px, transparent 2.25px) !important;
   filter: none !important;
 }
-#view-settings .mac-queue-trigger {
+.studio-combobox-trigger {
   color: var(--mac-text) !important;
   background: var(--mac-surface) !important;
   border-color: var(--mac-separator) !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .04) !important;
 }
 
-#view-settings .mac-queue-trigger[aria-expanded="true"] {
+.studio-combobox-trigger[aria-expanded="true"] {
   background: color-mix(in srgb, var(--mac-context-a) 7%, var(--mac-surface)) !important;
   border-color: var(--mac-focus) !important;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--mac-focus) 18%, transparent) !important;
 }
 
-#view-settings .mac-queue-option {
+.studio-combobox-option {
   color: var(--mac-text) !important;
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
 }
 
-#view-settings .mac-queue-option:is(:hover, .active) {
+.studio-combobox-option:is(:hover, .active) {
   color: var(--mac-text) !important;
   background: color-mix(in srgb, var(--mac-blue) 14%, transparent) !important;
 }
@@ -3212,7 +3263,7 @@ body.low-power #longTermSphere[data-memory-world="v3"] *::after {
     min-height: 44px !important;
   }
 
-  #view-settings .mac-queue-option,
+  .studio-combobox-option,
   #view-books .v20-library-more > div .btn,
   #view-books .v20-library-more > div .v20-review-scope-toggle {
     min-height: 44px !important;

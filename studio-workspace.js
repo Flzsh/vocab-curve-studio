@@ -196,7 +196,6 @@
     var toastZone = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('toastZone') : null;
     var booksView = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('view-books') : null;
     var libraryOrganizer = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('libraryOrganizer') : null;
-    var queueSelect = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('queueStyle') : null;
     var dailyNewRange = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('dailyNewRange') : null;
     var dailyReviewRange = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('dailyReviewRange') : null;
     var protectBacklog = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('protectBacklog') : null;
@@ -214,8 +213,13 @@
     var inspectorSpring = { value: 0, velocity: 0 };
     var pressedControl = null;
     var lastViewportMode = '';
+    var lastActiveView = '';
     var openLibraryMenu = null;
-    var queueCombobox = null;
+    var selectRecords = new WeakMap();
+    var enhancedSelects = [];
+    var activeSelectRecord = null;
+    var typeaheadBuffer = '';
+    var typeaheadTimer = 0;
     var generatedId = 0;
 
     if (body.classList && typeof body.classList.add === 'function') body.classList.add('studio-workspace');
@@ -572,6 +576,7 @@
         closeActiveLibraryMenu({ returnFocus: true });
         return;
       }
+      closeActiveSelect();
       closeActiveLibraryMenu();
       details.open = true;
       menu.hidden = false;
@@ -622,173 +627,333 @@
       });
     }
 
-    function closeQueueCombobox(options) {
-      if (!queueCombobox || !queueCombobox.open) return false;
+    function selectOptionSignature(select, snapshots) {
+      return JSON.stringify({
+        options: (snapshots || snapshotSelectOptions(select)).map(function (option) {
+          return [option.value, option.label, option.disabled];
+        }),
+        value: String(select && select.value),
+        disabled: Boolean(select && select.disabled)
+      });
+    }
+
+    function closeActiveSelect(options) {
+      if (!activeSelectRecord || !activeSelectRecord.open) return false;
       var settings = options && typeof options === 'object' ? options : {};
-      queueCombobox.open = false;
-      queueCombobox.listbox.hidden = true;
-      setAttributeIfChanged(queueCombobox.trigger, 'aria-expanded', 'false');
-      removeAttributeIfPresent(queueCombobox.trigger, 'aria-activedescendant');
-      if (settings.returnFocus && typeof queueCombobox.trigger.focus === 'function') queueCombobox.trigger.focus();
+      var record = activeSelectRecord;
+      record.open = false;
+      record.listbox.hidden = true;
+      setAttributeIfChanged(record.trigger, 'aria-expanded', 'false');
+      removeAttributeIfPresent(record.trigger, 'aria-activedescendant');
+      activeSelectRecord = null;
+      typeaheadBuffer = '';
+      if (typeaheadTimer && typeof windowRef.clearTimeout === 'function') windowRef.clearTimeout(typeaheadTimer);
+      typeaheadTimer = 0;
+      if (settings.returnFocus && typeof record.trigger.focus === 'function') record.trigger.focus();
       return true;
     }
 
-    function syncQueueCombobox() {
-      if (!queueCombobox || !queueSelect) return;
-      var selectedIndex = -1;
-      queueCombobox.options.forEach(function (record, index) {
-        var selected = String(record.value) === String(queueSelect.value);
-        if (selected) selectedIndex = index;
-        setAttributeIfChanged(record.button, 'aria-selected', String(selected));
-        record.button.classList && record.button.classList.toggle('selected', selected);
-        if (record.check) record.check.textContent = selected ? '✓' : '';
+    function optionStructureChanged(record, snapshots) {
+      if (!record || record.options.length !== snapshots.length) return true;
+      return snapshots.some(function (snapshot, index) {
+        var option = record.options[index];
+        return !option ||
+          String(option.value) !== String(snapshot.value) ||
+          String(option.label) !== String(snapshot.label) ||
+          Boolean(option.disabled) !== Boolean(snapshot.disabled);
       });
-      if (selectedIndex < 0 && queueCombobox.options.length) selectedIndex = 0;
-      queueCombobox.activeIndex = selectedIndex;
-      var selectedRecord = queueCombobox.options[selectedIndex];
-      if (selectedRecord) queueCombobox.label.textContent = selectedRecord.label;
-      queueCombobox.trigger.disabled = Boolean(queueSelect.disabled);
-      if (queueCombobox.open && selectedRecord) setAttributeIfChanged(queueCombobox.trigger, 'aria-activedescendant', selectedRecord.button.id);
     }
 
-    function setQueueActive(index) {
-      if (!queueCombobox || !queueCombobox.options.length) return;
-      queueCombobox.activeIndex = clamp(index, 0, queueCombobox.options.length - 1);
-      queueCombobox.options.forEach(function (record, optionIndex) {
-        record.button.classList && record.button.classList.toggle('active', optionIndex === queueCombobox.activeIndex);
+    function renderSelectOptions(record, snapshots) {
+      while (record.listbox.firstChild) record.listbox.removeChild(record.listbox.firstChild);
+      record.options = snapshots.map(function (snapshot, index) {
+        var button = documentRef.createElement('button');
+        var check = documentRef.createElement('span');
+        var text = documentRef.createElement('span');
+        button.type = 'button';
+        button.id = record.listbox.id + '-option-' + index;
+        button.className = 'studio-combobox-option';
+        button.disabled = Boolean(snapshot.disabled);
+        check.className = 'studio-combobox-check';
+        check.setAttribute && check.setAttribute('aria-hidden', 'true');
+        text.className = 'studio-combobox-option-label';
+        text.textContent = snapshot.label;
+        setAttributeIfChanged(button, 'role', 'option');
+        setAttributeIfChanged(button, 'aria-disabled', String(Boolean(snapshot.disabled)));
+        if (button.dataset) button.dataset.value = snapshot.value;
+        button.appendChild(check);
+        button.appendChild(text);
+        button.addEventListener('pointerenter', function () {
+          if (!snapshot.disabled) setSelectActive(record, index);
+        });
+        button.addEventListener('click', function () { commitSelectOption(record, index); });
+        record.listbox.appendChild(button);
+        return {
+          button: button,
+          check: check,
+          value: snapshot.value,
+          label: snapshot.label,
+          disabled: snapshot.disabled
+        };
       });
-      var active = queueCombobox.options[queueCombobox.activeIndex];
-      setAttributeIfChanged(queueCombobox.trigger, 'aria-activedescendant', active.button.id);
+    }
+
+    function syncSelect(record) {
+      if (!record || !record.select) return;
+      var snapshots = snapshotSelectOptions(record.select);
+      var signature = selectOptionSignature(record.select, snapshots);
+      if (signature !== record.signature && optionStructureChanged(record, snapshots)) renderSelectOptions(record, snapshots);
+      record.signature = signature;
+      var selectedIndex = selectedOptionIndex(snapshots, record.select.value);
+      if (selectedIndex < 0) selectedIndex = nextEnabledOptionIndex(snapshots, -1, 'Home');
+      record.activeIndex = selectedIndex;
+      record.options.forEach(function (option, index) {
+        var selected = index === selectedIndex && String(option.value) === String(record.select.value);
+        setAttributeIfChanged(option.button, 'aria-selected', String(selected));
+        option.button.classList && option.button.classList.toggle('selected', selected);
+        option.button.classList && option.button.classList.toggle('active', record.open && index === record.activeIndex);
+        if (option.check && option.check.textContent !== (selected ? '✓' : '')) option.check.textContent = selected ? '✓' : '';
+      });
+      var selectedRecord = record.options[selectedIndex];
+      var visibleText = selectedRecord ? selectedRecord.label : '';
+      if (record.label.textContent !== visibleText) record.label.textContent = visibleText;
+      record.trigger.disabled = Boolean(record.select.disabled);
+      setAttributeIfChanged(record.trigger, 'aria-disabled', String(Boolean(record.select.disabled)));
+      if (record.open && selectedRecord) setAttributeIfChanged(record.trigger, 'aria-activedescendant', selectedRecord.button.id);
+      else if (!record.open) removeAttributeIfPresent(record.trigger, 'aria-activedescendant');
+      if (record.open && record.trigger.disabled) closeActiveSelect();
+    }
+
+    function setSelectActive(record, index) {
+      if (!record || index < 0 || !record.options[index] || record.options[index].disabled) return;
+      record.activeIndex = index;
+      record.options.forEach(function (option, optionIndex) {
+        option.button.classList && option.button.classList.toggle('active', optionIndex === index);
+      });
+      var active = record.options[index];
+      setAttributeIfChanged(record.trigger, 'aria-activedescendant', active.button.id);
       if (typeof active.button.scrollIntoView === 'function') active.button.scrollIntoView({ block: 'nearest' });
     }
 
-    function openQueueCombobox() {
-      if (!queueCombobox || queueCombobox.trigger.disabled) return;
-      closeActiveLibraryMenu();
-      syncQueueCombobox();
-      queueCombobox.open = true;
-      queueCombobox.listbox.hidden = false;
-      setAttributeIfChanged(queueCombobox.trigger, 'aria-expanded', 'true');
-      setQueueActive(queueCombobox.activeIndex < 0 ? 0 : queueCombobox.activeIndex);
-    }
-
-    function commitQueueOption(index) {
-      if (!queueCombobox || !queueSelect) return;
-      var record = queueCombobox.options[index];
-      if (!record) return;
-      var changed = String(queueSelect.value) !== String(record.value);
-      queueSelect.value = record.value;
-      syncQueueCombobox();
-      closeQueueCombobox({ returnFocus: true });
-      if (changed && typeof queueSelect.dispatchEvent === 'function') {
-        var changeEvent = typeof windowRef.Event === 'function'
-          ? new windowRef.Event('change', { bubbles: true })
-          : { type: 'change', bubbles: true };
-        queueSelect.dispatchEvent(changeEvent);
+    function positionSelect(record) {
+      if (!record || !record.open) return;
+      if (isCompact()) {
+        setAttributeIfChanged(record.shell, 'data-studio-sheet', 'true');
+        removeAttributeIfPresent(record.listbox, 'data-studio-side');
+        return;
+      }
+      removeAttributeIfPresent(record.shell, 'data-studio-sheet');
+      if (typeof record.trigger.getBoundingClientRect !== 'function' || typeof record.listbox.getBoundingClientRect !== 'function') return;
+      var anchorRect = record.trigger.getBoundingClientRect();
+      var menuRect = record.listbox.getBoundingClientRect();
+      var width = Math.max(finiteNumber(anchorRect.width, 0), finiteNumber(menuRect.width, 0));
+      var placement = popoverPlacement(anchorRect, {
+        width: width,
+        height: finiteNumber(menuRect.height, 0)
+      }, {
+        width: finiteNumber(windowRef.innerWidth, 1024),
+        height: finiteNumber(windowRef.innerHeight, 768)
+      });
+      if (record.listbox.style && typeof record.listbox.style.setProperty === 'function') {
+        record.listbox.style.setProperty('--studio-menu-left', placement.left + 'px');
+        record.listbox.style.setProperty('--studio-menu-top', placement.top + 'px');
+        record.listbox.style.setProperty('--studio-menu-width', width + 'px');
+      }
+      setAttributeIfChanged(record.listbox, 'data-studio-side', placement.side);
+      if (record.shell.style && typeof record.shell.style.setProperty === 'function') {
+        record.shell.style.setProperty('--studio-menu-origin-y', placement.side === 'above' ? '100%' : '0%');
       }
     }
 
-    function queueKeydown(event) {
-      if (!queueCombobox || !event) return;
+    function openSelect(record) {
+      if (!record || record.trigger.disabled) return;
+      if (activeSelectRecord && activeSelectRecord !== record) closeActiveSelect();
+      closeActiveLibraryMenu();
+      syncSelect(record);
+      record.open = true;
+      activeSelectRecord = record;
+      record.listbox.hidden = false;
+      setAttributeIfChanged(record.trigger, 'aria-expanded', 'true');
+      var activeIndex = record.activeIndex;
+      if (activeIndex < 0 || !record.options[activeIndex] || record.options[activeIndex].disabled) {
+        activeIndex = nextEnabledOptionIndex(record.options, -1, 'Home');
+      }
+      setSelectActive(record, activeIndex);
+      positionSelect(record);
+    }
+
+    function commitSelectOption(record, index) {
+      var option = record && record.options[index];
+      if (!option || option.disabled) return;
+      var changed = String(record.select.value) !== String(option.value);
+      record.select.value = option.value;
+      syncSelect(record);
+      closeActiveSelect({ returnFocus: true });
+      if (changed && typeof record.select.dispatchEvent === 'function') {
+        var changeEvent = typeof windowRef.Event === 'function'
+          ? new windowRef.Event('change', { bubbles: true })
+          : { type: 'change', bubbles: true };
+        record.select.dispatchEvent(changeEvent);
+      }
+    }
+
+    function resetTypeaheadSoon() {
+      if (typeaheadTimer && typeof windowRef.clearTimeout === 'function') windowRef.clearTimeout(typeaheadTimer);
+      if (typeof windowRef.setTimeout === 'function') {
+        typeaheadTimer = windowRef.setTimeout(function () {
+          typeaheadBuffer = '';
+          typeaheadTimer = 0;
+        }, 500);
+      }
+    }
+
+    function selectKeydown(record, event) {
+      if (!record || !event) return;
       var key = event.key;
       if (key === 'Escape') {
-        if (queueCombobox.open) {
+        if (record.open) {
           if (typeof event.preventDefault === 'function') event.preventDefault();
-          closeQueueCombobox({ returnFocus: true });
+          if (typeof event.stopPropagation === 'function') event.stopPropagation();
+          closeActiveSelect({ returnFocus: true });
         }
         return;
       }
       if (key === 'Tab') {
-        closeQueueCombobox();
+        closeActiveSelect({ preserveFocus: true });
         return;
       }
       if (key === 'Enter' || key === ' ') {
         if (typeof event.preventDefault === 'function') event.preventDefault();
-        if (queueCombobox.open) commitQueueOption(queueCombobox.activeIndex);
-        else openQueueCombobox();
+        if (record.open) commitSelectOption(record, record.activeIndex);
+        else openSelect(record);
         return;
       }
-      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(key)) return;
-      if (typeof event.preventDefault === 'function') event.preventDefault();
-      if (!queueCombobox.open) openQueueCombobox();
-      setQueueActive(nextComboboxIndex(queueCombobox.activeIndex, key, queueCombobox.options.length));
+      if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(key)) {
+        if (typeof event.preventDefault === 'function') event.preventDefault();
+        if (!record.open) openSelect(record);
+        setSelectActive(record, nextEnabledOptionIndex(record.options, record.activeIndex, key));
+        return;
+      }
+      if (key && key.length === 1 && !event.altKey && !event.ctrlKey && !event.metaKey) {
+        typeaheadBuffer += key;
+        resetTypeaheadSoon();
+        if (!record.open) openSelect(record);
+        var match = typeaheadOptionIndex(record.options, record.activeIndex, typeaheadBuffer);
+        if (match >= 0) {
+          if (typeof event.preventDefault === 'function') event.preventDefault();
+          setSelectActive(record, match);
+        }
+      }
     }
 
-    function enhanceQueueSelect() {
-      if (!queueSelect || queueCombobox || !queueSelect.parentElement || typeof documentRef.createElement !== 'function') return;
-      var nativeOptions = Array.prototype.slice.call(queueSelect.options || []);
-      if (!nativeOptions.length) return;
+    function sourceLabelFor(select) {
+      if (select.labels && select.labels[0]) return select.labels[0];
+      var field = typeof select.closest === 'function' ? select.closest('.field') : null;
+      return field && typeof field.querySelector === 'function' ? field.querySelector('label') : null;
+    }
+
+    function enhanceSelect(select) {
+      if (!select) return null;
+      var existing = selectRecords.get(select);
+      if (existing) {
+        if (enhancedSelects.indexOf(existing) < 0) enhancedSelects.push(existing);
+        if (select.parentElement && existing.shell.parentElement !== select.parentElement) {
+          if (select.nextSibling && typeof select.parentElement.insertBefore === 'function') select.parentElement.insertBefore(existing.shell, select.nextSibling);
+          else if (typeof select.parentElement.appendChild === 'function') select.parentElement.appendChild(existing.shell);
+        }
+        return existing;
+      }
+      if (!select.parentElement || typeof documentRef.createElement !== 'function') return null;
+      if (select.multiple || finiteNumber(select.size, 0) > 1 || (typeof select.hasAttribute === 'function' && select.hasAttribute('data-studio-native-select'))) return null;
+      var sourceLabel = null;
+      var shell = null;
       try {
-        var shell = documentRef.createElement('div');
+        var snapshots = snapshotSelectOptions(select);
+        shell = documentRef.createElement('div');
         var trigger = documentRef.createElement('button');
-        var label = documentRef.createElement('span');
+        var visibleLabel = documentRef.createElement('span');
         var disclosure = documentRef.createElement('span');
         var listbox = documentRef.createElement('div');
-        var sourceLabel = directChild(queueSelect.parentElement, 'label');
-        var listboxId = nextGeneratedId('mac-queue-listbox');
-        shell.className = 'mac-queue-combobox';
+        sourceLabel = sourceLabelFor(select);
+        var listboxId = nextGeneratedId('studio-combobox-listbox');
+        shell.className = 'studio-combobox';
         trigger.type = 'button';
-        trigger.id = nextGeneratedId('mac-queue-trigger');
-        trigger.className = 'mac-queue-trigger';
-        label.className = 'mac-queue-label';
-        disclosure.className = 'mac-queue-disclosure';
+        trigger.id = nextGeneratedId('studio-combobox-trigger');
+        trigger.className = 'studio-combobox-trigger';
+        visibleLabel.className = 'studio-combobox-label';
+        disclosure.className = 'studio-combobox-disclosure';
         disclosure.textContent = '⌄';
+        disclosure.setAttribute && disclosure.setAttribute('aria-hidden', 'true');
         listbox.id = listboxId;
-        listbox.className = 'mac-queue-listbox';
+        listbox.className = 'studio-combobox-listbox';
         listbox.hidden = true;
         setAttributeIfChanged(trigger, 'role', 'combobox');
         setAttributeIfChanged(trigger, 'aria-haspopup', 'listbox');
         setAttributeIfChanged(trigger, 'aria-expanded', 'false');
         setAttributeIfChanged(trigger, 'aria-controls', listboxId);
         if (sourceLabel) {
-          sourceLabel.id = sourceLabel.id || nextGeneratedId('mac-queue-source-label');
-          setAttributeIfChanged(trigger, 'aria-labelledby', sourceLabel.id);
+          var labelledElement = sourceLabel;
+          if (typeof sourceLabel.contains === 'function' && sourceLabel.contains(select) && typeof sourceLabel.querySelector === 'function') {
+            labelledElement = sourceLabel.querySelector('span') || sourceLabel;
+          }
+          labelledElement.id = labelledElement.id || nextGeneratedId('studio-combobox-source-label');
+          setAttributeIfChanged(trigger, 'aria-labelledby', labelledElement.id);
+        } else if (typeof select.getAttribute === 'function' && select.getAttribute('aria-label')) {
+          setAttributeIfChanged(trigger, 'aria-label', select.getAttribute('aria-label'));
         }
         setAttributeIfChanged(listbox, 'role', 'listbox');
-        trigger.appendChild(label);
+        trigger.appendChild(visibleLabel);
         trigger.appendChild(disclosure);
         shell.appendChild(trigger);
         shell.appendChild(listbox);
-        var records = nativeOptions.map(function (option, index) {
-          var button = documentRef.createElement('button');
-          var check = documentRef.createElement('span');
-          var text = documentRef.createElement('span');
-          var value = String(option.value);
-          var optionLabel = String(option.textContent || option.label || value);
-          button.type = 'button';
-          button.id = nextGeneratedId('mac-queue-option');
-          button.className = 'mac-queue-option';
-          check.className = 'mac-queue-check';
-          text.textContent = optionLabel;
-          setAttributeIfChanged(button, 'role', 'option');
-          if (button.dataset) button.dataset.value = value;
-          button.appendChild(check);
-          button.appendChild(text);
-          button.addEventListener('click', function () { commitQueueOption(index); });
-          listbox.appendChild(button);
-          return { button: button, check: check, value: value, label: optionLabel };
-        });
-        if (queueSelect.nextSibling && typeof queueSelect.parentElement.insertBefore === 'function') queueSelect.parentElement.insertBefore(shell, queueSelect.nextSibling);
-        else queueSelect.parentElement.appendChild(shell);
-        queueCombobox = { shell: shell, trigger: trigger, label: label, listbox: listbox, options: records, activeIndex: 0, open: false, sourceLabel: sourceLabel };
+        if (select.nextSibling && typeof select.parentElement.insertBefore === 'function') select.parentElement.insertBefore(shell, select.nextSibling);
+        else select.parentElement.appendChild(shell);
+        var record = {
+          select: select,
+          shell: shell,
+          trigger: trigger,
+          label: visibleLabel,
+          disclosure: disclosure,
+          listbox: listbox,
+          options: [],
+          activeIndex: selectedOptionIndex(snapshots, select.value),
+          open: false,
+          sourceLabel: sourceLabel,
+          signature: ''
+        };
+        renderSelectOptions(record, snapshots);
+        record.signature = selectOptionSignature(select, snapshots);
         trigger.addEventListener('click', function () {
-          if (queueCombobox.open) closeQueueCombobox({ returnFocus: true });
-          else openQueueCombobox();
+          if (record.open) closeActiveSelect({ returnFocus: true });
+          else openSelect(record);
         });
-        trigger.addEventListener('keydown', queueKeydown);
-        listbox.addEventListener('keydown', queueKeydown);
-        queueSelect.classList && queueSelect.classList.add('mac-native-select');
-        queueSelect.tabIndex = -1;
-        setAttributeIfChanged(queueSelect, 'aria-hidden', 'true');
+        trigger.addEventListener('keydown', function (event) { selectKeydown(record, event); });
+        listbox.addEventListener('keydown', function (event) { selectKeydown(record, event); });
+        selectRecords.set(select, record);
+        enhancedSelects.push(record);
+        select.classList && select.classList.add('studio-native-select');
+        select.tabIndex = -1;
+        setAttributeIfChanged(select, 'aria-hidden', 'true');
+        syncSelect(record);
         if (sourceLabel) setAttributeIfChanged(sourceLabel, 'for', trigger.id);
-        syncQueueCombobox();
+        return record;
       } catch (error) {
-        queueCombobox = null;
-        queueSelect.classList && queueSelect.classList.remove('mac-native-select');
-        queueSelect.tabIndex = 0;
-        removeAttributeIfPresent(queueSelect, 'aria-hidden');
-        if (sourceLabel) setAttributeIfChanged(sourceLabel, 'for', queueSelect.id);
+        if (shell && shell.parentElement && typeof shell.parentElement.removeChild === 'function') shell.parentElement.removeChild(shell);
+        select.classList && select.classList.remove('studio-native-select');
+        return null;
       }
+    }
+
+    function enhanceSelects(rootNode) {
+      var scope = rootNode && typeof rootNode.querySelectorAll === 'function' ? rootNode : documentRef;
+      var selects = Array.prototype.slice.call(scope.querySelectorAll('select'));
+      selects.forEach(enhanceSelect);
+      if (activeSelectRecord && activeSelectRecord.select && activeSelectRecord.select.isConnected === false) closeActiveSelect();
+      enhancedSelects = enhancedSelects.filter(function(record) {
+        return record.select && record.select.isConnected !== false;
+      });
+      enhancedSelects.forEach(syncSelect);
+      return enhancedSelects.length;
     }
 
     function syncRange(range) {
@@ -797,8 +962,6 @@
     }
 
     function syncDailyControls() {
-      enhanceQueueSelect();
-      syncQueueCombobox();
       syncRange(dailyNewRange);
       syncRange(dailyReviewRange);
       [protectBacklog, requireTypingInstant].forEach(function (control) {
@@ -838,6 +1001,8 @@
 
     function syncContext() {
       var view = currentView();
+      if (lastActiveView && view !== lastActiveView) closeActiveSelect();
+      lastActiveView = view;
       var context = classifyContext({
         view: view,
         modeText: cardMode && cardMode.textContent,
@@ -857,6 +1022,7 @@
       }
       if (view !== 'books') closeActiveLibraryMenu();
       enhanceLibraryMenus();
+      enhanceSelects(documentRef);
       syncDailyControls();
       syncTabs(view);
       ensureToggle();
@@ -896,7 +1062,7 @@
 
     function keydown(event) {
       if (!event || event.key !== 'Escape') return;
-      if (closeQueueCombobox({ returnFocus: true })) {
+      if (closeActiveSelect({ returnFocus: true })) {
         if (typeof event.preventDefault === 'function') event.preventDefault();
         return;
       }
@@ -910,17 +1076,19 @@
     function dismissPointer(event) {
       var target = event && event.target;
       if (openLibraryMenu && target && !openLibraryMenu.details.contains(target) && !openLibraryMenu.menu.contains(target)) closeActiveLibraryMenu();
-      if (queueCombobox && queueCombobox.open && target && !queueCombobox.shell.contains(target)) closeQueueCombobox();
+      if (activeSelectRecord && target && !activeSelectRecord.shell.contains(target) && !activeSelectRecord.listbox.contains(target)) closeActiveSelect();
     }
 
-    function dismissLibraryFocus(event) {
+    function dismissSurfaceFocus(event) {
       var target = event && event.target;
-      if (!openLibraryMenu || !target) return;
-      if (!openLibraryMenu.details.contains(target) && !openLibraryMenu.menu.contains(target)) closeActiveLibraryMenu({ preserveFocus: true });
+      if (!target) return;
+      if (openLibraryMenu && !openLibraryMenu.details.contains(target) && !openLibraryMenu.menu.contains(target)) closeActiveLibraryMenu({ preserveFocus: true });
+      if (activeSelectRecord && !activeSelectRecord.shell.contains(target) && !activeSelectRecord.listbox.contains(target)) closeActiveSelect({ preserveFocus: true });
     }
 
-    function dismissLibraryScroll() {
+    function dismissSurfaceScroll() {
       if (openLibraryMenu) closeActiveLibraryMenu({ returnFocus: true });
+      closeActiveSelect();
     }
 
     function dismissAfterAction(event) {
@@ -930,6 +1098,7 @@
     }
 
     function controlsSync() {
+      enhanceSelects(documentRef);
       syncDailyControls();
     }
 
@@ -940,14 +1109,16 @@
       else syncPanelExposure(Boolean(body.classList && body.classList.contains('mac-inspector-open')));
       lastViewportMode = nextViewportMode;
       positionActiveLibraryMenu();
+      if (activeSelectRecord && nextViewportMode !== 'wide') closeActiveSelect();
+      else if (activeSelectRecord) positionSelect(activeSelectRecord);
       queueUpdate();
     }
 
     if (typeof documentRef.addEventListener === 'function') {
       documentRef.addEventListener('keydown', keydown);
       documentRef.addEventListener('pointerdown', dismissPointer, true);
-      documentRef.addEventListener('focusin', dismissLibraryFocus, true);
-      documentRef.addEventListener('scroll', dismissLibraryScroll, true);
+      documentRef.addEventListener('focusin', dismissSurfaceFocus, true);
+      documentRef.addEventListener('scroll', dismissSurfaceScroll, true);
       documentRef.addEventListener('pointerdown', press, { passive: true });
       documentRef.addEventListener('click', dismissAfterAction);
       documentRef.addEventListener('studio:controls-sync', controlsSync);
@@ -956,10 +1127,10 @@
       documentRef.addEventListener('pointerleave', clearPress, { passive: true });
       documentRef.addEventListener('lostpointercapture', clearPress, { passive: true });
     }
-    if (booksView && typeof booksView.addEventListener === 'function') booksView.addEventListener('scroll', dismissLibraryScroll, { capture: true, passive: true });
+    if (booksView && typeof booksView.addEventListener === 'function') booksView.addEventListener('scroll', dismissSurfaceScroll, { capture: true, passive: true });
     if (typeof windowRef.addEventListener === 'function') windowRef.addEventListener('resize', resize, { passive: true });
     if (windowRef.visualViewport && typeof windowRef.visualViewport.addEventListener === 'function') {
-      windowRef.visualViewport.addEventListener('scroll', dismissLibraryScroll, { passive: true });
+      windowRef.visualViewport.addEventListener('scroll', dismissSurfaceScroll, { passive: true });
     }
     if (reducedMedia && typeof reducedMedia.addEventListener === 'function') {
       reducedMedia.addEventListener('change', function (event) {
@@ -971,7 +1142,13 @@
     if (typeof Observer === 'function') {
       try {
         var observer = new Observer(queueUpdate);
-        observer.observe(body, { attributes: true, attributeFilter: ['data-active-view', 'data-v19-view'], subtree: false });
+        observer.observe(body, {
+          attributes: true,
+          attributeFilter: ['data-active-view', 'data-v19-view', 'disabled', 'label', 'selected', 'value'],
+          childList: true,
+          characterData: true,
+          subtree: true
+        });
         if (cardMode) observer.observe(cardMode, { childList: true, characterData: true, subtree: true });
         if (currentMeta) observer.observe(currentMeta, { attributes: true, attributeFilter: ['data-card-state'], subtree: false });
         if (answerPanel) observer.observe(answerPanel, { attributes: true, attributeFilter: ['class', 'hidden'], subtree: false });
@@ -986,7 +1163,11 @@
 
     controller.setInspector = setInspector;
     controller.closeLibraryMenu = closeActiveLibraryMenu;
-    controller.closeQueueCombobox = closeQueueCombobox;
+    controller.enhanceSelect = enhanceSelect;
+    controller.enhanceSelects = enhanceSelects;
+    controller.syncSelect = syncSelect;
+    controller.closeActiveSelect = closeActiveSelect;
+    controller.closeQueueCombobox = closeActiveSelect;
     syncContext();
     renderInspector();
     return controller;
