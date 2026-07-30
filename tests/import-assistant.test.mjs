@@ -199,3 +199,19 @@ test('completion result disposition rejects a changed editor fingerprint as stal
     reason: 'stale-input',
   });
 });
+
+test('completion result disposition suppresses a request superseded by a newer active session', () => {
+  const older = ImportAssistant.createCompletionSession('alpha', 'English');
+  const newer = ImportAssistant.createCompletionSession('beta', 'English');
+  older.bookId = 'book-a';
+  newer.bookId = 'book-a';
+  assert.deepEqual(ImportAssistant.completionResultDisposition(older, {
+    activeSession: newer,
+    selectedLanguage: 'English',
+    fingerprint: newer.fingerprint,
+    bookId: 'book-a',
+  }), {
+    apply: false,
+    reason: 'superseded',
+  });
+});

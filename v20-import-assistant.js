@@ -273,6 +273,9 @@
 
   function completionResultDisposition(session, context) {
     const value = context || {};
+    if (value.activeSession && value.activeSession !== session) {
+      return { apply: false, reason: 'superseded' };
+    }
     if (!session || session.fingerprint !== value.fingerprint) {
       return { apply: false, reason: 'stale-input' };
     }
