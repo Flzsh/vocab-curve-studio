@@ -213,3 +213,10 @@ test('transaction rollback removes partial registry, list, and shell state', () 
   assert.equal(select.tabIndex, 0);
   assert.equal(select.hasAttribute('aria-hidden'), false);
 });
+
+test('range percentage handles minimum midpoint maximum and invalid spans', () => {
+  assert.equal(Workspace.rangeFillPercentage(20, 20, 600), 0);
+  assert.equal(Workspace.rangeFillPercentage(310, 20, 600), 50);
+  assert.equal(Workspace.rangeFillPercentage(600, 20, 600), 100);
+  assert.equal(Workspace.rangeFillPercentage(10, 10, 10), 0);
+});

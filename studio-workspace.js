@@ -321,8 +321,6 @@
     var toastZone = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('toastZone') : null;
     var booksView = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('view-books') : null;
     var libraryOrganizer = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('libraryOrganizer') : null;
-    var dailyNewRange = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('dailyNewRange') : null;
-    var dailyReviewRange = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('dailyReviewRange') : null;
     var protectBacklog = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('protectBacklog') : null;
     var requireTypingInstant = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('requireTypingInstant') : null;
     var sideTabs = typeof documentRef.getElementById === 'function' ? documentRef.getElementById('studySideTabs') : null;
@@ -1100,14 +1098,7 @@
       return enhancedSelects.length;
     }
 
-    function syncRange(range) {
-      if (!range || !range.style || typeof range.style.setProperty !== 'function') return;
-      range.style.setProperty('--mac-range-fill', rangeFillPercentage(range.value, range.min, range.max) + '%');
-    }
-
-    function syncDailyControls() {
-      syncRange(dailyNewRange);
-      syncRange(dailyReviewRange);
+    function syncSharedControls() {
       [protectBacklog, requireTypingInstant].forEach(function (control) {
         if (control) removeAttributeIfPresent(control, 'aria-checked');
       });
@@ -1167,7 +1158,7 @@
       if (view !== 'books') closeActiveLibraryMenu();
       enhanceLibraryMenus();
       enhanceSelects(documentRef);
-      syncDailyControls();
+      syncSharedControls();
       syncTabs(view);
       ensureToggle();
       if (!isCompact() || view !== 'study') setInspector(false, { immediate: true });
@@ -1243,7 +1234,7 @@
 
     function controlsSync() {
       enhanceSelects(documentRef);
-      syncDailyControls();
+      syncSharedControls();
     }
 
     function resize() {
