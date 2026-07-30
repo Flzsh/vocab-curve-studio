@@ -2972,10 +2972,10 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
 
   function renderProTutorChip(){
-    if(!els.proTutorChip)return;const settings=proTutorSettings(),connected=isProTutorConnected(),working=proTutorPending.size>0;
-    if(!settings.enabled){els.proTutorChip.dataset.state='off';els.proTutorChip.textContent='Pro off';return;}
+    if(!els.proTutorChip)return;const settings=proTutorSettings(),connected=isProTutorConnected(),activity=ImportAssistant.openRouterChipActivity(proTutorPending.values(),settings.enabled);
+    if(!settings.enabled){els.proTutorChip.dataset.state=activity.state;els.proTutorChip.textContent=activity.label;return;}
     if(proTutorStorageBlocked){els.proTutorChip.dataset.state='offline';els.proTutorChip.textContent='Pro paused — save unavailable';return;}
-    if(working){els.proTutorChip.dataset.state='working';els.proTutorChip.textContent=ImportAssistant.openRouterPendingLabel(proTutorPending.values());return;}
+    if(activity){els.proTutorChip.dataset.state=activity.state;els.proTutorChip.textContent=activity.label;return;}
     if(!connected){els.proTutorChip.dataset.state='offline';els.proTutorChip.textContent='Pro needs OpenRouter';return;}
     els.proTutorChip.dataset.state=settings.interventionMode;els.proTutorChip.textContent=`Pro ${settings.interventionMode}`;
   }

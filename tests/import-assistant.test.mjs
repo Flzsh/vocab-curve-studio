@@ -362,7 +362,7 @@ test('text download activation cleans up before rethrowing an activation failure
   assert.deepEqual(actions, ['create', 'append', 'click', 'remove', 'revoke']);
 });
 
-test('text download activation still revokes its URL when anchor removal fails', () => {
+test('text download activation returns success after attempting cleanup that fails', () => {
   const actions = [];
   const body = {
     appendChild(anchor) {
@@ -381,7 +381,51 @@ test('text download activation still revokes its URL when anchor removal fails',
   };
   const URLApi = {
     createObjectURL() { return 'blob:test'; },
-    revokeObjectURL() { actions.push('revoke'); },
+    revokeObjectURL() {
+      actions.push('revoke');
+      throw new Error('URL revocation blocked');
+    },
+  };
+
+  const filename = ImportAssistant.activateTextDownload('alpha', 'vocab.txt', {
+    document,
+    URL: URLApi,
+    Blob: function BlobFake() {},
+  });
+  assert.equal(filename, 'vocab.txt');
+  assert.deepEqual(actions, ['click', 'remove', 'revoke']);
+});
+
+test('text download activation preserves click failure after attempting cleanup that also fails', () => {
+  const actions = [];
+  const clickError = new Error('downloads blocked');
+  const body = {
+    appendChild(anchor) {
+      anchor.parentNode = body;
+    },
+    removeChild() {
+      actions.push('remove');
+      throw new Error('anchor removal blocked');
+    },
+  };
+  const document = {
+    body,
+    createElement() {
+      return {
+        parentNode: null,
+        click() {
+          actions.push('click');
+          throw clickError;
+        },
+      };
+    },
+  };
+  const URLApi = {
+    createObjectURL() { return 'blob:test'; },
+    revokeObjectURL() {
+      actions.push('revoke');
+      throw new Error('URL revocation blocked');
+    },
   };
 
   assert.throws(
@@ -390,18 +434,45 @@ test('text download activation still revokes its URL when anchor removal fails',
       URL: URLApi,
       Blob: function BlobFake() {},
     }),
-    /anchor removal blocked/
+    error => error === clickError
   );
   assert.deepEqual(actions, ['click', 'remove', 'revoke']);
 });
 
-test('pending OpenRouter label distinguishes Import completion from Pro Tutor review', () => {
-  assert.equal(
-    ImportAssistant.openRouterPendingLabel([{ operation: 'import', state: 'requesting' }]),
-    'Import completing'
-  );
-  assert.equal(
-    ImportAssistant.openRouterPendingLabel([{ operation: 'tutor', state: 'requesting' }]),
-    'Pro reviewing'
-  );
+for (const fixture of [
+  {
+    name: 'disabled Pro Tutor with pending Import',
+    enabled: false,
+    pending: [{ operation: 'import', state: 'requesting' }],
+    expected: { state: 'working', label: 'Import completing' },
+  },
+  {
+    name: 'disabled Pro Tutor without pending work',
+    enabled: false,
+    pending: [],
+    expected: { state: 'off', label: 'Pro off' },
+  },
+  {
+    name: 'disabled Pro Tutor with pending tutor work',
+    enabled: false,
+    pending: [{ operation: 'tutor', state: 'requesting' }],
+    expected: { state: 'off', label: 'Pro off' },
+  },
+  {
+    name: 'enabled Pro Tutor with pending tutor work',
+    enabled: true,
+    pending: [{ operation: 'tutor', state: 'requesting' }],
+    expected: { state: 'working', label: 'Pro reviewing' },
+  },
+]) {
+  test(`pending OpenRouter label handles ${fixture.name}`, () => {
+    assert.deepEqual(
+      ImportAssistant.openRouterChipActivity(fixture.pending, fixture.enabled),
+      fixture.expected
+    );
+  });
+}
+
+test('enabled Pro Tutor without pending work has no activity override', () => {
+  assert.equal(ImportAssistant.openRouterChipActivity([], true), null);
 });

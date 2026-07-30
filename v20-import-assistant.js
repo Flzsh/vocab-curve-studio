@@ -274,6 +274,13 @@
     }) ? 'Import completing' : 'Pro reviewing';
   }
 
+  function openRouterChipActivity(pendingEntries, proTutorEnabled) {
+    const label = openRouterPendingLabel(pendingEntries);
+    if (label === 'Import completing') return { state: 'working', label };
+    if (!proTutorEnabled) return { state: 'off', label: 'Pro off' };
+    return label ? { state: 'working', label } : null;
+  }
+
   function activateTextDownload(text, filename, environment) {
     const dependencies = environment || {};
     const documentRef = dependencies.document || (typeof document !== 'undefined' ? document : null);
@@ -291,13 +298,12 @@
       return anchor.download;
     } finally {
       try {
-        if (anchor && anchor.parentNode) {
-          if (typeof anchor.remove === 'function') anchor.remove();
-          else if (typeof anchor.parentNode.removeChild === 'function') anchor.parentNode.removeChild(anchor);
-        }
-      } finally {
+        if (anchor && anchor.parentNode && typeof anchor.remove === 'function') anchor.remove();
+        else if (anchor && anchor.parentNode && typeof anchor.parentNode.removeChild === 'function') anchor.parentNode.removeChild(anchor);
+      } catch (_error) {}
+      try {
         if (url && URLRef && typeof URLRef.revokeObjectURL === 'function') URLRef.revokeObjectURL(url);
-      }
+      } catch (_error) {}
     }
   }
 
@@ -338,6 +344,7 @@
     completedSessionText,
     shouldBlockOpenRouterInteraction,
     openRouterPendingLabel,
+    openRouterChipActivity,
     activateTextDownload,
     completionSessionMatches,
     completionResultDisposition,
