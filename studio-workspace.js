@@ -169,6 +169,131 @@
     return -1;
   }
 
+  function nodeContainsSelect(node) {
+    if (!node) return false;
+    if (String(node.tagName || '').toUpperCase() === 'SELECT') return true;
+    return typeof node.querySelector === 'function' && Boolean(node.querySelector('select'));
+  }
+
+  function nodeBelongsToSelect(node) {
+    var current = node;
+    while (current) {
+      if (String(current.tagName || '').toUpperCase() === 'SELECT') return true;
+      current = current.parentElement || current.parentNode;
+    }
+    return false;
+  }
+
+  function selectMutationIsRelevant(mutation) {
+    if (!mutation || !mutation.target) return false;
+    if (nodeBelongsToSelect(mutation.target)) return true;
+    if (mutation.type !== 'childList') return false;
+    var changedNodes = Array.prototype.slice.call(mutation.addedNodes || []).concat(Array.prototype.slice.call(mutation.removedNodes || []));
+    return changedNodes.some(nodeContainsSelect);
+  }
+
+  function reflectDisabledState(control, disabled) {
+    if (!control) return false;
+    var next = Boolean(disabled);
+    if (Boolean(control.disabled) === next) return false;
+    control.disabled = next;
+    return true;
+  }
+
+  function ensureSelectShellAdjacency(select, shell) {
+    if (!select || !shell || !select.parentElement) return false;
+    if (select.nextSibling === shell && shell.parentElement === select.parentElement) return false;
+    if (typeof select.parentElement.insertBefore === 'function') select.parentElement.insertBefore(shell, select.nextSibling || null);
+    else if (!select.nextSibling && typeof select.parentElement.appendChild === 'function') select.parentElement.appendChild(shell);
+    else return false;
+    return true;
+  }
+
+  function removeSelectShell(record) {
+    var shell = record && record.shell;
+    if (!shell || !shell.parentElement || typeof shell.parentElement.removeChild !== 'function') return false;
+    try {
+      shell.parentElement.removeChild(shell);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function configureSelectOptionFocus(option) {
+    if (!option) return option;
+    option.tabIndex = -1;
+    return option;
+  }
+
+  function attributeSnapshot(element, name) {
+    var present = Boolean(element && typeof element.hasAttribute === 'function' && element.hasAttribute(name));
+    return {
+      present: present,
+      value: present && typeof element.getAttribute === 'function' ? element.getAttribute(name) : null
+    };
+  }
+
+  function restoreAttributeSnapshot(element, name, snapshot) {
+    if (!element || !snapshot) return;
+    try {
+      if (snapshot.present && typeof element.setAttribute === 'function') element.setAttribute(name, snapshot.value);
+      else if (typeof element.removeAttribute === 'function') element.removeAttribute(name);
+    } catch (error) {
+      // Rollback continues so one hostile reflection does not strand other native state.
+    }
+  }
+
+  function snapshotNativeSelectState(select, sourceLabel, labelledElement) {
+    return {
+      tabIndex: select ? select.tabIndex : 0,
+      tabIndexAttribute: attributeSnapshot(select, 'tabindex'),
+      ariaHidden: attributeSnapshot(select, 'aria-hidden'),
+      hadNativeClass: Boolean(select && select.classList && select.classList.contains('studio-native-select')),
+      labelFor: attributeSnapshot(sourceLabel, 'for'),
+      labelId: attributeSnapshot(sourceLabel, 'id'),
+      labelledElement: labelledElement || sourceLabel || null,
+      labelledElementId: attributeSnapshot(labelledElement || sourceLabel, 'id')
+    };
+  }
+
+  function restoreNativeSelectState(select, sourceLabel, snapshot) {
+    if (!select || !snapshot) return;
+    try {
+      if (select.classList) {
+        if (snapshot.hadNativeClass && typeof select.classList.add === 'function') select.classList.add('studio-native-select');
+        else if (typeof select.classList.remove === 'function') select.classList.remove('studio-native-select');
+      }
+    } catch (error) {
+      // Continue restoring keyboard and accessibility state.
+    }
+    try {
+      select.tabIndex = snapshot.tabIndex;
+    } catch (error) {
+      // The tabindex attribute snapshot below remains the native fallback.
+    }
+    restoreAttributeSnapshot(select, 'tabindex', snapshot.tabIndexAttribute);
+    restoreAttributeSnapshot(select, 'aria-hidden', snapshot.ariaHidden);
+    restoreAttributeSnapshot(sourceLabel, 'for', snapshot.labelFor);
+    restoreAttributeSnapshot(sourceLabel, 'id', snapshot.labelId);
+    if (snapshot.labelledElement && snapshot.labelledElement !== sourceLabel) {
+      restoreAttributeSnapshot(snapshot.labelledElement, 'id', snapshot.labelledElementId);
+    }
+  }
+
+  function rollbackSelectEnhancement(select, record, sourceLabel, nativeState, registry, records, shell) {
+    try {
+      if (registry && typeof registry.delete === 'function') registry.delete(select);
+    } catch (error) {
+      // Weak registry cleanup is best-effort; the visible/native state still rolls back.
+    }
+    removeSelectShell(record || { shell: shell });
+    restoreNativeSelectState(select, sourceLabel, nativeState);
+    return (Array.isArray(records) ? records : []).filter(function(candidate) {
+      return candidate !== record;
+    });
+  }
+
   function rangeFillPercentage(value, minimum, maximum) {
     var min = finiteNumber(minimum, 0);
     var max = finiteNumber(maximum, min);
@@ -673,6 +798,7 @@
         button.type = 'button';
         button.id = record.listbox.id + '-option-' + index;
         button.className = 'studio-combobox-option';
+        configureSelectOptionFocus(button);
         button.disabled = Boolean(snapshot.disabled);
         check.className = 'studio-combobox-check';
         check.setAttribute && check.setAttribute('aria-hidden', 'true');
@@ -717,7 +843,7 @@
       var selectedRecord = record.options[selectedIndex];
       var visibleText = selectedRecord ? selectedRecord.label : '';
       if (record.label.textContent !== visibleText) record.label.textContent = visibleText;
-      record.trigger.disabled = Boolean(record.select.disabled);
+      reflectDisabledState(record.trigger, record.select.disabled);
       setAttributeIfChanged(record.trigger, 'aria-disabled', String(Boolean(record.select.disabled)));
       if (record.open && selectedRecord) setAttributeIfChanged(record.trigger, 'aria-activedescendant', selectedRecord.button.id);
       else if (!record.open) removeAttributeIfPresent(record.trigger, 'aria-activedescendant');
@@ -857,24 +983,29 @@
       var existing = selectRecords.get(select);
       if (existing) {
         if (enhancedSelects.indexOf(existing) < 0) enhancedSelects.push(existing);
-        if (select.parentElement && existing.shell.parentElement !== select.parentElement) {
-          if (select.nextSibling && typeof select.parentElement.insertBefore === 'function') select.parentElement.insertBefore(existing.shell, select.nextSibling);
-          else if (typeof select.parentElement.appendChild === 'function') select.parentElement.appendChild(existing.shell);
-        }
+        ensureSelectShellAdjacency(select, existing.shell);
         return existing;
       }
       if (!select.parentElement || typeof documentRef.createElement !== 'function') return null;
       if (select.multiple || finiteNumber(select.size, 0) > 1 || (typeof select.hasAttribute === 'function' && select.hasAttribute('data-studio-native-select'))) return null;
       var sourceLabel = null;
+      var labelledElement = null;
+      var nativeState = null;
       var shell = null;
+      var record = null;
       try {
+        sourceLabel = sourceLabelFor(select);
+        labelledElement = sourceLabel;
+        if (sourceLabel && typeof sourceLabel.contains === 'function' && sourceLabel.contains(select) && typeof sourceLabel.querySelector === 'function') {
+          labelledElement = sourceLabel.querySelector('span') || sourceLabel;
+        }
+        nativeState = snapshotNativeSelectState(select, sourceLabel, labelledElement);
         var snapshots = snapshotSelectOptions(select);
         shell = documentRef.createElement('div');
         var trigger = documentRef.createElement('button');
         var visibleLabel = documentRef.createElement('span');
         var disclosure = documentRef.createElement('span');
         var listbox = documentRef.createElement('div');
-        sourceLabel = sourceLabelFor(select);
         var listboxId = nextGeneratedId('studio-combobox-listbox');
         shell.className = 'studio-combobox';
         trigger.type = 'button';
@@ -892,10 +1023,6 @@
         setAttributeIfChanged(trigger, 'aria-expanded', 'false');
         setAttributeIfChanged(trigger, 'aria-controls', listboxId);
         if (sourceLabel) {
-          var labelledElement = sourceLabel;
-          if (typeof sourceLabel.contains === 'function' && sourceLabel.contains(select) && typeof sourceLabel.querySelector === 'function') {
-            labelledElement = sourceLabel.querySelector('span') || sourceLabel;
-          }
           labelledElement.id = labelledElement.id || nextGeneratedId('studio-combobox-source-label');
           setAttributeIfChanged(trigger, 'aria-labelledby', labelledElement.id);
         } else if (typeof select.getAttribute === 'function' && select.getAttribute('aria-label')) {
@@ -906,9 +1033,8 @@
         trigger.appendChild(disclosure);
         shell.appendChild(trigger);
         shell.appendChild(listbox);
-        if (select.nextSibling && typeof select.parentElement.insertBefore === 'function') select.parentElement.insertBefore(shell, select.nextSibling);
-        else select.parentElement.appendChild(shell);
-        var record = {
+        ensureSelectShellAdjacency(select, shell);
+        record = {
           select: select,
           shell: shell,
           trigger: trigger,
@@ -919,6 +1045,8 @@
           activeIndex: selectedOptionIndex(snapshots, select.value),
           open: false,
           sourceLabel: sourceLabel,
+          labelledElement: labelledElement,
+          nativeState: nativeState,
           signature: ''
         };
         renderSelectOptions(record, snapshots);
@@ -938,9 +1066,19 @@
         if (sourceLabel) setAttributeIfChanged(sourceLabel, 'for', trigger.id);
         return record;
       } catch (error) {
-        if (shell && shell.parentElement && typeof shell.parentElement.removeChild === 'function') shell.parentElement.removeChild(shell);
-        select.classList && select.classList.remove('studio-native-select');
+        if (activeSelectRecord === record) closeActiveSelect();
+        enhancedSelects = rollbackSelectEnhancement(select, record, sourceLabel, nativeState, selectRecords, enhancedSelects, shell);
         return null;
+      }
+    }
+
+    function disposeSelectRecord(record) {
+      if (!record) return;
+      if (activeSelectRecord === record) closeActiveSelect();
+      removeSelectShell(record);
+      if (record.select) {
+        selectRecords.delete(record.select);
+        restoreNativeSelectState(record.select, record.sourceLabel, record.nativeState);
       }
     }
 
@@ -948,10 +1086,16 @@
       var scope = rootNode && typeof rootNode.querySelectorAll === 'function' ? rootNode : documentRef;
       var selects = Array.prototype.slice.call(scope.querySelectorAll('select'));
       selects.forEach(enhanceSelect);
-      if (activeSelectRecord && activeSelectRecord.select && activeSelectRecord.select.isConnected === false) closeActiveSelect();
-      enhancedSelects = enhancedSelects.filter(function(record) {
-        return record.select && record.select.isConnected !== false;
+      var connectedRecords = [];
+      enhancedSelects.forEach(function(record) {
+        if (!record.select || record.select.isConnected === false) {
+          disposeSelectRecord(record);
+          return;
+        }
+        ensureSelectShellAdjacency(record.select, record.shell);
+        connectedRecords.push(record);
       });
+      enhancedSelects = connectedRecords;
       enhancedSelects.forEach(syncSelect);
       return enhancedSelects.length;
     }
@@ -1142,22 +1286,28 @@
     if (typeof Observer === 'function') {
       try {
         var observer = new Observer(queueUpdate);
-        observer.observe(body, {
-          attributes: true,
-          attributeFilter: ['data-active-view', 'data-v19-view', 'disabled', 'label', 'selected', 'value'],
-          childList: true,
-          characterData: true,
-          subtree: true
-        });
+        observer.observe(body, { attributes: true, attributeFilter: ['data-active-view', 'data-v19-view'], subtree: false });
         if (cardMode) observer.observe(cardMode, { childList: true, characterData: true, subtree: true });
         if (currentMeta) observer.observe(currentMeta, { attributes: true, attributeFilter: ['data-card-state'], subtree: false });
         if (answerPanel) observer.observe(answerPanel, { attributes: true, attributeFilter: ['class', 'hidden'], subtree: false });
         if (savePill) observer.observe(savePill, { attributes: true, attributeFilter: ['class'], childList: true, characterData: true, subtree: true });
         if (toastZone) observer.observe(toastZone, { childList: true, characterData: true, subtree: true });
         if (libraryOrganizer) observer.observe(libraryOrganizer, { childList: true, subtree: true });
+        var selectObserver = new Observer(function(mutations) {
+          if (Array.prototype.some.call(mutations || [], selectMutationIsRelevant)) queueUpdate();
+        });
+        selectObserver.observe(body, {
+          attributes: true,
+          attributeFilter: ['disabled', 'label', 'selected', 'value'],
+          childList: true,
+          characterData: true,
+          subtree: true
+        });
         controller.observer = observer;
+        controller.selectObserver = selectObserver;
       } catch (error) {
         controller.observer = null;
+        controller.selectObserver = null;
       }
     }
 
@@ -1183,6 +1333,14 @@
     selectedOptionIndex: selectedOptionIndex,
     nextEnabledOptionIndex: nextEnabledOptionIndex,
     typeaheadOptionIndex: typeaheadOptionIndex,
+    selectMutationIsRelevant: selectMutationIsRelevant,
+    reflectDisabledState: reflectDisabledState,
+    ensureSelectShellAdjacency: ensureSelectShellAdjacency,
+    removeSelectShell: removeSelectShell,
+    configureSelectOptionFocus: configureSelectOptionFocus,
+    snapshotNativeSelectState: snapshotNativeSelectState,
+    restoreNativeSelectState: restoreNativeSelectState,
+    rollbackSelectEnhancement: rollbackSelectEnhancement,
     rangeFillPercentage: rangeFillPercentage,
     boot: boot
   });
