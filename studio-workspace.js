@@ -945,10 +945,12 @@
       if (typeof record.trigger.getBoundingClientRect !== 'function' || typeof record.listbox.getBoundingClientRect !== 'function') return;
       var anchorRect = record.trigger.getBoundingClientRect();
       var menuRect = record.listbox.getBoundingClientRect();
-      var width = Math.max(finiteNumber(anchorRect.width, 0), finiteNumber(menuRect.width, 0));
+      var menuWidth = finiteNumber(record.listbox.offsetWidth, finiteNumber(menuRect.width, 0));
+      var menuHeight = finiteNumber(record.listbox.offsetHeight, finiteNumber(menuRect.height, 0));
+      var width = Math.max(finiteNumber(anchorRect.width, 0), menuWidth);
       var placement = popoverPlacement(anchorRect, {
         width: width,
-        height: finiteNumber(menuRect.height, 0)
+        height: menuHeight
       }, {
         width: finiteNumber(windowRef.innerWidth, 1024),
         height: finiteNumber(windowRef.innerHeight, 768)
