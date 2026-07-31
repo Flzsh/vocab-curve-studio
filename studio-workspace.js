@@ -1,4 +1,4 @@
-// Studio Workspace v43.0.0-beta-studio.15
+// Studio Workspace v43.0.0-beta-studio.16
 (function (root, factory) {
   'use strict';
   var api = factory(root);
