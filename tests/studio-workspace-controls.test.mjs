@@ -433,6 +433,22 @@ test('combobox above placement uses untransformed layout dimensions while openin
   assert.equal(listbox.getAttribute('data-studio-side'), 'above');
 });
 
+test('combobox falls back to positive visual dimensions when layout dimensions are zero', () => {
+  const { listbox, trigger, windowRef } = createComboboxHarness();
+  windowRef.innerWidth = 1280;
+  windowRef.innerHeight = 720;
+  trigger.getBoundingClientRect = () => ({ left: 100, right: 300, top: 560, bottom: 600, width: 200, height: 40 });
+  listbox.offsetWidth = 0;
+  listbox.offsetHeight = 0;
+  listbox.getBoundingClientRect = () => ({ left: 100, right: 335.2, top: 320, bottom: 555.2, width: 235.2, height: 235.2 });
+
+  trigger.emit('click');
+
+  assert.equal(listbox.style.getPropertyValue('--studio-menu-width'), '235.2px');
+  assert.equal(listbox.style.getPropertyValue('--studio-menu-top'), '317px');
+  assert.equal(listbox.getAttribute('data-studio-side'), 'above');
+});
+
 test('every resize dismisses an open combobox even when the viewport remains wide', () => {
   const { listbox, trigger, windowRef } = createComboboxHarness();
   trigger.emit('click');
