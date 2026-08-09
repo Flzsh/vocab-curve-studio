@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='43.0.0-beta';
+  const VERSION='44.0.0-beta';
   const OPENROUTER_CHAT_URL='https://openrouter.ai/api/v1/chat/completions';
   const OPENROUTER_AUTH_URL='https://openrouter.ai/auth';
   const OPENROUTER_KEY_URL='https://openrouter.ai/api/v1/auth/keys';
@@ -52,7 +52,12 @@
     scene_anchor:{label:'Scene anchor',guidance:'Build one concrete mental scene that accurately represents the meaning.'},
     collocation_map:{label:'Usage pattern',guidance:'Show one or two natural combinations and explain the shared usage boundary.'},
     word_structure_anchor:{label:'Word structure',guidance:'Use structure only when supplied family evidence supports it; never invent etymology.'},
-    context_transfer:{label:'Context transfer',guidance:'Move the word into a substantially different situation from the imported example.'}
+    context_transfer:{label:'Context transfer',guidance:'Move the word into a substantially different situation from the imported example.'},
+    multiword_sentence:{label:'Linked sentence',guidance:'Use two or three naturally related struggling words in one concise sentence, then make each role clear.'},
+    mini_story:{label:'Mini story',guidance:'Use a short coherent story for two to five naturally compatible targets; never force unrelated words together.'},
+    confusion_contrast:{label:'Confusion contrast',guidance:'Contrast two genuinely confusable targets using their supplied meanings and usage boundaries.'},
+    causal_chain:{label:'Cause and effect',guidance:'Arrange related targets into a supported cause, process, or consequence chain.'},
+    mixed_mastery_cluster:{label:'Mixed-mastery cluster',guidance:'Use familiar anchors and struggling targets together only when the supplied relationship improves recall.'}
   });
   const CHOICE_ACTIVITY_CATALOG=Object.freeze({
     meaning_choice:{label:'Exact meaning',guidance:'Choose the exact supplied meaning from close but distinct alternatives.'},
@@ -68,6 +73,23 @@
     sequence_choice:{label:'Meaning sequence',guidance:'Choose the ordered cause, process, or degree sequence supported by the supplied meanings.'}
   });
   const INTERACTIVE_ACTIVITY_CATALOG=Object.freeze({...GUIDED_ACTIVITY_CATALOG,...CHOICE_ACTIVITY_CATALOG});
+  const V44_TOOLBOX=Object.freeze(Object.entries({
+    memory_bridge:GUIDED_ACTIVITY_CATALOG.memory_bridge,
+    application_pattern:GUIDED_ACTIVITY_CATALOG.application_pattern,
+    source_context:GUIDED_ACTIVITY_CATALOG.source_context,
+    nuance_map:GUIDED_ACTIVITY_CATALOG.nuance_map,
+    word_network:GUIDED_ACTIVITY_CATALOG.word_network,
+    confusion_contrast:GUIDED_ACTIVITY_CATALOG.confusion_contrast,
+    scene_anchor:GUIDED_ACTIVITY_CATALOG.scene_anchor,
+    collocation_map:GUIDED_ACTIVITY_CATALOG.collocation_map,
+    word_structure_anchor:GUIDED_ACTIVITY_CATALOG.word_structure_anchor,
+    context_transfer:GUIDED_ACTIVITY_CATALOG.context_transfer,
+    multiword_sentence:GUIDED_ACTIVITY_CATALOG.multiword_sentence,
+    mini_story:GUIDED_ACTIVITY_CATALOG.mini_story,
+    causal_chain:GUIDED_ACTIVITY_CATALOG.causal_chain,
+    mixed_mastery_cluster:GUIDED_ACTIVITY_CATALOG.mixed_mastery_cluster
+  }).map(([id,value])=>Object.freeze({id,label:value.label,guidance:value.guidance})));
+
   const INTERACTIVE_ACTIVITY_TYPES=new Set(Object.keys(INTERACTIVE_ACTIVITY_CATALOG));
   const GUIDED_ACTIVITY_TYPES=new Set(Object.keys(GUIDED_ACTIVITY_CATALOG));
   const APPLICATION_GUIDED_TYPES=new Set(['application_pattern','source_context','collocation_map','context_transfer']);
@@ -155,9 +177,14 @@
   }
 
   function normalizeHistory(history){
-    return (Array.isArray(history)?history:[]).slice(-3).map(entry=>({
+    return (Array.isArray(history)?history:[]).slice(-8).map(entry=>({
       rating:text(entry&&entry.rating,16),
-      seconds:Math.round(clamp(entry&&(entry.activeSeconds??entry.seconds),0,600))
+      seconds:Number(clamp(entry&&(entry.activeSeconds??entry.seconds),0,600).toFixed(1)),
+      hints:Math.round(clamp(entry&&entry.hints,0,20)),
+      predictedRecall:Number(clamp(entry&&(entry.predBefore??entry.predictedRecall),0,1).toFixed(3)),
+      shortTerm:Math.round(clamp(entry&&entry.shortTermMastery,0,100)),
+      memoryScore:Math.round(clamp(entry&&entry.memoryScore,0,100)),
+      time:Math.max(0,finite(entry&&(entry.time??entry.reviewedAt),0))
     }));
   }
 
@@ -177,6 +204,11 @@
       shortTermEvidenceCount:Math.round(clamp(card.shortTermEvidenceCount,0,100000)),
       sessionAttempts:Math.round(clamp(card.sessionAttempts,0,100000)),
       sessionIndependentCorrect:Math.round(clamp(card.sessionIndependentCorrect,0,100000)),
+      shortTermDayKey:text(card.shortTermDayKey,20),
+      shortTermDayAttempts:Math.round(clamp(card.shortTermDayAttempts??card.sessionAttempts,0,100000)),
+      shortTermDayIndependentCorrect:Math.round(clamp(card.shortTermDayIndependentCorrect??card.sessionIndependentCorrect,0,100000)),
+      calibrationPrediction:Number(clamp(card.lastPredictedRecall??card.predictedRecall,0,1).toFixed(3)),
+      recentHistory:normalizeHistory(card.history),
       history:normalizeHistory(card.history)
     };
     if(shareSemanticData){
@@ -542,12 +574,59 @@
     const recentActivities=Array.isArray(options.recentActivities)?options.recentActivities:(Array.isArray(payload.recentActivities)?payload.recentActivities:[]);
     const activityEffectiveness=options.activityEffectiveness||payload.activityEffectiveness||{};
     const byId=new Map(targets.map(target=>[String(target.id),target])),used=new Set(),plans=[],batchActivityCounts=new Map();
-    const contrast=relationships.find(relation=>String(relation.relationType)==='meaning_contrast'&&byId.has(String(relation.targetCardId))&&byId.has(String(relation.anchorCardId))&&String(relation.targetCardId)!==String(relation.anchorCardId));
+    const supportedRelations=relationships.filter(relation=>{
+      const left=String(relation.targetCardId),right=String(relation.anchorCardId);
+      return left!==right&&byId.has(left)&&byId.has(right)&&['meaning_contrast','shared_concept','shared_meaning','word_family','shared_stem_meaning','cause_effect','process_sequence'].includes(String(relation.relationType||''));
+    });
+    const adjacency=new Map(targets.map(target=>[String(target.id),new Set()]));
+    for(const relation of supportedRelations){
+      const left=String(relation.targetCardId),right=String(relation.anchorCardId);
+      adjacency.get(left)?.add(right);adjacency.get(right)?.add(left);
+    }
+    const components=[];const visited=new Set();
+    for(const target of targets){
+      const start=String(target.id);if(visited.has(start))continue;
+      const queue=[start],component=[];visited.add(start);
+      while(queue.length){
+        const current=queue.shift();component.push(current);
+        for(const next of adjacency.get(current)||[])if(!visited.has(next)){visited.add(next);queue.push(next);}
+      }
+      if(component.length>=2)components.push(component);
+    }
+    components.sort((left,right)=>right.length-left.length);
+    const groupIds=(components.find(component=>component.length>=3)||[]).slice(0,3);
+    if(groupIds.length>=3&&plans.length<5){
+      const groupTargets=groupIds.map(id=>byId.get(id)).filter(Boolean),groupSet=new Set(groupIds);
+      const groupRelations=supportedRelations.filter(relation=>groupSet.has(String(relation.targetCardId))&&groupSet.has(String(relation.anchorCardId)));
+      const hasContrast=groupRelations.some(relation=>String(relation.relationType)==='meaning_contrast');
+      const hasSequence=groupRelations.some(relation=>['cause_effect','process_sequence'].includes(String(relation.relationType)));
+      const recent=new Set(recentActivities.slice(-4).map(String));
+      const groupCandidate=(activityType,base,reason)=>({
+        activityType,inputMode:'tap',score:Number(clamp(base+effectivenessAdjustment(activityType,activityEffectiveness[activityType])-(recent.has(activityType)?18:0),1,100).toFixed(1)),reason
+      });
+      const groupCandidates=[
+        groupCandidate('multiword_sentence',100,'the supplied relationships support one memorable sentence using several difficult words'),
+        groupCandidate('mini_story',96,'the connected targets can share one short coherent scene'),
+        ...(hasContrast?[groupCandidate('confusion_contrast',98,'the cluster includes a supplied meaning contrast that needs a precise boundary')]:[]),
+        ...(hasSequence?[groupCandidate('causal_chain',95,'the supplied relationship supports a cause or process sequence')]:[]),
+        groupCandidate('mixed_mastery_cluster',90,'one supported cluster can reduce separate relearning work'),
+        groupCandidate('word_network',88,'the supplied relationships form a compact retrieval network')
+      ].sort((left,right)=>right.score-left.score);
+      const candidates=diversifyActivityCandidates(groupCandidates,batchActivityCounts);recordPrimaryActivity(candidates,batchActivityCounts);
+      const aggregateScore=groupTargets.reduce((sum,target)=>sum+finite(target.evidenceScore,0),0)/groupTargets.length;
+      const reasons=Array.from(new Set(groupTargets.flatMap(target=>target.evidenceReasons||[]))).slice(0,8);
+      const primary=groupTargets[0];
+      plans.push({planId:'activity-1',targetCardIds:groupIds,connectionCardIds:[],learningObjective:hasContrast?'discrimination':'delayed_retention',inputMode:'tap',wordAffordances:{...analyzeWordAffordances(primary,{relationships:groupRelations}),groupSize:groupIds.length,relationTypes:Array.from(new Set(groupRelations.map(relation=>String(relation.relationType))))},learnerEvidence:{score:Number(aggregateScore.toFixed(1)),reasons},candidateActivities:candidates,importedExample:groupTargets.map(target=>text(target.example,160)).filter(Boolean).join(' | ').slice(0,480)});
+      groupIds.forEach(id=>used.add(id));
+    }
+    const contrast=relationships.find(relation=>String(relation.relationType)==='meaning_contrast'&&byId.has(String(relation.targetCardId))&&byId.has(String(relation.anchorCardId))&&String(relation.targetCardId)!==String(relation.anchorCardId)&&!used.has(String(relation.targetCardId))&&!used.has(String(relation.anchorCardId)));
     if(contrast&&plans.length<5){
       const first=byId.get(String(contrast.targetCardId)),second=byId.get(String(contrast.anchorCardId));
       const primary={...first,evidenceReasons:Array.from(new Set([...(first.evidenceReasons||[]),'meaning_contrast']))};
-      const candidates=diversifyActivityCandidates(candidateActivitiesForTarget(primary,{relationships,recentActivities,activityEffectiveness}),batchActivityCounts);recordPrimaryActivity(candidates,batchActivityCounts);
-      plans.push({planId:'activity-1',targetCardIds:[String(first.id),String(second.id)],connectionCardIds:[],learningObjective:'discrimination',inputMode:'tap',wordAffordances:analyzeWordAffordances(primary,{relationships}),learnerEvidence:{score:finite(first.evidenceScore,0),reasons:(first.evidenceReasons||[]).slice(0,6)},candidateActivities:candidates,importedExample:text(first.example,240)});
+      const baseCandidates=candidateActivitiesForTarget(primary,{relationships,recentActivities,activityEffectiveness});
+      baseCandidates.unshift({activityType:'confusion_contrast',inputMode:'tap',score:100,reason:'two supplied difficult words form a genuine confusion pair'});
+      const candidates=diversifyActivityCandidates(baseCandidates,batchActivityCounts);recordPrimaryActivity(candidates,batchActivityCounts);
+      plans.push({planId:`activity-${plans.length+1}`,targetCardIds:[String(first.id),String(second.id)],connectionCardIds:[],learningObjective:'discrimination',inputMode:'tap',wordAffordances:analyzeWordAffordances(primary,{relationships}),learnerEvidence:{score:finite(first.evidenceScore,0),reasons:(first.evidenceReasons||[]).slice(0,6)},candidateActivities:candidates,importedExample:text(first.example,240)});
       used.add(String(first.id));used.add(String(second.id));
     }
     for(const target of targets){
@@ -590,6 +669,11 @@
     const firstExposure=source.firstExposure===true||(source.firstExposure==null&&String(source.kind||'').toLowerCase()==='new'&&repsBefore===0);
     return {
       ...snapshot,
+      recentHistory:Array.isArray(source.recentHistory)?source.recentHistory.slice(-8).map(entry=>({
+        rating:text(entry&&entry.rating,16),seconds:Number(clamp(entry&&(entry.responseSeconds??entry.activeSeconds??entry.seconds),0,600).toFixed(1)),
+        hints:Math.round(clamp(entry&&entry.hints,0,20)),predictedRecall:Number(clamp(entry&&(entry.predictedRecall??entry.predBefore),0,1).toFixed(3)),
+        shortTerm:Math.round(clamp(entry&&entry.shortTerm,0,100)),memoryScore:Math.round(clamp(entry&&entry.memoryScore,0,100)),time:Math.max(0,finite(entry&&entry.time,0))
+      })):snapshot.recentHistory,
       rating:ratingName(source.rating),
       responseSeconds:Number(clamp(source.responseSeconds,0,600).toFixed(1)),
       hintCount:Math.round(clamp(source.hintCount,0,20)),
@@ -599,6 +683,17 @@
       recentWrongBefore:Math.round(clamp(source.recentWrongBefore,0,20)),
       firstExposure,repsBefore,
       manualRequest:source.manualRequest===true||String(source.kind||'').toLowerCase()==='manual',
+      pointerEvidence:{
+        hesitationMs:Math.round(clamp(source.pointerEvidence?.hesitationMs??source.hesitationMs,0,120000)),
+        reversals:Math.round(clamp(source.pointerEvidence?.reversals??source.pointerReversals,0,100)),
+        optionChanges:Math.round(clamp(source.pointerEvidence?.optionChanges??source.optionChanges,0,100)),
+        movementDistance:Math.round(clamp(source.pointerEvidence?.movementDistance??source.pointerDistance,0,100000))
+      },
+      attentionEvidence:{
+        hiddenMs:Math.round(clamp(source.attentionEvidence?.hiddenMs??source.hiddenMs,0,600000)),
+        blurMs:Math.round(clamp(source.attentionEvidence?.blurMs??source.blurMs,0,600000)),
+        afk:Boolean(source.attentionEvidence?.afk??source.afk)
+      },
       evidenceReasons:(Array.isArray(source.evidenceReasons)?source.evidenceReasons:[]).map(value=>text(value,60)).filter(Boolean),
       kind:text(source.kind||'review',16),
       recordedAt:Math.max(0,finite(source.recordedAt,index)),
@@ -704,7 +799,8 @@
       const id=text(source.id,100),word=text(source.word,100);if(!id||!word||seen.has(id))continue;
       seen.add(id);
       const meaning=shareSemanticData?text(source.fullMeaning||source.meaning,320):'';
-      result.push({id,word,meaning,fullMeaning:meaning,bridge:shareSemanticData?text(source.bridge,260):'',example:shareSemanticData?text(source.example,300):'',partOfSpeech:partOfSpeech(meaning)});
+      const history=(Array.isArray(source.history)?source.history:[]).slice(-8),wrongCount=history.filter(item=>String(item.rating||'').toLowerCase()==='wrong').length,independentCorrect=history.filter(item=>['correct','know'].includes(String(item.rating||'').toLowerCase())&&finite(item.hints,0)===0).length;
+      result.push({id,word,meaning,fullMeaning:meaning,bridge:shareSemanticData?text(source.bridge,260):'',example:shareSemanticData?text(source.example,300):'',partOfSpeech:partOfSpeech(meaning),memoryScore:Math.round(clamp(source.memoryScore,0,100)),shortTermMastery:Math.round(clamp(source.shortTermMastery,0,100)),usabilityScore:Math.round(clamp(source.usabilityScore,0,100)),studyReviews:Math.max(0,Math.round(finite(source.studyReviews,0))),lapses:Math.max(0,Math.round(finite(source.lapses,0))),recentWrong:wrongCount,independentCorrect});
       if(result.length>=Math.max(0,Math.round(finite(maxItems,2200))))break;
     }
     return result;
@@ -753,8 +849,17 @@
       observations,
       anchors:Array.from(anchorsById.values()).slice(0,8),
       relationships:relationships.slice(0,24),
-      recentMethods:(Array.isArray(options.recentMethods)?options.recentMethods:[]).slice(-6),
-      referencePool:compactReferenceCards(options.referenceCards,shareSemanticData)
+      recentMethods:(Array.isArray(options.recentMethods)?options.recentMethods:[]).slice(-12),
+      referencePool:compactReferenceCards(options.referenceCards,shareSemanticData),
+      strugglingReferencePool:compactReferenceCards(options.referenceCards,shareSemanticData).filter(item=>item.recentWrong>0||item.lapses>0||item.shortTermMastery<70||item.memoryScore<45).sort((a,b)=>(b.recentWrong-a.recentWrong)||(b.lapses-a.lapses)||(a.shortTermMastery-b.shortTermMastery)||(a.memoryScore-b.memoryScore)).slice(0,36),
+      toolbox:V44_TOOLBOX.map(item=>({...item})),
+      activityEffectiveness:options.activityEffectiveness&&typeof options.activityEffectiveness==='object'?options.activityEffectiveness:{},
+      peerDifficultySummary:targets.map(target=>({
+        cardId:target.id,word:target.word,meaning:target.meaning||'',evidenceScore:target.evidenceScore,
+        wrongCount:Math.max(0,finite(target.retrievalWrongCount,0)+finite(target.firstExposureWrongCount,0)),
+        partialCount:Math.max(0,finite(target.retrievalPartialCount,0)),memoryScore:target.memoryAfter,
+        shortTermMastery:target.shortTermMastery,responseSeconds:target.responseSeconds,hintCount:target.hintCount
+      })).slice(0,12)
     };
     payload.methodPlans=buildSetMethodPlans(payload,{recentMethods:payload.recentMethods});
     if(options.interactive===true){
@@ -1118,10 +1223,17 @@
   }
 
   function guidedSupportFor(activityType,main,plan,payload){
-    const word=text(main&&main.word,100)||'this word',meaning=cleanMeaning(main),bridge=text(main&&main.bridge,300);
-    const segments=meaningSegments(meaning),related=cardsForActivityPlan(plan,payload).filter(card=>String(card.id)!==String(main.id));
-    const relatedLine=related.slice(0,2).map(card=>`${text(card.word,100)} — ${cleanMeaning(card)}`).join('\n');
-    const usage=semanticUsageFrame(main),cleanBridge=bridge&&bridge.length>=6?bridge:'',contextA=localContextFor(main,0),contextB=localContextFor(main,1),scene=localSceneFor(main);
+    const word=text(main&&main.word,100)||'this word';
+    const meaning=cleanMeaning(main);
+    const bridge=text(main&&main.bridge,300);
+    const segments=meaningSegments(meaning);
+    const related=cardsForActivityPlan(plan,payload).filter(card=>String(card.id)!==String(main.id));
+    const relatedLine=related.slice(0,4).map(card=>`${text(card.word,100)} — ${cleanMeaning(card)}`).join('\n');
+    const usage=semanticUsageFrame(main);
+    const cleanBridge=bridge&&bridge.length>=6?bridge:'';
+    const contextA=localContextFor(main,0);
+    const contextB=localContextFor(main,1);
+    const scene=localSceneFor(main);
     switch(activityType){
       case 'memory_bridge':
         return {title:'Memory bridge',body:cleanBridge||`${word} ↔ ${meaning}`,application:''};
@@ -1138,6 +1250,7 @@
       case 'source_context':
         return {title:'Text in use',body:contextA,application:usage.boundary};
       case 'contrast_map':
+      case 'confusion_contrast':
         return {title:'Exact boundary',body:relatedLine?`${word} — ${meaning}\n${relatedLine}`:`${word} — ${meaning}\n${usage.boundary}`,application:contextA};
       case 'scene_anchor':
         return {title:'Scene',body:scene,application:''};
@@ -1145,11 +1258,24 @@
         return {title:'Natural combinations',body:`${usage.frame}\n${usage.boundary}`,application:contextB};
       case 'word_structure_anchor':
         return {title:'Supported family',body:relatedLine?`${word} — ${meaning}\n${relatedLine}`:`${word} — ${meaning}`,application:cleanBridge};
+      case 'multiword_sentence':{
+        const words=[word,...related.slice(0,2).map(card=>text(card.word,100))].filter(Boolean);
+        return {title:'Linked sentence',body:`Use naturally together: ${words.join(' · ')}`,application:[contextA,relatedLine].filter(Boolean).join('\n')};
+      }
+      case 'mini_story':{
+        const words=[word,...related.slice(0,4).map(card=>text(card.word,100))].filter(Boolean);
+        return {title:'Mini story',body:`One scene: ${words.join(' → ')}`,application:[contextA,contextB,relatedLine].filter(Boolean).join(' ')};
+      }
+      case 'causal_chain':
+        return {title:'Cause and effect',body:[`${word} — ${meaning}`,relatedLine].filter(Boolean).join('\n'),application:contextA};
+      case 'mixed_mastery_cluster':
+        return {title:'Connected set',body:[`${word} — ${meaning}`,relatedLine].filter(Boolean).join('\n'),application:contextB};
       case 'context_transfer':
       default:
         return {title:'Different situation',body:contextA,application:usage.boundary};
     }
   }
+
   function guidedRecallPrompt(main,activityType){
     const word=text(main&&main.word,100),meaning=cleanMeaning(main),imported=maskTarget(main&&main.example,word),localMasked=maskTarget(localContextFor(main,1),word),usage=semanticUsageFrame(main);
     if(activityType==='memory_bridge')return imported||localMasked||`Which word completes this idea: ${meaning}`;
@@ -1539,7 +1665,9 @@
         const safePayload={
           task:guided?'Create a compact vocabulary coaching set. Teach each target once, then provide a separate delayed retrieval cue for an interleaved recall pass.':'Create a compact choice-based vocabulary review.',
           interactionMode:guided?'coach':'tap',mode:mode(payload.mode),setLabel:text(payload.setLabel,100),completedCount:Math.round(clamp(payload.completedCount,1,50)),
-          targets:payload.targets.slice(0,20),anchors:(Array.isArray(payload.anchors)?payload.anchors:[]).slice(0,8),relationships:(Array.isArray(payload.relationships)?payload.relationships:[]).slice(0,24),activityPlans,
+          targets:payload.targets.slice(0,20),anchors:(Array.isArray(payload.anchors)?payload.anchors:[]).slice(0,8),relationships:(Array.isArray(payload.relationships)?payload.relationships:[]).slice(0,24),strugglingReferencePool:(Array.isArray(payload.strugglingReferencePool)?payload.strugglingReferencePool:[]).slice(0,36),peerDifficultySummary:(Array.isArray(payload.peerDifficultySummary)?payload.peerDifficultySummary:[]).slice(0,16),activityEffectiveness:payload.activityEffectiveness&&typeof payload.activityEffectiveness==='object'?payload.activityEffectiveness:{},activityPlans,
+          toolbox:(Array.isArray(payload.toolbox)&&payload.toolbox.length?payload.toolbox:V44_TOOLBOX).slice(0,20),
+          recentActivities:(Array.isArray(payload.recentActivities)?payload.recentActivities:[]).slice(-12),
           activityCatalog:Object.fromEntries(Array.from(new Set(activityPlans.flatMap(plan=>plan.candidateActivities.map(item=>item.activityType)))).filter(id=>guided?GUIDED_ACTIVITY_TYPES.has(id):CHOICE_ACTIVITY_TYPES.has(id)).map(id=>[id,INTERACTIVE_ACTIVITY_CATALOG[id]])),
           requirements:guided?[
             'Return one reviewCard for every supplied activityPlan in the same order.',
@@ -1560,8 +1688,8 @@
           ]
         };
         const schema=guided?interactiveReviewSchema():choiceReviewSchema();
-        const body={model:modelName,max_completion_tokens:mode(payload.mode)==='immersive'?1500:1200,plugins:[{id:'response-healing'}],provider:{require_parameters:true,allow_fallbacks:true},response_format:{type:'json_schema',json_schema:{name:guided?'vocab_curve_coach_review_v2':'vocab_curve_choice_review_v2',strict:true,schema}},messages:[
-          {role:'system',content:guided?'Act as a practical vocabulary memory coach, not a definition or quiz generator. Use learner evidence and the word’s affordances to choose one high-value route: application, collocation, contrast, scene, bridge, context transfer, or word network. The coaching pass may show the word. The recallPrompt is used only after other targets intervene and must conceal it. The app schedules later normal-flashcard checks, so never create an immediate second recall loop. Never fabricate quotations, etymology, morphology, relationships, or diagnoses.':'Design compact tap-only retrieval using only supplied vocabulary data.'},
+        const body={model:modelName,max_completion_tokens:mode(payload.mode)==='immersive'?3600:2800,plugins:[{id:'response-healing'}],provider:{require_parameters:true,allow_fallbacks:true},response_format:{type:'json_schema',json_schema:{name:guided?'vocab_curve_coach_review_v2':'vocab_curve_choice_review_v2',strict:true,schema}},messages:[
+          {role:'system',content:guided?'Act as a practical vocabulary memory coach, not a definition or quiz generator. Use the complete supplied learner evidence, peer difficulties, prior tool outcomes, timing, attention, pointer hesitation, and word affordances to choose the highest-value route. You may connect naturally related struggling words through a sentence, mini-story, contrast, causal chain, or mixed-mastery network; never force unrelated words together. The coaching pass may show the word. The recallPrompt is used only after other targets intervene and must conceal it. The app schedules later normal-flashcard checks, so never create an immediate second recall loop. Never fabricate quotations, etymology, morphology, relationships, or diagnoses.':'Design compact tap-only retrieval using only supplied vocabulary data.'},
           {role:'user',content:JSON.stringify(safePayload)}
         ]};
         const reasoning=reasoningForModel(modelName);if(reasoning)body.reasoning=reasoning;
@@ -1648,7 +1776,7 @@
   }
 
   return {
-    VERSION,DEFAULT_MODEL,LEGACY_DEFAULT_MODEL,DEFAULT_SETTINGS,METHOD_CATALOG,INTERACTIVE_ACTIVITY_CATALOG,tutorDecisionSchema,setTutorReviewSchema,interactiveTutorReviewSchema,
+    VERSION,DEFAULT_MODEL,LEGACY_DEFAULT_MODEL,DEFAULT_SETTINGS,METHOD_CATALOG,INTERACTIVE_ACTIVITY_CATALOG,V44_TOOLBOX,tutorDecisionSchema,setTutorReviewSchema,interactiveTutorReviewSchema,
     normalizeSettings,interventionPolicy,setReviewPolicy,cardSnapshot,buildMixedMasteryCandidates,selectInterventionTool,eligibleMethodsForTarget,buildSetMethodPlans,selectSetReviewMethodPlan,analyzeRecallEvidence,buildSetReviewPayload,isCurrentReview,
     classifyLearningObjective,analyzeWordAffordances,candidateActivitiesForTarget,buildInteractiveActivityPlans,contextSimilarity,isNovelContext,detectLanguageFamily,compactReferenceCandidates,
     validateTutorDecision,validateSetReview,validateInteractiveSetReview,createLocalSetReview,createInteractiveLocalReview,importCompletionSchema,validateImportCompletion,parseStructuredContent,createOpenRouterClient,budgetState,applyQueuePlan,

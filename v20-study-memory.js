@@ -5,10 +5,11 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createV20StudyMemory() {
   'use strict';
 
-  const VERSION = '43.0.0-beta';
-  const HOUR = 60 * 60 * 1000;
-  const SESSION_HOLD_HOURS = 6;
-  const DECAY_HOURS = 12;
+  const VERSION = '44.0.0-beta';
+  const MINUTE = 60 * 1000;
+  const HOUR = 60 * MINUTE;
+  const DAY = 24 * HOUR;
+  const DECAY_HOURS = 18;
   const SHORT_TERM_TARGET = 90;
   const LONG_TERM_TARGET = 90;
   const COLOR_STOPS = Object.freeze([
@@ -21,6 +22,20 @@
   function finite(value, fallback = 0) {
     const number = Number(value);
     return Number.isFinite(number) ? number : fallback;
+  }
+
+  function localDayKey(timestamp = Date.now()) {
+    const date = new Date(finite(timestamp, Date.now()));
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function startOfLocalDay(timestamp = Date.now()) {
+    const date = new Date(finite(timestamp, Date.now()));
+    date.setHours(0, 0, 0, 0);
+    return date.getTime();
   }
 
   function usableNumber(value) {
@@ -70,10 +85,16 @@
       card && card.shortTermUpdatedAt,
       finite(card && card.lastReviewedAt, finite(card && card.introducedAt, now))
     );
-    const ageHours = Math.max(0, (finite(now, Date.now()) - updatedAt) / HOUR);
-    if (ageHours <= SESSION_HOLD_HOURS) return stored;
+    const storedDay = String(card && card.shortTermDayKey || localDayKey(updatedAt));
+    if (storedDay === localDayKey(now)) return stored;
+
+    // Keep the day's short-term evidence stable through the local calendar day.
+    // After midnight, converge gradually toward durable memory instead of
+    // pretending an immediate success remains fresh indefinitely.
+    const nextDayStart = startOfLocalDay(updatedAt) + DAY;
+    const hoursAfterDay = Math.max(0, (finite(now, Date.now()) - nextDayStart) / HOUR);
     const anchor = clamp(longTerm);
-    const decay = Math.exp(-(ageHours - SESSION_HOLD_HOURS) / DECAY_HOURS);
+    const decay = Math.exp(-hoursAfterDay / DECAY_HOURS);
     return clamp(anchor + (stored - anchor) * decay);
   }
 
@@ -94,6 +115,17 @@
     return -8;
   }
 
+  function latestIndependentEvidenceAt(card, before = Date.now()) {
+    const history = (Array.isArray(card && card.history) ? card.history : [])
+      .filter((entry) => entry && !isRankedHistory(entry))
+      .map((entry) => ({ entry, time: finite(entry.time ?? entry.reviewedAt ?? entry.at, 0) }))
+      .filter(({ entry, time }) => time > 0 && time < before
+        && normalizeRating(entry.rating) !== 'wrong'
+        && finite(entry.hints, 0) === 0)
+      .sort((left, right) => right.time - left.time);
+    return history.length ? history[0].time : 0;
+  }
+
   function nextShortTerm(card, rating, context = {}) {
     const normalized = normalizeRating(rating);
     const first = context.first === true || context.firstExposure === true;
@@ -106,16 +138,40 @@
 
     if (normalized === 'wrong') {
       if (first && finite(card && card.shortTermEvidenceCount, finite(card && card.sessionAttempts, 0)) === 0) {
-        return clamp(18 - Math.min(4, hints));
+        return clamp(16 - Math.min(4, hints));
       }
-      return clamp(Math.max(5, previous * 0.45 - Math.min(10, hints * 2)));
+      return clamp(Math.max(5, previous * 0.48 - 6 - Math.min(10, hints * 2)));
     }
-    if (normalized === 'know') return 100;
 
-    const hintPenalty = hints === 0 ? 0 : hints === 1 ? 13 : hints === 2 ? 30 : 43 + (hints - 3) * 5;
-    if (first) return clamp(92 + speed + typedBoost - hintPenalty);
-    const repaired = Math.max(90, previous + (100 - previous) * 0.72);
-    return clamp(repaired + speed + typedBoost - hintPenalty);
+    const hintPenalty = hints === 0 ? 0 : hints === 1 ? 12 : hints === 2 ? 25 : 38 + (hints - 3) * 5;
+    if (normalized === 'know') {
+      const knowBase = first ? 88 : 98;
+      return clamp(knowBase + speed + typedBoost - Math.min(22, hintPenalty));
+    }
+
+    const priorIndependentAt = latestIndependentEvidenceAt(card, now);
+    const delayMinutes = priorIndependentAt > 0 ? Math.max(0, (now - priorIndependentAt) / MINUTE) : 0;
+    let candidate;
+    let ceiling;
+    if (first || !priorIndependentAt) {
+      candidate = Math.max(58, previous + 24);
+      ceiling = 72;
+    } else if (delayMinutes < 10) {
+      candidate = previous + 12;
+      ceiling = 82;
+    } else if (delayMinutes < 60) {
+      candidate = previous + 17;
+      ceiling = 88;
+    } else if (delayMinutes < 180) {
+      candidate = Math.max(92, previous + 22);
+      ceiling = 96;
+    } else {
+      candidate = Math.max(94, previous + 25);
+      ceiling = 99;
+    }
+    candidate = Math.min(ceiling, candidate + speed + typedBoost - hintPenalty);
+    if (hints >= 1) candidate = Math.min(candidate, hints === 1 ? 82 : 68);
+    return clamp(candidate);
   }
 
   function updateUsabilityEvidence(card, rating, context = {}) {
@@ -161,6 +217,7 @@
     const shortTerm = Math.round(nextShortTerm(card, rating, { ...context, now }) * 10) / 10;
     card.shortTermMastery = shortTerm;
     card.shortTermUpdatedAt = now;
+    card.shortTermDayKey = localDayKey(now);
     card.shortTermEvidenceCount = Math.max(0, Math.floor(finite(card.shortTermEvidenceCount, finite(card.sessionAttempts)))) + 1;
     card.sessionAttempts = Math.max(0, Math.floor(finite(card.sessionAttempts))) + 1;
     card.sessionLastRating = normalizeRating(rating);
@@ -271,6 +328,48 @@
       retirementEligible: source.length > 0 && introducedComplete && longTermAverage >= finite(settings.longTermThreshold, LONG_TERM_TARGET),
       usabilityAverage,
       usabilityMeasured: measuredUsability.length > 0
+    });
+  }
+
+  function sectionContinuationDecision(cards, options = {}) {
+    const source = activeCards(cards);
+    const now = finite(options.now, Date.now());
+    const threshold = finite(options.threshold, finite(options.shortTermThreshold, SHORT_TERM_TARGET));
+    const maxWeakLoop = Math.max(1, Math.floor(finite(options.maxWeakLoop, 4)));
+    const repeatThreshold = Math.max(2, Math.floor(finite(options.repeatThreshold, 2)));
+    const introduced = source.filter((card) => finite(card.introducedAt) > 0
+      || finite(card.studyReviews) > 0
+      || finite(card.sessionAttempts) > 0
+      || card.state === 'known');
+    const weak = source.filter((card) => card.state !== 'known'
+      && effectiveShortTerm(card, now, finite(card.memoryScore, 0)) < threshold);
+    const recentIds = (Array.isArray(options.recentCardIds) ? options.recentCardIds : []).map(String).filter(Boolean);
+    const counts = recentIds.reduce((map, id) => {
+      map.set(id, (map.get(id) || 0) + 1);
+      return map;
+    }, new Map());
+    const weakIds = weak.map((card) => String(card.id || '')).filter(Boolean);
+    const repeatedWeak = weakIds.filter((id) => (counts.get(id) || 0) >= repeatThreshold);
+    const average = source.length
+      ? source.reduce((sum, card) => sum + effectiveShortTerm(card, now, finite(card.memoryScore, 0)), 0) / source.length
+      : 0;
+    const introducedComplete = source.length > 0 && introduced.length === source.length;
+    const eligible = introducedComplete
+      && average < threshold
+      && weakIds.length > 0
+      && weakIds.length <= maxWeakLoop
+      && repeatedWeak.length === weakIds.length;
+    return Object.freeze({
+      eligible,
+      reason: eligible ? 'small_weak_loop' : introducedComplete ? 'insufficient_loop_evidence' : 'not_introduced',
+      weakCardIds: weakIds,
+      repeatedWeakCardIds: repeatedWeak,
+      weakCount: weakIds.length,
+      average,
+      threshold,
+      count: source.length,
+      introduced: introduced.length,
+      introducedComplete
     });
   }
 
@@ -416,9 +515,13 @@
 
   return Object.freeze({
     VERSION,
+    MINUTE,
+    HOUR,
+    DAY,
     SHORT_TERM_TARGET,
     LONG_TERM_TARGET,
     clamp,
+    localDayKey,
     normalizeRating,
     effectiveShortTerm,
     nextShortTerm,
@@ -427,6 +530,7 @@
     usabilityScore,
     cardSnapshot,
     sectionSnapshot,
+    sectionContinuationDecision,
     routineCards,
     applyPauseNewBridge,
     reinforcementCandidates,

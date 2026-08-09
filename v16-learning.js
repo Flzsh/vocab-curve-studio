@@ -43,8 +43,9 @@
 
   function defaultCalibration() {
     return {
-      version: 16,
+      version: 44,
       studyOutcomes: 0,
+      weightedOutcomes: 0,
       observedRecall: 0.75,
       predictedRecall: 0.75,
       brierScore: 0.1875,
@@ -60,8 +61,9 @@
     for (const key of Object.keys(defaults)) {
       if (key !== 'version' && !Number.isFinite(Number(target[key]))) target[key] = defaults[key];
     }
-    target.version = 16;
+    target.version = 44;
     target.studyOutcomes = Math.max(0, Math.floor(finite(target.studyOutcomes, defaults.studyOutcomes)));
+    target.weightedOutcomes = Math.max(0, finite(target.weightedOutcomes, target.studyOutcomes));
     target.observedRecall = clamp(target.observedRecall, 0.01, 0.99);
     target.predictedRecall = clamp(target.predictedRecall, 0.01, 0.99);
     target.brierScore = clamp(target.brierScore, 0, 1);
@@ -155,6 +157,11 @@
     target.shortTermMastery = clamp(finite(target.shortTermMastery, inferredShortTerm), 0, 100);
     target.shortTermUpdatedAt = Math.max(0, finite(target.shortTermUpdatedAt,
       finite(target.lastReviewedAt, finite(target.introducedAt, 0))));
+    if (target.shortTermUpdatedAt > 0) {
+      target.shortTermDayKey = Metrics && typeof Metrics.localDayKey === 'function'
+        ? Metrics.localDayKey(target.shortTermUpdatedAt)
+        : String(target.shortTermDayKey || '');
+    }
     target.shortTermEvidenceCount = Math.max(0, Math.floor(finite(target.shortTermEvidenceCount, target.studyReviews)));
     target.sessionAttempts = Math.max(0, Math.floor(finite(target.sessionAttempts, target.shortTermEvidenceCount)));
     target.sessionIndependentCorrect = Math.max(0, Math.floor(finite(target.sessionIndependentCorrect, 0)));
@@ -164,7 +171,7 @@
       ? null
       : clamp(target.usabilityScore, 0, 100);
     target.memoryScore = clamp(finite(target.memoryScore, target.studyMastery), 0, 100);
-    target.memoryStateVersion = 16;
+    target.memoryStateVersion = 44;
     const explicitStudyEvidence = finite(target.introducedAt, 0) > 0
       || finite(target.studySeenAt, 0) > 0
       || finite(target.studyReviews, 0) > 0
@@ -371,33 +378,61 @@
     return source.filter((card) => sectionKey(card) === focus);
   }
 
+  function calibrationSummary(model) {
+    const target = migrateCalibration(model);
+    const samples = Math.max(0, Math.floor(finite(target.studyOutcomes, 0)));
+    const weight = Math.max(0, finite(target.weightedOutcomes, samples));
+    const observed = clamp(target.observedRecall, 0, 1);
+    const predicted = clamp(target.predictedRecall, 0, 1);
+    return Object.freeze({
+      samples,
+      effectiveSamples: Math.round(weight * 10) / 10,
+      observedPercent: Math.round(observed * 100),
+      predictedPercent: Math.round(predicted * 100),
+      gapPercent: Math.round((observed - predicted) * 100),
+      brierScore: Math.round(clamp(target.brierScore, 0, 1) * 1000) / 1000,
+      calibrationPercent: Math.round(clamp(1 - Math.sqrt(clamp(target.brierScore, 0, 1)), 0, 1) * 100),
+      intervalScale: Math.round(clamp(target.intervalScale, 0.70, 1.30) * 100) / 100,
+      status: samples < 5 ? 'learning' : samples < 20 ? 'calibrating' : 'active'
+    });
+  }
+
   function updateCalibration(model, evidence) {
     const target = migrateCalibration(model);
     const timing = sanitizeTiming(evidence && evidence.timing);
+    const independent = evidence && evidence.independent !== false && finite(evidence && evidence.hints, 0) === 0;
     const valid = evidence
       && evidence.source === 'study'
       && !evidence.first
       && !evidence.timedOut
-      && finite(evidence.hints, 0) === 0
+      && independent
       && !timing.afk;
     if (!valid) return target;
 
+    const delayMinutes = Math.max(0, finite(evidence.delayMinutes, 0));
+    const delayWeight = delayMinutes >= 1440 ? 1
+      : delayMinutes >= 45 ? 0.85
+        : delayMinutes >= 5 ? 0.65
+          : 0.25;
     const observed = evidence.correct ? 1 : 0;
     const predicted = clamp(evidence.predicted, 0.01, 0.99);
-    const alpha = target.studyOutcomes < 10 ? 0.12 : 0.055;
+    const oldWeight = Math.max(0, finite(target.weightedOutcomes, target.studyOutcomes));
+    const alpha = clamp(delayWeight / Math.max(4, oldWeight + delayWeight), 0.035, 0.22);
     target.studyOutcomes += 1;
+    target.weightedOutcomes = oldWeight + delayWeight;
     target.observedRecall += alpha * (observed - target.observedRecall);
     target.predictedRecall += alpha * (predicted - target.predictedRecall);
     const brier = Math.pow(observed - predicted, 2);
     target.brierScore += alpha * (brier - target.brierScore);
     if (timing.seconds > 0) {
       const key = evidence.correct ? 'avgCorrectSeconds' : 'avgWrongSeconds';
-      target[key] += 0.06 * (timing.seconds - target[key]);
+      const timingAlpha = Math.min(0.18, 0.04 + delayWeight * 0.05);
+      target[key] += timingAlpha * (timing.seconds - target[key]);
       target[key] = clamp(target[key], 1, key === 'avgCorrectSeconds' ? 45 : 60);
     }
-    if (target.studyOutcomes >= 30) {
+    if (target.weightedOutcomes >= 8) {
       const calibrationGap = target.observedRecall - target.predictedRecall;
-      const adjustment = clamp(calibrationGap * 0.008, -0.004, 0.004);
+      const adjustment = clamp(calibrationGap * 0.018, -0.012, 0.012);
       target.intervalScale = clamp(target.intervalScale * Math.exp(adjustment), 0.70, 1.30);
     }
     return target;
@@ -411,6 +446,8 @@
     const timing = sanitizeTiming(context.timing);
     const hints = Math.max(0, Math.floor(finite(context.hints, 0)));
     const first = !finite(current.lastReviewedAt, 0) && finite(current.studyReviews, 0) === 0;
+    const previousReviewedAt = finite(current.lastReviewedAt, finite(current.studySeenAt, finite(current.introducedAt, 0)));
+    const delayMinutes = previousReviewedAt > 0 ? Math.max(0, (now - previousReviewedAt) / MINUTE) : Number.POSITIVE_INFINITY;
     const predicted = retrievability(current, now);
     const previousStability = memoryStability(current);
     const previousDifficulty = clamp(current.memoryDifficulty, 1, 10);
@@ -473,11 +510,31 @@
       );
       nextStability = previousStability + (targetStability - previousStability) * sourceWeight;
       nextDifficulty = clamp(previousDifficulty - 0.18 * sourceWeight, 1, 10);
-      intervalDays = intervalForRetention(nextStability, desiredRetention(context.profile)) * intervalScale;
-      if (first && source === 'study') intervalDays = clamp(intervalDays, 0.12, 1.4);
-      else intervalDays = clamp(intervalDays, 0.04, 3_650);
-      dueAt = now + intervalDays * DAY;
-      state = intervalDays < 1 ? 'learning' : 'review';
+
+      const stillLearning = source === 'study' && (
+        first
+        || ['new', 'learning', 'relearning'].includes(String(current.state || ''))
+        || finite(current.intervalDays, 0) < 1
+        || finite(current.studyMastery, 0) < 78
+      );
+      if (stillLearning) {
+        let stepMinutes;
+        if (first || !Number.isFinite(delayMinutes)) stepMinutes = 8;
+        else if (delayMinutes < 12) stepMinutes = 45;
+        else if (delayMinutes < 90) stepMinutes = 180;
+        else if (delayMinutes < 480) stepMinutes = 540;
+        else stepMinutes = 1080;
+        if (hints > 0) stepMinutes = Math.max(5, stepMinutes * Math.max(0.35, 1 - hints * 0.2));
+        if (timing.afk) stepMinutes = Math.max(5, stepMinutes * 0.6);
+        intervalDays = clamp(stepMinutes / 1440, 5 / 1440, 0.75);
+        dueAt = now + intervalDays * DAY;
+        state = 'learning';
+      } else {
+        intervalDays = intervalForRetention(nextStability, desiredRetention(context.profile)) * intervalScale;
+        intervalDays = clamp(intervalDays, 0.75, 3_650);
+        dueAt = now + intervalDays * DAY;
+        state = intervalDays < 1 ? 'learning' : 'review';
+      }
     }
 
     const previousMastery = clamp(current.studyMastery, 0, 100);
@@ -510,6 +567,7 @@
       timing,
       predicted,
       predBefore: predicted,
+      delayMinutes,
       memoryStability: clamp(nextStability, 0.02, 36_500),
       stability: clamp(nextStability, 0.02, 36_500),
       memoryDifficulty: clamp(nextDifficulty, 1, 10),
@@ -550,7 +608,9 @@
       predicted: transition.predicted,
       hints: context.hints,
       timedOut: context.timedOut,
-      timing: transition.timing
+      timing: transition.timing,
+      delayMinutes: transition.delayMinutes,
+      independent: finite(context.hints, 0) === 0 && !transition.timing.afk
     });
     return transition;
   }
@@ -575,6 +635,7 @@
     filterForSection,
     reviewTransition,
     applyReview,
-    updateCalibration
+    updateCalibration,
+    calibrationSummary
   });
 });

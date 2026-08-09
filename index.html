@@ -11,7 +11,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Vocab Curve Studio Beta v43</title>
+<title>Vocab Curve Studio V44</title>
 <style>
 :root{
   --bg0:#f7f8ff;--bg1:#f1fbff;--bg2:#fff9f3;--ink:#202437;--muted:#697189;--soft:#8d94a8;
@@ -377,7 +377,7 @@ body.ranked-mode .wager-card:not(.available){display:none}body.ranked-mode .batt
 @media (min-width:721px) and (max-width:930px){.today-strip{display:none}.nav{grid-template-columns:1fr}.top-actions .save-pill,.top-actions .book-select{max-width:150px}.ranked-shell{grid-template-columns:1fr}.rank-side-panel{grid-template-columns:repeat(2,minmax(0,1fr))}.rank-account-summary,.compact-rank-info{grid-column:1/-1}}
 
 
-/* Beta v43 final-audit presentation */
+/* V44 final-audit presentation */
 .logo{overflow:hidden;padding:0!important;isolation:isolate}.logo img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}.logo[data-icon-fallback]::after{content:attr(data-icon-fallback);font-size:25px;font-weight:1000}
 .v20-performance-settings{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important}.v20-performance-settings h2{margin:2px 0 0!important}.v20-low-power-toggle{display:flex;align-items:center;gap:10px;min-width:min(100%,330px);padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.72)}.v20-low-power-toggle>span{display:grid;gap:2px}.v20-low-power-toggle small{color:var(--muted)}
 body.low-power .ambient,body.low-power .blob{display:none!important}
@@ -394,26 +394,26 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 @media(max-width:720px){.v20-performance-settings{align-items:stretch!important;flex-direction:column!important}.v20-low-power-toggle{width:100%}}
 
 </style>
-<link rel="stylesheet" href="./v16.css?v=43.0.0-beta-studio.16">
-<link rel="stylesheet" href="./v17.css?v=43.0.0-beta-studio.16">
-<link rel="stylesheet" href="./v18.css?v=43.0.0-beta-studio.16">
-<link rel="stylesheet" href="./v19.css?v=43.0.0-beta-studio.16">
-<link rel="stylesheet" href="./v20.css?v=43.0.0-beta-studio.16">
-<link rel="stylesheet" href="./studio-workspace.css?v=43.0.0-beta-studio.16">
+<link rel="stylesheet" href="./v16.css?v=44.0.0-beta-studio.19">
+<link rel="stylesheet" href="./v17.css?v=44.0.0-beta-studio.19">
+<link rel="stylesheet" href="./v18.css?v=44.0.0-beta-studio.19">
+<link rel="stylesheet" href="./v19.css?v=44.0.0-beta-studio.19">
+<link rel="stylesheet" href="./v20.css?v=44.0.0-beta-studio.19">
+<link rel="stylesheet" href="./studio-workspace.css?v=44.0.0-beta-studio.19">
+<link rel="stylesheet" href="./v44.css?v=44.0.0-beta-studio.19">
 </head>
 <body>
 <div class="ambient"><div class="blob one"></div><div class="blob two"></div><div class="blob three"></div></div>
 <div class="app">
   <header class="topbar panel v20-top-shell">
-    <div class="brand"><div class="logo" aria-hidden="true"><img src="./icons/icon-192.png" alt="" width="52" height="52" onerror="this.hidden=true;this.parentElement.dataset.iconFallback='V'"></div><div><h1>Vocab Curve Studio</h1><p class="muted">BETA V43 · Adaptive vocabulary</p></div></div>
+    <div class="brand"><div class="logo" aria-hidden="true"><img src="./icons/icon-192.png" alt="" width="52" height="52" onerror="this.hidden=true;this.parentElement.dataset.iconFallback='V'"></div><div><h1>Vocab Curve Studio</h1><p class="muted">V44 · Adaptive vocabulary</p></div></div>
     <nav class="header-nav v20-header-nav" aria-label="Primary">
       <div class="nav-tab-groups">
         <div class="tabs" id="tabs">
           <span class="tab-indicator" id="tabIndicator"></span>
           <button class="tab active mobile-main" data-view="study" aria-current="page"><span class="tab-icon asset-study"></span><span class="tab-label">Study</span></button>
-          <button class="tab mobile-main" data-view="import"><span class="tab-icon asset-import"></span><span class="tab-label">Import</span></button>
           <button class="tab desktop-tab" data-view="planner"><span class="tab-icon asset-planner"></span><span class="tab-label">Planner</span></button>
-          <button class="tab desktop-tab" data-view="books"><span class="tab-icon asset-books"></span><span class="tab-label">Books</span></button>
+          <button class="tab desktop-tab mobile-main" data-view="books"><span class="tab-icon asset-books"></span><span class="tab-label">Books</span></button>
           <button class="tab desktop-tab" data-view="stats"><span class="tab-icon asset-stats"></span><span class="tab-label">Stats</span></button>
           <button class="tab mobile-main mobile-only-tab" data-view="more"><span class="tab-icon asset-more"></span><span class="tab-label">More</span></button>
           <button class="tab desktop-tab" data-view="settings"><span class="tab-icon asset-settings"></span><span class="tab-label">Settings</span></button>
@@ -439,7 +439,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
           </div>
           <div id="emptyState" class="empty">
             <div><h2>No card selected</h2><p class="muted" id="emptyText">Import a batch or press Study.</p></div>
-            <div class="row"><button class="btn btn-primary" data-go="import">Import words</button><button class="btn" id="forceOneBtn">Force one new</button></div>
+            <div class="row"><button class="btn btn-primary" data-go="books" data-books-pane="import">Import words</button><button class="btn" id="forceOneBtn">Force one new</button></div>
           </div>
           <div id="cardShell" class="card-shell hidden">
             <div class="v17-study-stage" id="studyStage" data-study-phase="empty" tabindex="-1">
@@ -449,7 +449,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
                   <span id="cardMode" class="sr-only">Mode</span>
                   <span class="study-section-chip" id="studySectionStatus" aria-live="polite">Section</span>
                   <span class="memory-chip" id="memoryChip">Short-term —</span>
-                  <span class="pro-tutor-chip" id="proTutorChip" data-state="off">Pro off</span>
+                  <span class="pro-tutor-chip" id="proTutorChip" data-state="off">Pro off</span><button class="study-continue-chip" id="continueNextSetBtn" type="button" hidden>Continue</button>
                 </div>
                 <section class="v17-recall-zone">
                   <div class="front v20-study-word-region"><div class="front-title" id="frontTitle"></div><div class="front-prompt" id="frontPrompt" aria-hidden="true"></div></div>
@@ -591,43 +591,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
         </aside>
       </div>
     </section>
-    <section class="view" id="view-import">
-      <div class="grid">
-        <div class="section panel col-7">
-          <h2>Import batch</h2>
-          <p class="muted">word TAB meaning｜Bridge: ...｜Example: ...</p>
-          <div class="split" style="margin-top:12px"><div class="field"><label for="batchName">Batch name</label><input id="batchName" placeholder="SAT Batch 001"></div><div class="field"><label for="importMode">Import behavior</label><select id="importMode"><option value="merge">Merge/update existing words</option><option value="addOnly">Add new only</option><option value="replaceBook">Replace current book</option></select></div></div>
-          <div class="import-ai-panel" id="importAiPanel">
-            <div class="import-ai-heading">
-              <div>
-                <span class="eyebrow">OPENROUTER ASSIST</span>
-                <h3>Complete missing fields</h3>
-              </div>
-              <span class="import-ai-model" id="importAiModel">Not connected</span>
-            </div>
-            <div class="import-ai-controls">
-              <label class="field" for="importAiLanguage">
-                <span>Meaning language</span>
-                <select id="importAiLanguage">
-                  <option value="Auto">Auto</option>
-                  <option value="English">English</option>
-                  <option value="Simplified Chinese">Simplified Chinese</option>
-                </select>
-              </label>
-              <button class="btn btn-primary" id="importAiCompleteBtn" type="button">Complete missing fields</button>
-            </div>
-            <div class="import-ai-status" id="importAiStatus" data-state="ready" aria-live="polite">
-              <div><b id="importAiStatusTitle">Ready</b><span id="importAiStatusText">Paste words or import text.</span></div>
-              <div class="studio-progress-track import-ai-progress" aria-hidden="true"><span id="importAiProgress"></span></div>
-            </div>
-          </div>
-          <div class="field"><label for="importText">Words or import format</label><textarea id="importText" placeholder="precipitate&#9;v. 促成，加速｜Bridge: ...｜Example: ..."></textarea></div>
-          <div class="toolbar"><button class="btn btn-primary" id="importApplyBtn">Import batch</button><button class="btn" id="previewBtn">Preview</button><button class="btn" id="loadSampleBtn">Load sample 100</button><button class="btn" id="importCopyBtn">Copy format</button><button class="btn" id="importDownloadBtn">Download .txt</button><button class="btn" id="clearImportBtn">Clear</button></div>
-          <div class="drop" id="dropArea" style="margin-top:12px"><b>Drop .txt here</b><br><span class="tiny">or paste text above. Works offline.</span></div>
-        </div>
-        <div class="section panel col-5"><h2>Preview</h2><p class="muted" id="previewSummary">Paste a list to preview.</p><div class="preview-box" id="previewBox"></div><div class="import-transfer-note"><b>Moving data between devices?</b><span>Backups and current-book transfers now live together in Settings.</span><button class="btn btn-mini" data-go="settings">Open Transfer center</button></div></div>
-      </div>
-    </section>
+
     <section class="view" id="view-planner">
       <div class="grid">
         <div class="section panel col-6"><h2>Target plan</h2><p class="muted">Recommendations adapt to remaining words and review pressure.</p><div class="split" style="margin-top:12px"><div class="field"><label for="targetTotal">Target total words</label><input id="targetTotal" type="number" min="0" max="50000"></div><div class="field"><label for="targetDays">Days remaining</label><input id="targetDays" type="number" min="1" max="365"></div></div><div class="field"><label for="curveProfile">Curve profile</label><select id="curveProfile"><option value="cram">Fast SAT cram</option><option value="balanced">Balanced</option><option value="retention">High retention</option></select></div><div class="plan-grid" id="planGrid"></div><div class="toolbar" style="margin-top:12px"><button class="btn btn-primary" id="applyNewBtn">Apply new/day</button><button class="btn" id="applyReviewBtn">Apply review cap</button><button class="btn" id="reviewOnlyDayBtn">Make today review-only</button></div><p class="tiny" id="planNotice" style="margin-top:10px"></p></div>
@@ -635,13 +599,18 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       </div>
     </section>
     <section class="view" id="view-books">
+<div class="v44-books-mode-tabs" role="tablist" aria-label="Books workspace">
+  <button type="button" class="active" data-books-pane="library" role="tab" aria-selected="true">Library</button>
+  <button type="button" data-books-pane="import" role="tab" aria-selected="false">Import</button>
+</div>
+<div id="booksLibraryPanel" class="v44-books-pane active" data-books-panel="library">
       <div class="v20-library-workspace">
         <section class="section panel v20-library-books">
           <div class="row v20-library-heading">
             <div>
               <span class="eyebrow">Vocabulary library</span>
               <h2>Books</h2>
-              
+
             </div>
             <div class="toolbar"><input id="newBookName" aria-label="New book name" placeholder="New book name"><button class="btn btn-primary" id="createBookBtn">Create book</button></div>
           </div>
@@ -653,7 +622,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
             <div>
               <span class="eyebrow">Chapters &amp; study sets</span>
               <h2 id="libraryOrganizerTitle">Organize the active book</h2>
-              
+
             </div>
             <div class="v20-scope-summary">
               <span class="tiny">Active study scope</span>
@@ -688,7 +657,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
                 <button class="btn" id="createChapterSelectionBtn" data-library-action="create-selection-chapter">Make chapter</button>
                 <button class="btn btn-primary" id="studySelectionBtn" data-library-action="study-selection">Study selection</button>
               </div>
-              
+
             </article>
 
             <article class="v20-library-builder-card" data-library-builder-panel="divide">
@@ -705,7 +674,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
               <div class="field"><label for="bookSetSize">Words per set</label><input id="bookSetSize" type="number" min="2" max="500" value="50"></div>
               <label class="v20-compact-toggle"><input id="bookSetReviewOutside" type="checkbox" checked> <span>Review outside selected sets</span></label>
               <button class="btn" id="splitWholeBookBtn" data-library-action="split-whole-book">Split whole book</button>
-              
+
             </article>
           </div>
 
@@ -732,7 +701,45 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
           </div>
         </section>
       </div>
-    </section>
+    </div>
+<div id="booksImportPanel" class="v44-books-pane" data-books-panel="import" hidden>
+  <div class="grid v44-books-import-grid">
+        <div class="section panel col-7">
+          <h2>Import batch</h2>
+          <p class="muted">word TAB meaning｜Bridge: ...｜Example: ...</p>
+          <div class="split" style="margin-top:12px"><div class="field"><label for="batchName">Batch name</label><input id="batchName" placeholder="SAT Batch 001"></div><div class="field"><label for="importMode">Import behavior</label><select id="importMode"><option value="merge">Merge/update existing words</option><option value="addOnly">Add new only</option><option value="replaceBook">Replace current book</option></select></div></div>
+          <div class="import-ai-panel" id="importAiPanel">
+            <div class="import-ai-heading">
+              <div>
+                <span class="eyebrow">OPENROUTER ASSIST</span>
+                <h3>Complete missing fields</h3>
+              </div>
+              <span class="import-ai-model" id="importAiModel">Not connected</span>
+            </div>
+            <div class="import-ai-controls">
+              <label class="field" for="importAiLanguage">
+                <span>Meaning language</span>
+                <select id="importAiLanguage">
+                  <option value="Auto">Auto</option>
+                  <option value="English">English</option>
+                  <option value="Simplified Chinese">Simplified Chinese</option>
+                </select>
+              </label>
+              <button class="btn btn-primary" id="importAiCompleteBtn" type="button">Complete missing fields</button>
+            </div>
+            <div class="import-ai-status" id="importAiStatus" data-state="ready" aria-live="polite">
+              <div><b id="importAiStatusTitle">Ready</b><span id="importAiStatusText">Paste words or import text.</span></div>
+              <div class="studio-progress-track import-ai-progress" aria-hidden="true"><span id="importAiProgress"></span></div>
+            </div>
+          </div>
+          <div class="field"><label for="importText">Words or import format</label><textarea id="importText" placeholder="precipitate&#9;v. 促成，加速｜Bridge: ...｜Example: ..."></textarea></div>
+          <div class="toolbar"><button class="btn btn-primary" id="importApplyBtn">Import batch</button><button class="btn" id="previewBtn">Preview</button><button class="btn" id="loadSampleBtn">Load sample 100</button><button class="btn" id="importCopyBtn">Copy format</button><button class="btn" id="importDownloadBtn">Download .txt</button><button class="btn" id="clearImportBtn">Clear</button></div>
+          <div class="drop" id="dropArea" style="margin-top:12px"><b>Drop .txt here</b><br><span class="tiny">or paste text above. Works offline.</span></div>
+        </div>
+        <div class="section panel col-5"><h2>Preview</h2><p class="muted" id="previewSummary">Paste a list to preview.</p><div class="preview-box" id="previewBox"></div><div class="import-transfer-note"><b>Moving data between devices?</b><span>Backups and current-book transfers now live together in Settings.</span><button class="btn btn-mini" data-go="settings">Open Transfer center</button></div></div>
+      </div>
+</div>
+</section>
 
     <section class="view" id="view-stats">
       <div class="grid"><div class="section panel col-12"><h2>Stats</h2><div class="stat-grid" id="statGrid"></div></div><div class="section panel col-6"><h2>Hard words</h2><div class="priority-list" id="hardWords"></div></div><div class="section panel col-6"><h2>Book progress</h2><div id="bookBars"></div></div><div class="section panel col-12"><h2>Deck table</h2><div class="toolbar" style="margin-bottom:10px"><input id="deckSearch" aria-label="Search deck words or meanings" placeholder="Search word or meaning"><select id="deckStateFilter" aria-label="Filter deck by state"><option value="all">All states</option><option value="new">New</option><option value="learning">Learning</option><option value="review">Review</option><option value="known">Known before</option><option value="suspended">Suspended</option></select></div><div class="table-wrap"><table><thead><tr><th>Word</th><th>Meaning</th><th>State</th><th>Due / interval</th><th>Memory</th><th>Actions</th></tr></thead><tbody id="deckTable"></tbody></table></div></div></div>
@@ -752,7 +759,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       <div class="grid settings-grid">
         <div class="section panel col-12 pro-tutor-settings">
           <div class="pro-tutor-settings-head">
-            <div><div class="pro-tutor-title-row"><span class="v15-eyebrow">V20 PRO MODE</span><span class="pro-tutor-alpha">ALPHA 20</span></div><h2>Adaptive Pro Tutor</h2><p class="muted">Focused tap reviews for words that need extra help.</p></div>
+            <div><div class="pro-tutor-title-row"><span class="v15-eyebrow">V20 PRO MODE</span><span class="pro-tutor-alpha">V44</span></div><h2>Adaptive Pro Tutor</h2><p class="muted">Focused tap reviews for words that need extra help.</p></div>
             <label class="pro-tutor-master-switch"><input id="proTutorEnabled" type="checkbox"><span>Enable Pro Tutor</span></label>
           </div>
           <div class="pro-tutor-settings-grid">
@@ -781,7 +788,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
         </div>
         <div class="section panel col-12 v20-performance-settings">
           <div><span class="v15-eyebrow">PERFORMANCE</span><h2>Power</h2></div>
-          <label class="v20-low-power-toggle"><input id="lowPowerMode" type="checkbox"><span><b>Low Power mode</b><small>Stops continuous motion and blur.</small></span></label>
+          <label class="v20-low-power-toggle"><input id="lowPowerMode" type="checkbox"><span><b>Low Power mode</b><small>Pauses nonessential motion and reduces visual effects.</small></span></label>
         </div>
         <div class="section panel col-12 transfer-center" id="transferCenter">
           <div class="transfer-heading"><div><span class="v15-eyebrow">TRANSFER</span><h2>Transfer center</h2><p class="muted">Move a complete study save or the current book.</p></div><span class="transfer-badge">V20</span></div>
@@ -802,24 +809,26 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 <div class="toast-zone" id="toastZone" role="status" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></div>
 <div class="modal" id="newPickerModal" role="dialog" aria-modal="true" aria-label="Pick a new word" tabindex="-1"><div class="modal-card picker-modal-card"><div class="row" style="justify-content:space-between;align-items:center"><div><h2>Pick a new word</h2><p class="muted">New words come from the active set, chapter, selection, or automatic section.</p></div><button class="btn btn-mini" id="closePickerBtn">Close</button></div><div class="split"><div class="field"><label for="modalBatchPicker">Batch</label><select id="modalBatchPicker"></select></div><div class="field"><label for="modalPickerSearch">Search</label><input id="modalPickerSearch" placeholder="word or meaning"></div></div><div class="field"><label for="modalSectionPicker">Review focus</label><select id="modalSectionPicker"></select></div><div class="section-progress" id="modalSectionProgress" aria-live="polite"></div><div class="new-card-list modal-new-card-list" id="modalNewCardList"></div></div></div>
 <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText" tabindex="-1"><div class="modal-card"><h2 id="confirmTitle">Confirm</h2><p class="muted" id="confirmText"></p><div class="modal-actions"><button class="btn" id="confirmCancel">Cancel</button><button class="btn btn-primary" id="confirmOk">OK</button></div></div></div>
-<script src="./v16-rules.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-storage.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-study-memory.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-queue-policy.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-liquid-motion.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-memory-world.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-library.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-default-workbook.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-forecast.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v16-learning.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v16-transfer.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v16-runtime.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v17-study.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v18-study.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v19-ui.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-interactive-review.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-import-assistant.js?v=43.0.0-beta-studio.16"></script>
-<script src="./v20-pro-tutor.js?v=43.0.0-beta-studio.16"></script>
+<script src="./v16-rules.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-storage.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-study-memory.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-queue-policy.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-liquid-motion.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-memory-world.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-library.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-default-workbook.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v44-default-book2.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-forecast.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v44-runtime.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v16-learning.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v16-transfer.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v16-runtime.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v17-study.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v18-study.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v19-ui.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-interactive-review.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-import-assistant.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v20-pro-tutor.js?v=44.0.0-beta-studio.19"></script>
 <script>
 (() => {
   'use strict';
@@ -832,6 +841,8 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const MemoryWorld = window.V20MemoryWorld;
   const Library = window.V20Library;
   const DefaultWorkbook = window.V20DefaultWorkbook;
+  const DefaultBook2 = window.V44DefaultBook2;
+  const V44Runtime = window.V44Runtime;
   const Forecast = window.V20Forecast;
   const Transfer = window.V16Transfer;
   const Study = window.V17Study;
@@ -839,7 +850,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const ProInteractiveReview = window.ProInteractiveReview;
   const ImportAssistant = window.V20ImportAssistant;
   const ProTutor = window.V20ProTutor;
-  const APP_VERSION = '43.0.0-beta';
+  const APP_VERSION = '44.0.0-beta';
   const PRO_TUTOR_SESSION_KEY = 'vocab-curve-studio:v20-openrouter-session-key';
   const PRO_TUTOR_PKCE_KEY = 'vocab-curve-studio:v20-openrouter-pkce';
   const LEGACY_STORAGE_KEY = 'vocab-curve-studio:stable';
@@ -985,7 +996,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   let proSetReviewUiState={session:null,review:null,cardsById:new Map(),local:false};
   const proTutorPending = new Map(), proTutorDecisions = new Map();
   function init(){ normalizeState(); bindEvents(); setupAttentionTracking(); hydrateInputs(); renderAll(); showView('study'); selectNextCard(false); setupTabIndicator(); updateSaveHealth(); registerServiceWorker(); }
-  function defaultState(){ const bundled=DefaultWorkbook?.createBook?.({now:Date.now()}); const id=bundled?.id||uid('book'); return {schemaVersion:13, appVersion:APP_VERSION, createdAt:Date.now(), updatedAt:Date.now(), activeBookId:id, books:[bundled||{id,name:'SAT Main Book',createdAt:Date.now(),updatedAt:Date.now(),cards:[],batches:[]}], daily:{}, achievements:{unlocked:{}, recent:[]}, profile:{installId:uid('install'), totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0}, flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false}, model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.50,shortTermSlipRate:.18,intervalScale:1.0,speedTrust:1.0,reviewUrgency:1.0,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0}}, account:{id:uid('acct'), name:'Flzsh', rank:{tier:'D', pips:0, sStars:0, matches:0, wins:0, losses:0, ties:0, overtime:0, winStreak:0, bestStreak:0, peakTier:'D', peakSStars:0, history:[]}}, settings:{dailyNewLimit:70,dailyReviewLimit:180,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:15,smartReview:true,newBatchFilter:'all',sectionFocus:'all',lowPowerMode:false}}; }
+  function defaultState(){ const now=Date.now(),bundled=DefaultWorkbook?.createBook?.({now}),second=DefaultBook2?.createBook?.({now}); const id=bundled?.id||uid('book'); return {schemaVersion:13, appVersion:APP_VERSION, createdAt:Date.now(), updatedAt:Date.now(), activeBookId:id, books:[bundled||{id,name:'SAT Main Book',createdAt:now,updatedAt:now,cards:[],batches:[]},second].filter(Boolean), daily:{}, achievements:{unlocked:{}, recent:[]}, profile:{installId:uid('install'), totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0}, flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false}, model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.50,shortTermSlipRate:.18,intervalScale:1.0,speedTrust:1.0,reviewUrgency:1.0,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0}}, account:{id:uid('acct'), name:'Flzsh', rank:{tier:'D', pips:0, sStars:0, matches:0, wins:0, losses:0, ties:0, overtime:0, winStreak:0, bestStreak:0, peakTier:'D', peakSStars:0, history:[]}}, settings:{dailyNewLimit:70,dailyReviewLimit:180,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:15,smartReview:true,newBatchFilter:'all',sectionFocus:'all',lowPowerMode:false}}; }
   function loadState(){
     try{
       const loaded=Storage.load(localStorage,{writerId:SAVE_WRITER_ID,legacyKeys:LEGACY_KEYS,defaultState,migrateState,now:()=>Date.now()});
@@ -1150,9 +1161,9 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function bindEvents(){
     ['click','keydown','input','change'].forEach(type=>document.addEventListener(type,guardStaleInteraction,true));
     els.reloadSaveConflictBtn?.addEventListener('click',()=>location.reload());
-    els.tabs.addEventListener('click',e=>{const b=e.target.closest('[data-view]'); if(b) showView(b.dataset.view);}); document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.go)));
+    els.tabs.addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(!b)return;if(b.dataset.view==='books')setBooksPane('library',false);showView(b.dataset.view);});document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.go==='books'&&b.dataset.booksPane==='import')openBooksImport();else{if(b.dataset.go==='books')setBooksPane('library',false);showView(b.dataset.go);}}));
     els.bookSelect.addEventListener('change',async()=>{if(!verifyWritableRevision()){hydrateInputs();return;}const stateBefore=cloneStateForRollback();cancelRankMatchForDataChange();state.activeBookId=els.bookSelect.value;if(!await saveState('switch-book'))return restoreFailedStateCommit(stateBefore,'Book switch');current=null;renderAll();selectNextCard(false);toast('Book switched',activeBook().name);});
-    els.pickNewBtn.addEventListener('click',openNewPicker); els.speakBtn.addEventListener('click',()=>speak(current?.card?.word||'')); els.buryBtn.addEventListener('click',buryCurrent); els.undoBtn.addEventListener('click',undoLast); els.forceOneBtn.addEventListener('click',forceOneNew);
+    els.pickNewBtn.addEventListener('click',openNewPicker);els.continueNextSetBtn?.addEventListener('click',()=>void continueFromWeakLoop()); els.speakBtn.addEventListener('click',()=>speak(current?.card?.word||'')); els.buryBtn.addEventListener('click',buryCurrent); els.undoBtn.addEventListener('click',undoLast); els.forceOneBtn.addEventListener('click',forceOneNew);
     els.showAnswerBtn.addEventListener('click',showAnswer); els.hintBtn.addEventListener('click',showHint); els.ratingDock.addEventListener('click',e=>{const b=e.target.closest('[data-rating]'); if(b) void rateCurrent(b.dataset.rating,'button');}); els.typeInput.addEventListener('input',()=>{});
     els.pauseNewBtn.addEventListener('click',()=>{const d=todayLog(); d.pauseNew=!d.pauseNew; saveState(); renderAll(); toast(d.pauseNew?'New paused':'New resumed', 'Today only.');}); els.boostReviewBtn.addEventListener('click',()=>{const d=todayLog(); d.boostReview=!d.boostReview; saveState(); renderAll(); toast(d.boostReview?'Review boost on':'Review boost off', d.boostReview?'Review cap temporarily doubled today.':'Back to normal cap.');}); els.batchPicker.addEventListener('change',()=>{state.settings.newBatchFilter=els.batchPicker.value; saveState(); renderAll(); selectNextCard(false);}); els.shuffleNewBtn.addEventListener('click',shuffleNewPick); els.newCardList.addEventListener('click',e=>{const b=e.target.closest('[data-new-card-id]'); if(b) chooseNewCard(b.dataset.newCardId);}); els.closePickerBtn.addEventListener('click',closeNewPicker); els.newPickerModal.addEventListener('click',e=>{if(e.target===els.newPickerModal) closeNewPicker();}); els.modalBatchPicker.addEventListener('change',()=>{state.settings.newBatchFilter=els.modalBatchPicker.value; saveState(); renderAll();}); els.modalPickerSearch.addEventListener('input',debounce(renderNewPicker,80)); els.modalNewCardList.addEventListener('click',e=>{const b=e.target.closest('[data-new-card-id]'); if(b) chooseNewCard(b.dataset.newCardId);});
     const renderImportPreviewDebounced=debounce(renderImportPreview,150);
@@ -1168,6 +1179,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
   function setupAttentionTracking(){
     const activity = (kind='activity') => {
+      if(kind==='pointer'&&lowPowerEnabled())return;
       const now=Date.now();
       if(cardTimer && !answerShown){
         cardTimer.activityCount=(cardTimer.activityCount||0)+1;
@@ -1213,6 +1225,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const enabled=lowPowerEnabled();
     document.body.classList.toggle('low-power',enabled);
     document.body.dataset.lowPower=enabled?'true':'false';
+    if(V44Runtime?.setLowPower)V44Runtime.setLowPower(enabled);else window.dispatchEvent(new CustomEvent('studio:low-power-change',{detail:{enabled}}));
     liquidMotionController?.setLowPower?.(enabled);
     const studyVisible=document.body.dataset.activeView==='study'||!document.body.dataset.activeView;
     if(memoryWorldMotionController){
@@ -2222,7 +2235,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const prompt=prompts[decoded.scope];if(!prompt)throw new TypeError('Unsupported transfer scope.');
     const approved=await confirmBox(prompt[0],prompt[1]);if(!approved)return false;
     if(decoded.scope==='words'){
-      els.importText.value=staged.data.text;els.batchName.value=sourceLabel.replace(/\.[^.]+$/,'').slice(0,80);renderImportPreview();showView('import');toast('Word list ready','Check the preview, then choose Import batch.');return true;
+      els.importText.value=staged.data.text;els.batchName.value=sourceLabel.replace(/\.[^.]+$/,'').slice(0,80);renderImportPreview();openBooksImport();toast('Word list ready','Check the preview, then choose Import batch.');return true;
     }
     if(!verifyWritableRevision('A newer save appeared while the transfer confirmation was open.'))return false;
     const stateBefore=cloneStateForRollback();cancelRankMatchForDataChange();
@@ -2314,7 +2327,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
   /* ================= V14 adaptive memory + Elo health arena overrides ================= */
   function defaultAdaptiveV14(){return {version:14,samples:0,accuracyEMA:.74,wrongEMA:.18,hintEMA:.08,latencyEMA:7.5,wrongLatencyEMA:5.5,afkEMA:.02,targetRetention:.89,intervalScale:1,calibrationScale:1,calibrationBias:0,weights:{bias:2.05,logGap:-2.28,difficulty:-.68,recentWrong:-.82,streak:.15,lapses:-.21,hint:-.66,latency:-.24,shortTerm:-.92,first:-.15},calibration:Array.from({length:10},()=>({n:0,hits:0})),rankAccuracyEMA:.62,rankLatencyEMA:6,rankStreakEMA:0};}
-  function defaultState(){const bundled=DefaultWorkbook?.createBook?.({now:Date.now()});const id=bundled?.id||uid('book');return {schemaVersion:16,appVersion:APP_VERSION,createdAt:Date.now(),updatedAt:Date.now(),activeBookId:id,sectionUnlocks:{},sectionRetirements:{},books:[bundled||{id,name:'SAT Main Book',createdAt:Date.now(),updatedAt:Date.now(),cards:[],batches:[]}],daily:{},achievements:{unlocked:{},recent:[],claimedRewards:{}},profile:{installId:uid('install'),totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0,trainingTokensEarned:0,upgradesPurchased:0,itemsUsed:0,perfectMatches:0,comebackWins:0},flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false},model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.5,shortTermSlipRate:.18,intervalScale:1,speedTrust:1,reviewUrgency:1,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0},adaptive:defaultAdaptiveV14(),studyClimate:Study.defaultClimateState()},account:{id:uid('acct'),name:'Flzsh',rank:{elo:850,peakElo:850,tier:'D',pips:0,sStars:0,matches:0,wins:0,losses:0,ties:0,overtime:0,winStreak:0,bestStreak:0,peakTier:'D',peakSStars:0,history:[]},progress:{trainingTokens:0,lifetimeTrainingTokens:0,selectedCharacter:'nova',unlockedCharacters:['nova'],upgrades:{vitality:0,regen:0,focus:0,wallet:0,arsenal:0},characterStats:{},battleItemsUsed:0}},settings:{dailyNewLimit:70,dailyReviewLimit:220,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:18,smartReview:true,newBatchFilter:'all',sectionFocus:'all',lowPowerMode:false}};}
+  function defaultState(){const now=Date.now(),bundled=DefaultWorkbook?.createBook?.({now}),second=DefaultBook2?.createBook?.({now});const id=bundled?.id||uid('book');return {schemaVersion:16,appVersion:APP_VERSION,createdAt:Date.now(),updatedAt:Date.now(),activeBookId:id,sectionUnlocks:{},sectionRetirements:{},books:[bundled||{id,name:'SAT Main Book',createdAt:now,updatedAt:now,cards:[],batches:[]},second].filter(Boolean),daily:{},achievements:{unlocked:{},recent:[],claimedRewards:{}},profile:{installId:uid('install'),totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0,trainingTokensEarned:0,upgradesPurchased:0,itemsUsed:0,perfectMatches:0,comebackWins:0},flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false},model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.5,shortTermSlipRate:.18,intervalScale:1,speedTrust:1,reviewUrgency:1,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0},adaptive:defaultAdaptiveV14(),studyClimate:Study.defaultClimateState()},account:{id:uid('acct'),name:'Flzsh',rank:{elo:850,peakElo:850,tier:'D',pips:0,sStars:0,matches:0,wins:0,losses:0,ties:0,overtime:0,winStreak:0,bestStreak:0,peakTier:'D',peakSStars:0,history:[]},progress:{trainingTokens:0,lifetimeTrainingTokens:0,selectedCharacter:'nova',unlockedCharacters:['nova'],upgrades:{vitality:0,regen:0,focus:0,wallet:0,arsenal:0},characterStats:{},battleItemsUsed:0}},settings:{dailyNewLimit:70,dailyReviewLimit:220,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:18,smartReview:true,newBatchFilter:'all',sectionFocus:'all',lowPowerMode:false}};}
   function legacyEloFromRank(r={}){const map={D:850,C:950,'C+':1050,B:1150,'B+':1250,A:1350,'A+':1450,S:1500};return clamp((map[r.tier]||850)+(r.tier==='S'?(Number(r.sStars)||0)*7:(Number(r.pips)||0)*22),600,2600);}
   function rankBandForElo(elo){elo=Number(elo||0);return V14_RANK_BANDS.find(x=>elo>=x.min&&elo<=x.max)||V14_RANK_BANDS[0];}
   function syncRankFromElo(r=state.account.rank){r.elo=clamp(Math.round(Number(r.elo)||legacyEloFromRank(r)),600,2800);const band=rankBandForElo(r.elo);r.tier=band.tier;r.pips=band.tier==='S'?0:clamp(Math.floor((r.elo-band.min)/Math.max(1,(band.max-band.min+1)/3)),0,2);r.sStars=band.tier==='S'?Math.max(0,Math.floor((r.elo-1500)/10)):0;r.peakElo=Math.max(Number(r.peakElo)||r.elo,r.elo);r.peakTier=rankBandForElo(r.peakElo).tier;r.peakSStars=Math.max(Number(r.peakSStars)||0,r.sStars||0);return band;}
@@ -2337,6 +2350,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     state.achievements.claimedRewards=state.achievements.claimedRewards||{};
     state.sectionUnlocks=state.sectionUnlocks&&typeof state.sectionUnlocks==='object'?state.sectionUnlocks:{};
     state.sectionRetirements=state.sectionRetirements&&typeof state.sectionRetirements==='object'?state.sectionRetirements:{};
+    state.continuedWeakCardIds=[...new Set([...(Array.isArray(state.continuedWeakCardIds)?state.continuedWeakCardIds:[]),...(Array.isArray(state.settings.carryoverWeakCardIds)?state.settings.carryoverWeakCardIds:[])].map(String).filter(Boolean))].slice(0,24);delete state.settings.carryoverWeakCardIds;
     state.daily=state.daily||{};
     state.account=Object.assign(def.account,state.account||{});
     state.account.rank=Object.assign(def.account.rank,state.account.rank||{});
@@ -2455,6 +2469,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
   function renderStudySectionStatus(summaries){
     if(!els.studySectionStatus)return;
+    queueMicrotask(()=>renderContinueNextSetControl());
     const focus=activeSectionFocus(summaries),batchId=selectedBatchId(),currentKey=current?.card?Learning.sectionKey(current.card):'';
     let section=summaries.find(entry=>entry.key===currentKey)||summaries.find(entry=>entry.key===focus);
     const visible=batchId==='all'?summaries:summaries.filter(entry=>entry.batchId===batchId);
@@ -2518,13 +2533,27 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     return Learning.filterForSection(pool,focus,state.sectionUnlocks||{}).sort((left,right)=>reviewUtility(right,now)-reviewUtility(left,now)).slice(0,24);
   }
   function shortTermRepairCards(now=Date.now()){
-    const summaries=refreshSectionState(),focus=activeSectionFocus(summaries),batchId=selectedBatchId();
-    const candidates=summaries.filter(section=>section.unlocked&&!section.retired&&section.introducedComplete&&!section.shortTermComplete&&(focus==='all'||section.key===focus)&&(batchId==='all'||section.batchId===batchId));
-    const section=candidates.sort((left,right)=>left.batchId.localeCompare(right.batchId)||left.index-right.index)[0];
-    if(!section)return[];
-    const sectionCards=activeCards().filter(card=>Learning.sectionKey(card)===section.key);
-    return V20StudyMemory.reinforcementCandidates(sectionCards,{now,recentCardIds:studyRecentCardIds,threshold:V20StudyMemory.SHORT_TERM_TARGET,longTermOf:getMemoryScore}).slice(0,24);
+    const scope=activeLibraryStudyScope(),allActive=activeCards(),threshold=V20StudyMemory.SHORT_TERM_TARGET;
+    const continuedIds=V44Runtime?.cleanContinuedWeakIds?.(state,allActive,libraryCardShortTerm,threshold)||[];
+    const continuedSet=new Set(continuedIds.map(String));
+    const continued=allActive.filter(card=>continuedSet.has(String(card.id)));
+    let base=[];
+    if(!libraryScopeAutomatic(scope)){
+      const summary=libraryScopeSnapshot(scope),scopeCards=Library.scopeCards(activeBook(),scope);
+      const scopeNeedsRepair=summary&&!summary.retired&&summary.total&&summary.introduced>=summary.total&&summary.shortTermAverage<threshold;
+      if(scopeNeedsRepair)base=scopeCards;
+    }else{
+      const summaries=refreshSectionState(),focus=activeSectionFocus(summaries),batchId=selectedBatchId();
+      const candidates=summaries.filter(section=>section.unlocked&&!section.retired&&section.introducedComplete&&!section.shortTermComplete&&(focus==='all'||section.key===focus)&&(batchId==='all'||section.batchId===batchId));
+      const section=candidates.sort((left,right)=>left.batchId.localeCompare(right.batchId)||left.index-right.index)[0];
+      if(section)base=allActive.filter(card=>Learning.sectionKey(card)===section.key);
+    }
+    const combined=[...new Map([...base,...continued].map(card=>[String(card.id),card])).values()]
+      .filter(card=>card&&!card.deleted&&card.state!=='known'&&card.state!=='suspended');
+    if(!combined.length)return[];
+    return V20StudyMemory.reinforcementCandidates(combined,{now,recentCardIds:studyRecentCardIds,threshold,longTermOf:getMemoryScore}).slice(0,24);
   }
+
   function buildBaseQueue(forceNew=false){
     const now=Date.now(),day=todayLog(),summary=counts(),focus=activeSectionFocus(),items=priorityReviewCards(now),selected=items.filter(entry=>entry.selected).map(entry=>entry.card),overflow=items.map(entry=>entry.card),news=filteredNewCards(''),repair=shortTermRepairCards(now),canNew=focus==='all'&&dailyNewRemaining()>0&&!day.pauseNew&&(!state.settings.protectBacklog||summary.dueAll<=Math.max(5,effectiveReviewLimit()*.9)||forceNew);
     if(forceNew&&canNew&&news.length)return[{card:news[0],kind:'new'}];
@@ -2616,7 +2645,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       }catch(_error){}
       undoSnapshot=previousUndoSnapshot;answerShown=false;hintCount=0;studyRatingInFlight=false;document.body.classList.remove('study-motion-active');studyController?.cancel();renderAll();renderCard();if(saveMeta.stale)notifySaveConflict();else if(saveMeta.lastFailure==='busy')toast('Save busy','Another tab is finishing a save. Try the rating again in a moment.');else toast('Rating not saved','Local storage is unavailable or full. Your previous saved progress remains active.');return;
     }
-    const handoff=takeSectionHandoff(),lastResult=recordProTutorSetResult({card:c,rating,responseSeconds:timing.seconds,hintCount,memoryBefore:before.longTerm,memoryAfter:after.longTerm,predictedRecall:result.predBefore,firstExposure:first,repsBefore,recentWrongBefore,kind,sectionKey});
+    const handoff=takeSectionHandoff(),lastResult=recordProTutorSetResult({card:c,rating,responseSeconds:timing.seconds,hintCount,memoryBefore:before.longTerm,memoryAfter:after.longTerm,predictedRecall:result.predBefore,firstExposure:first,repsBefore,recentWrongBefore,kind,sectionKey,pointerEvidence:{hesitationMs:timing.inactiveMs||0,movementEvents:timing.pointerMoves||0,keyEvents:timing.keyEvents||0,touchEvents:timing.touchEvents||0},attentionEvidence:{afk:timing.afk===true,hiddenMs:timing.hiddenMs||0,blurMs:timing.blurMs||0,backgroundMs:timing.backgroundMs||0,activeMs:timing.activeMs||0}});
     const continuation={handoff,lastResult,contextEpoch:dataContextEpoch,bookId:activeBook()?.id||'',ratedCardId:String(c.id)};
     proTutorDecisions.delete(c.id);
     if(transitionId!==studyTransitionId){document.body.classList.remove('study-motion-active');scheduleStudyBackgroundRender();const queued=queueCommittedStudyAdvance(continuation);studyRatingInFlight=false;if(queued&&document.body.dataset.activeView==='study')await resumeCommittedStudyAdvance();return;}
@@ -2760,7 +2789,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function createV16Runtime(){
     return window.V16RuntimeModule.createV16Runtime({
       getState:()=>state,getRankMatch:()=>rankMatch,setRankMatch:value=>{rankMatch=value;},getRankTimer:()=>rankTimer,setRankTimer:value=>{rankTimer=value;},els,achievements:ACHIEVEMENTS,appVersion:APP_VERSION,legacyCompetitiveFeatures:false,
-      helpers:{todayLog,toast,confirmBox,saveState,checkAchievements:()=>checkAchievements(),debounce,esc,escAttr,counts,totalCards,effectiveReviewLimit,backlogHeld,recordSessionMinutes,dailyNewRemaining,dailyReviewRemaining,todayKey,adaptiveModel,percent,renderHardWords,renderBookBars,renderDeck,cards,reviewUtility,predictRecall,shuffle,activeBook,applySmartRating,updateAdaptiveModel}
+      helpers:{todayLog,toast,confirmBox,saveState,checkAchievements:()=>checkAchievements(),debounce,esc,escAttr,counts,totalCards,effectiveReviewLimit,backlogHeld,recordSessionMinutes,dailyNewRemaining,dailyReviewRemaining,todayKey,adaptiveModel,memoryCalibration,calibrationView:()=>V44Runtime.calibrationView(memoryCalibration(),Learning),effectiveShortTerm:card=>V20StudyMemory.effectiveShortTerm(card,Date.now(),getMemoryScore(card)),percent,renderHardWords,renderBookBars,renderDeck,cards,reviewUtility,predictRecall,shuffle,activeBook,applySmartRating,updateAdaptiveModel}
     });
   }
 
@@ -2927,7 +2956,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     Object.assign(els,{
       studyCard:document.querySelector('#view-study .study-card'),studyCardFace:$('studyCardFace'),studyMetadata:$('studyMetadata'),
       usabilityRail:$('usabilityRail'),usabilityRailLiquid:$('usabilityRailLiquid'),usabilityRailMarker:$('usabilityRailMarker'),longTermSphere:$('longTermSphere'),longTermWordValue:$('longTermWordValue'),longTermSectionValue:$('longTermSectionValue'),longTermAverageBadge:$('longTermAverageBadge'),memoryWorldStageLabel:$('memoryWorldStageLabel'),
-      proTutorChip:$('proTutorChip'),proTutorBtn:$('proTutorBtn'),
+      proTutorChip:$('proTutorChip'),proTutorBtn:$('proTutorBtn'),continueNextSetBtn:$('continueNextSetBtn'),
       proSetReviewPage:$('proSetReviewPage'),proSetReviewStatus:$('proSetReviewStatus'),proSetReviewTitle:$('proSetReviewTitle'),proSetReviewSummary:$('proSetReviewSummary'),proSetReviewSource:$('proSetReviewSource'),proSetReviewLessons:$('proSetReviewLessons'),proSetReviewProgress:$('proSetReviewProgress'),proSetReviewCard:$('proSetReviewCard'),proSetReviewFeedback:$('proSetReviewFeedback'),proSetFinalRecall:$('proSetFinalRecall'),proSetReviewNote:$('proSetReviewNote'),proSetReviewRetryBtn:$('proSetReviewRetryBtn'),proSetReviewPrevBtn:$('proSetReviewPrevBtn'),proSetReviewAltBtn:$('proSetReviewAltBtn'),proSetReviewTestBtn:$('proSetReviewTestBtn'),proSetReviewContinueBtn:$('proSetReviewContinueBtn'),
       lowPowerMode:$('lowPowerMode'),proTutorEnabled:$('proTutorEnabled'),proTutorMode:$('proTutorMode'),proTutorThreshold:$('proTutorThreshold'),proTutorThresholdValue:$('proTutorThresholdValue'),proTutorThresholdHelp:$('proTutorThresholdHelp'),proTutorModel:$('proTutorModel'),proTutorShareSemantic:$('proTutorShareSemantic'),proTutorDailyTokenLimit:$('proTutorDailyTokenLimit'),proTutorDailyCostLimit:$('proTutorDailyCostLimit'),proTutorConnectBtn:$('proTutorConnectBtn'),proTutorKeyInput:$('proTutorKeyInput'),proTutorSaveKeyBtn:$('proTutorSaveKeyBtn'),proTutorTestBtn:$('proTutorTestBtn'),proTutorDisconnectBtn:$('proTutorDisconnectBtn'),proTutorConnectionStatus:$('proTutorConnectionStatus'),proTutorDiagnostics:$('proTutorDiagnostics')
     });
@@ -2959,7 +2988,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function proTutorAppUrl(){try{const url=new URL(location.href);for(const key of ['code','error','error_description','vcs_openrouter'])url.searchParams.delete(key);return url.toString();}catch(_error){return '';}}
   function rebuildProTutorClient(){
     if(!ProTutor||typeof fetch!=='function'){proTutorClient=null;return null;}
-    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio Beta v43'});return proTutorClient;
+    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio V44'});return proTutorClient;
   }
 
   function friendlyProTutorError(error){
@@ -3090,7 +3119,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function isProTutorTargetRating(rating){return rating==='wrong'||rating==='partial';}
   function isProTutorAnchorRating(rating){return rating==='correct'||rating==='know';}
   function recordProTutorSetResult(context={}){
-    const card=context.card;if(!card)return null;const rating=String(context.rating||'wrong').toLowerCase(),entry={bookId:activeBook()?.id||'',card:{...card,history:Array.isArray(card.history)?card.history.slice(-8).map(item=>({...item})):[]},rating,responseSeconds:Number(context.responseSeconds)||0,hintCount:Number(context.hintCount)||0,memoryBefore:Number(context.memoryBefore)||0,memoryAfter:Number(context.memoryAfter)||0,predictedRecall:clamp(Number(context.predictedRecall)||0,0,1),firstExposure:context.firstExposure===true,repsBefore:Math.max(0,Number(context.repsBefore)||0),recentWrongBefore:Math.max(0,Number(context.recentWrongBefore)||0),manualRequest:context.manualRequest===true,kind:String(context.kind||'review'),sectionKey:context.sectionKey||Learning.sectionKey(card),recordedAt:Date.now()};
+    const card=context.card;if(!card)return null;const rating=String(context.rating||'wrong').toLowerCase(),entry={bookId:activeBook()?.id||'',card:{...card,history:Array.isArray(card.history)?card.history.slice(-12).map(item=>({...item})):[]},rating,responseSeconds:Number(context.responseSeconds)||0,hintCount:Number(context.hintCount)||0,memoryBefore:Number(context.memoryBefore)||0,memoryAfter:Number(context.memoryAfter)||0,predictedRecall:clamp(Number(context.predictedRecall)||0,0,1),firstExposure:context.firstExposure===true,repsBefore:Math.max(0,Number(context.repsBefore)||0),recentWrongBefore:Math.max(0,Number(context.recentWrongBefore)||0),pointerEvidence:context.pointerEvidence&&typeof context.pointerEvidence==='object'?{...context.pointerEvidence}:{},attentionEvidence:context.attentionEvidence&&typeof context.attentionEvidence==='object'?{...context.attentionEvidence}:{},dailyEvidence:{day:V44Runtime?.localDayKey?.(Date.now())||todayKey(),shortTerm:Number(card.shortTermMastery)||0,independentToday:(Array.isArray(card.history)?card.history:[]).filter(item=>V44Runtime?.localDayKey?.(item.time)===V44Runtime?.localDayKey?.(Date.now())&&Number(item.hints||0)===0).length},calibration:Learning.calibrationSummary(memoryCalibration()),manualRequest:context.manualRequest===true,kind:String(context.kind||'review'),sectionKey:context.sectionKey||Learning.sectionKey(card),recordedAt:Date.now()};
     if(isProTutorTargetRating(rating)||isProTutorAnchorRating(rating))proTutorSetBuffer.push(entry);if(proTutorSetBuffer.length>120)proTutorSetBuffer=proTutorSetBuffer.slice(-120);return entry;
   }
   function removeProTutorSetEntries(entries){const selected=new Set(entries);proTutorSetBuffer=proTutorSetBuffer.filter(entry=>!selected.has(entry));}
@@ -3300,19 +3329,22 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
   async function requestProTutorForCurrent(){
     if(pendingProTutorSetReview||proTutorPending.size>0)return toast('Tutor request in progress','Wait for the current review request to finish.');if(!verifyWritableRevision('Study data changed before the tutor request could start.'))return;const card=current?.card;if(!card)return toast('No card selected','Start or select a flashcard first.');if(!proTutorSettings().enabled){showView('settings');toast('Enable Pro Tutor first','Choose Shadow, Hybrid, or Immersive in Settings.');return;}if(!isProTutorConnected()){showView('settings');toast('Connect OpenRouter first','Use OAuth or a session-only API key.');return;}const budget=proTutorBudgetPreview();if(!budget.allowed)return toast(proTutorStorageBlocked?'Pro Tutor paused':'Pro Tutor budget reached',proTutorStorageBlocked?'Reload after local storage is available; normal flashcards still work.':'Normal flashcards remain available.');
-    const manualEntry={bookId:activeBook()?.id||'',card:{...card,history:Array.isArray(card.history)?card.history.slice(-8).map(item=>({...item})):[]},rating:'partial',responseSeconds:recallTiming().seconds,hintCount,memoryBefore:getMemoryScore(card),memoryAfter:getMemoryScore(card),predictedRecall:predictRecall(card,Date.now()),firstExposure:!card.introducedAt,repsBefore:Number(card.reps)||0,recentWrongBefore:recentWrongCount(card,5),manualRequest:true,kind:'manual',sectionKey:Learning.sectionKey(card),recordedAt:Date.now()};openProTutorSetReview({entries:[manualEntry],kind:'manual'});
+    const timing=recallTiming(),manualEntry={bookId:activeBook()?.id||'',card:{...card,history:Array.isArray(card.history)?card.history.slice(-12).map(item=>({...item})):[]},rating:'partial',responseSeconds:timing.seconds,hintCount,memoryBefore:getMemoryScore(card),memoryAfter:getMemoryScore(card),predictedRecall:predictRecall(card,Date.now()),firstExposure:!card.introducedAt,repsBefore:Number(card.reps)||0,recentWrongBefore:recentWrongCount(card,5),pointerEvidence:{hesitationMs:timing.inactiveMs||0,movementEvents:timing.pointerMoves||0,keyEvents:timing.keyEvents||0,touchEvents:timing.touchEvents||0},attentionEvidence:{afk:timing.afk===true,hiddenMs:timing.hiddenMs||0,blurMs:timing.blurMs||0,backgroundMs:timing.backgroundMs||0,activeMs:timing.activeMs||0},manualRequest:true,kind:'manual',sectionKey:Learning.sectionKey(card),recordedAt:Date.now()};openProTutorSetReview({entries:[manualEntry],kind:'manual'});
   }
   function applyProTutorQueue(queue){return Array.isArray(queue)?queue:[];}
 
   function normalizeState(){
     const before=stateFingerprint();
     DefaultWorkbook?.ensureInState?.(state,{now:Date.now()});
+    DefaultBook2?.ensureInState?.(state,{now:Date.now()});
     normalizeV14State();
+    V44Runtime?.ensureState?.(state,{now:Date.now(),book2:DefaultBook2,learning:Learning});
     normalizeProTutorState();
     state.sectionUnlocks=state.sectionUnlocks&&typeof state.sectionUnlocks==='object'?state.sectionUnlocks:{};
     state.sectionRetirements=state.sectionRetirements&&typeof state.sectionRetirements==='object'?state.sectionRetirements:{};
     state.profile.studyClimate=Study.migrateClimateState(state.profile.studyClimate);
     if(v16Runtime)v16Runtime.normalizeState();
+    state.schemaVersion=44;
     return stateFingerprint()!==before;
   }
 
@@ -3323,6 +3355,17 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const librarySelectedWordIds=new Set();
   let libraryEventsBound=false;
 
+
+  let booksPane='library';
+  function setBooksPane(pane='library',focus=false){
+    booksPane=pane==='import'?'import':'library';
+    document.querySelectorAll('[data-books-pane]').forEach(button=>{const active=button.dataset.booksPane===booksPane;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));if(active&&focus)button.focus({preventScroll:true});});
+    document.querySelectorAll('[data-books-panel]').forEach(panel=>{const active=panel.dataset.booksPanel===booksPane;panel.classList.toggle('active',active);panel.hidden=!active;});
+    document.body.dataset.booksPane=booksPane;
+    if(booksPane==='import')renderImportPreview();else renderBooks();
+    return booksPane;
+  }
+  function openBooksImport(){booksPane='import';showView('books');setBooksPane('import',false);}
 
   function setLibraryBuilderMode(mode,focus=true){
     const allowed=new Set(['range','select','divide','sets']);libraryBuilderMode=allowed.has(String(mode))?String(mode):'range';
@@ -3487,6 +3530,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
   function bindLibraryEvents(){
     if(libraryEventsBound)return;libraryEventsBound=true;
+    document.querySelector('.v44-books-mode-tabs')?.addEventListener('click',event=>{const button=event.target.closest('[data-books-pane]');if(button)setBooksPane(button.dataset.booksPane,true);});
     const root=$('libraryOrganizer');if(!root)return;
     root.addEventListener('click',event=>{const mode=event.target.closest('[data-library-builder-mode]');if(mode){setLibraryBuilderMode(mode.dataset.libraryBuilderMode,false);mode.focus({preventScroll:true});return;}const control=event.target.closest('[data-library-action]');if(!control)return;const action=control.dataset.libraryAction;if(action?.startsWith('toggle-'))return;libraryAction(action,control.dataset.id,event);});
     root.addEventListener('keydown',event=>{const tab=event.target.closest('[data-library-builder-mode]');if(!tab)return;const tabs=[...root.querySelectorAll('[data-library-builder-mode]')],current=tabs.indexOf(tab);let next=current;if(event.key==='ArrowRight')next=(current+1)%tabs.length;else if(event.key==='ArrowLeft')next=(current-1+tabs.length)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();const target=tabs[next];setLibraryBuilderMode(target.dataset.libraryBuilderMode,false);target.focus({preventScroll:true});});
@@ -3539,6 +3583,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
   function renderStudySectionStatus(summaries){
     if(!els.studySectionStatus)return;
+    queueMicrotask(()=>renderContinueNextSetControl());
     const scope=activeLibraryStudyScope();
     if(!libraryScopeAutomatic(scope)){
       const summary=libraryScopeSnapshot(scope),kind=scope.type==='set'?'Set':scope.type==='chapter'?'Chapter':'Selection';
@@ -3596,13 +3641,27 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     return pool.sort((left,right)=>reviewUtility(right,now)-reviewUtility(left,now)).slice(0,24);
   }
   function shortTermRepairCards(now=Date.now()){
-    const scope=activeLibraryStudyScope();
+    const scope=activeLibraryStudyScope(),allActive=activeCards(),threshold=V20StudyMemory.SHORT_TERM_TARGET;
+    const continuedIds=V44Runtime?.cleanContinuedWeakIds?.(state,allActive,libraryCardShortTerm,threshold)||[];
+    const continuedSet=new Set(continuedIds.map(String));
+    const continued=allActive.filter(card=>continuedSet.has(String(card.id)));
+    let base=[];
     if(!libraryScopeAutomatic(scope)){
-      const summary=libraryScopeSnapshot(scope);if(!summary||summary.retired||!summary.total||summary.introduced<summary.total||summary.shortTermAverage>=V20StudyMemory.SHORT_TERM_TARGET)return[];
-      return V20StudyMemory.reinforcementCandidates(Library.scopeCards(activeBook(),scope).filter(card=>card.state!=='known'&&card.state!=='suspended'),{now,recentCardIds:studyRecentCardIds,threshold:V20StudyMemory.SHORT_TERM_TARGET,longTermOf:getMemoryScore}).slice(0,24);
+      const summary=libraryScopeSnapshot(scope),scopeCards=Library.scopeCards(activeBook(),scope);
+      const scopeNeedsRepair=summary&&!summary.retired&&summary.total&&summary.introduced>=summary.total&&summary.shortTermAverage<threshold;
+      if(scopeNeedsRepair)base=scopeCards;
+    }else{
+      const summaries=refreshSectionState(),focus=activeSectionFocus(summaries),batchId=selectedBatchId();
+      const candidates=summaries.filter(section=>section.unlocked&&!section.retired&&section.introducedComplete&&!section.shortTermComplete&&(focus==='all'||section.key===focus)&&(batchId==='all'||section.batchId===batchId));
+      const section=candidates.sort((left,right)=>left.batchId.localeCompare(right.batchId)||left.index-right.index)[0];
+      if(section)base=allActive.filter(card=>Learning.sectionKey(card)===section.key);
     }
-    const summaries=refreshSectionState(),focus=activeSectionFocus(summaries),batchId=selectedBatchId(),candidates=summaries.filter(section=>section.unlocked&&!section.retired&&section.introducedComplete&&!section.shortTermComplete&&(focus==='all'||section.key===focus)&&(batchId==='all'||section.batchId===batchId)),section=candidates.sort((left,right)=>left.batchId.localeCompare(right.batchId)||left.index-right.index)[0];if(!section)return[];const sectionCards=activeCards().filter(card=>Learning.sectionKey(card)===section.key);return V20StudyMemory.reinforcementCandidates(sectionCards,{now,recentCardIds:studyRecentCardIds,threshold:V20StudyMemory.SHORT_TERM_TARGET,longTermOf:getMemoryScore}).slice(0,24);
+    const combined=[...new Map([...base,...continued].map(card=>[String(card.id),card])).values()]
+      .filter(card=>card&&!card.deleted&&card.state!=='known'&&card.state!=='suspended');
+    if(!combined.length)return[];
+    return V20StudyMemory.reinforcementCandidates(combined,{now,recentCardIds:studyRecentCardIds,threshold,longTermOf:getMemoryScore}).slice(0,24);
   }
+
   function buildBaseQueue(forceNew=false,queueOptions={}){
     const now=Date.now(),day=todayLog(),summary=counts(),scope=activeLibraryStudyScope(),focus=libraryScopeAutomatic(scope)?activeSectionFocus():'library-active',items=priorityReviewCards(now),selected=items.filter(entry=>entry.selected).map(entry=>entry.card),overflow=items.map(entry=>entry.card),news=filteredNewCards(''),repair=shortTermRepairCards(now),scopeDuePressure=libraryScopeAutomatic(scope)?summary.dueAll:items.length,canNew=(libraryScopeAutomatic(scope)?focus==='all':true)&&dailyNewRemaining()>0&&!day.pauseNew&&(!state.settings.protectBacklog||scopeDuePressure<=Math.max(5,effectiveReviewLimit()*.9)||forceNew),suppressEarlyExpansion=queueOptions.allowEmptyNormalBridge===false;
     if(suppressEarlyExpansion&&!selected.length&&!overflow.length&&!(canNew&&news.length))return[];
@@ -3644,6 +3703,35 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     }
     const sectionKey=Learning.sectionKey(card),sectionMemory=V20StudyMemory.sectionSnapshot(cards(),sectionKey,Learning.sectionKey,{now,longTermOf:getMemoryScore}),sectionRetired=Object.prototype.hasOwnProperty.call(state.sectionRetirements||{},sectionKey),shortTerm=clamp(Number(cardMemory.shortTerm),0,100),sectionShortTerm=clamp(Number(sectionMemory.shortTermAverage),0,100),sectionLongTerm=clamp(Number(sectionMemory.displayLongTermAverage??sectionMemory.longTermAverage),0,100);return{word:shortTerm,section:sectionShortTerm,shortTerm,sectionShortTerm,usability:clamp(Number(cardMemory.usability),0,100),usabilityMeasured:cardMemory.usabilityMeasured===true,usabilityLabel:cardMemory.usabilityLabel,longTerm:clamp(Number(cardMemory.longTerm),0,100),sectionLongTerm,sectionKey,sectionReady:Boolean(sectionMemory.shortTermReady),sectionRetired,longTermObserved:Number(sectionMemory.longTermObserved||0),longTermCoverage:clamp(Number(sectionMemory.longTermCoverage||0),0,1)};
   }
+  function weakLoopContinuationContext(){
+    const scope=activeLibraryStudyScope(),now=Date.now();
+    if(!libraryScopeAutomatic(scope)&&scope.type==='set'){
+      const book=activeBook(),set=book.organization.sets.find(item=>item.id===scope.id);if(!set)return null;
+      const cardsInSet=Library.scopeCards(book,scope),decision=V20StudyMemory.sectionContinuationDecision(cardsInSet,{now,recentCardIds:studyRecentCardIds,repeatThreshold:2,maxWeakLoop:5});
+      const siblings=book.organization.sets.filter(item=>(item.chapterId||null)===(set.chapterId||null)).sort((a,b)=>a.order-b.order),next=siblings[siblings.findIndex(item=>item.id===set.id)+1];
+      return decision.eligible&&next?{scope,set,next,decision,automatic:false}:null;
+    }
+    if(libraryScopeAutomatic(scope)){
+      const summaries=refreshSectionState(),currentKey=current?.card?Learning.sectionKey(current.card):'',section=summaries.find(item=>item.key===currentKey)||summaries.find(item=>item.unlocked&&!item.retired&&!item.shortTermComplete);if(!section)return null;
+      const sectionCards=activeCards().filter(card=>Learning.sectionKey(card)===section.key),decision=V20StudyMemory.sectionContinuationDecision(sectionCards,{now,recentCardIds:studyRecentCardIds,repeatThreshold:2,maxWeakLoop:5}),next=summaries.find(item=>item.batchId===section.batchId&&item.index===section.index+1);
+      return decision.eligible&&next?{section,next,decision,automatic:true}:null;
+    }
+    return null;
+  }
+  function renderContinueNextSetControl(){
+    if(!els.continueNextSetBtn)return null;const context=weakLoopContinuationContext();els.continueNextSetBtn.hidden=!context;els.continueNextSetBtn.disabled=!context;els.continueNextSetBtn.textContent=context?'Continue':'Continue';els.continueNextSetBtn.title=context?`Begin the next set and keep ${context.decision.weakCount} weak word${context.decision.weakCount===1?'':'s'} in review.`:'';return context;
+  }
+  async function continueFromWeakLoop(){
+    const context=weakLoopContinuationContext();if(!context)return toast('Keep reviewing','Continue becomes available when only a small repeated weak group remains.');
+    if(!verifyWritableRevision('Study data changed before the next set could be selected.'))return;
+    const before=cloneStateForRollback();V44Runtime?.markContinuedWeak?.(state,context.decision.weakCardIds);state.continuedWeakCardIds=(state.continuedWeakCardIds||[]).slice(0,24);
+    if(context.automatic){state.sectionUnlocks[context.next.key]=Date.now();state.settings.sectionFocus=context.next.key;}
+    else Library.setActiveScope(activeBook(),{type:'set',id:context.next.id,includeOutsideReviews:true});
+    current=null;answerShown=false;hintCount=0;
+    if(!await saveState('continue-weak-loop',true,true)){state=before;hydrateInputs();renderAll();return toast('Continue not saved','The current set remains active.');}
+    renderAll();selectNextCard(false);toast('Next set started',`${context.decision.weakCount} weak word${context.decision.weakCount===1?' remains':'s remain'} in review.`);
+  }
+
   async function waitForStudyAdvanceSaveIdle(){
     if(!pendingStateTransaction&&pendingSaveCount<=0)return !saveMeta.stale;
     const stateAtWait=state,pending=pendingStateTransaction?.promise||saveQueue,committed=await pending.catch(()=>false);
@@ -3672,7 +3760,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function init(){
     const beforeNormalize=stateFingerprint();
     syncShellScrollbarEdge();window.addEventListener('resize',debounce(syncShellScrollbarEdge,80),{passive:true});
-    hydrateV14Els();hydrateV16Els();hydrateV17Els();hydrateV20Els();normalizeState();applyLowPowerMode();initLiquidMemoryMotion();applyLowPowerMode();v16Runtime=createV16Runtime();v16Runtime.normalizeState();
+    hydrateV14Els();hydrateV16Els();hydrateV17Els();hydrateV20Els();normalizeState();applyLowPowerMode();initLiquidMemoryMotion();applyLowPowerMode();v16Runtime=createV16Runtime();v16Runtime.normalizeState();state.schemaVersion=44;
     const normalizationChanged=beforeNormalize!==stateFingerprint();
     if(saveMeta.needsInitialSave||normalizationChanged)saveState(saveMeta.needsInitialSave?'initial-normalize':'normalize-v20',true);
     else{setSaveConflictState(saveMeta.stale===true);setSavePill(saveMeta.stale?'warn':'saved',saveMeta.stale?'Newer save detected':'Saved');}
@@ -3688,7 +3776,8 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
   function showView(name){
     syncShellScrollbarEdge();
-    const supportedViews=new Set(['study','import','planner','books','stats','settings','more']);
+    if(name==='import'){booksPane='import';name='books';}
+    const supportedViews=new Set(['study','planner','books','stats','settings','more']);
     if(!supportedViews.has(name))name='study';
     const outgoingView=document.querySelector('.view.active'),focusedInOutgoing=!!(outgoingView&&outgoingView.id!=='view-'+name&&outgoingView.contains(document.activeElement));
     if(name!=='study')invalidateStudyTransition();
@@ -3700,7 +3789,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(window.matchMedia&&window.matchMedia('(max-width:720px)').matches){const appRoot=document.querySelector('.app');if(appRoot)appRoot.scrollTop=0;}
     requestAnimationFrame(()=>{updateTabIndicator();if(focusedInOutgoing)active?.focus({preventScroll:true});});
     if(name==='study'){if(pendingCommittedStudyAdvance?.retryOnUser)delete pendingCommittedStudyAdvance.retryOnUser;renderSide();void resumeCommittedStudyAdvance();}
-    if(name==='stats')renderStats();if(name==='books')renderBooks();if(name==='planner')renderPlanner();if(name==='import')renderImportPreview();if(name==='settings'){renderTransferCenter();renderProTutorSettings();updateSaveHealth();}
+    if(name==='stats')renderStats();if(name==='books')setBooksPane(booksPane,false);if(name==='planner')renderPlanner();if(name==='settings'){renderTransferCenter();renderProTutorSettings();updateSaveHealth();}
     refreshV18AmbientForView(name);
     window.V19UI?.setView(name);
     v16Runtime?.activateView(name);
@@ -3715,7 +3804,6 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     else if(view==='stats')renderStats();
     else if(view==='books')renderBooks();
     else if(view==='planner')renderPlanner();
-    else if(view==='import')renderImportPreview();
     else if(view==='settings'){renderTransferCenter();renderProTutorSettings();updateSaveHealth();}
     window.V19UI?.refresh();
   }
@@ -3735,7 +3823,26 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const snapshot=reviewUiSnapshot(),status=reviewStripStatus(snapshot);
     els.todayStrip.innerHTML=`<span class="pill cool">${todayKey()}</span><span class="pill ${dailyNewRemaining()?'ok':'warn'}">New ${dailyNewRemaining()}</span><span class="pill ${snapshot.dueNow?'hot':'cool'}">Due ${snapshot.dueNow}</span><span class="pill ${status.className}">${status.label} ${snapshot.queueCount}</span>`;
   }
-  function renderStats(){if(v16Runtime)v16Runtime.renderStats();}
+  function renderStats(){
+    if(!els.statGrid)return;
+    const now=Date.now(),c=counts(),d=todayLog(),introduced=activeCards().filter(card=>card.introducedAt||card.studySeenAt||card.studyReviews),due=allDueReviewItems(now).length;
+    const shortAverage=introduced.length?Math.round(introduced.reduce((sum,card)=>sum+clamp(Number(V20StudyMemory.cardSnapshot(card,now,getMemoryScore(card)).shortTerm),0,100),0)/introduced.length):0;
+    const longAverage=introduced.length?Math.round(introduced.reduce((sum,card)=>sum+getMemoryScore(card),0)/introduced.length):0;
+    const calibration=V44Runtime.calibrationView(memoryCalibration(),Learning);
+    const calibrationBar=calibration.samples?clamp(Number(calibration.observedPercent)||0,0,100):0;
+    const items=[
+      ['Book cards',c.total,percent(c.total,Math.max(1,state.settings.targetTotal)),`${c.active} active · ${c.known} known`],
+      ['Learned',c.learned,percent(c.learned,Math.max(1,c.active)),`${c.unseen} unseen`],
+      ['Due now',due,percent(Math.min(due,effectiveReviewLimit()),Math.max(1,effectiveReviewLimit())),`${Math.max(0,due-dailyReviewRemaining())} beyond remaining cap`],
+      ['New today',d.newIntroduced,percent(d.newIntroduced,Math.max(1,state.settings.dailyNewLimit)),`${dailyNewRemaining()} left`],
+      ['Reviews today',d.reviewsDone,percent(d.reviewsDone,Math.max(1,effectiveReviewLimit())),`${dailyReviewRemaining()} left`],
+      ['Short-term',`${shortAverage}%`,shortAverage,`${introduced.length} observed words`],
+      ['Long-term',`${longAverage}%`,longAverage,`${c.longTerm} at 30+ days`],
+      ['Recall calibration',calibration.display,calibrationBar,calibration.detail]
+    ];
+    els.statGrid.innerHTML=items.map(([label,value,bar,detail])=>`<div class="stat"><div class="num">${esc(value)}</div><div class="label">${esc(label)}</div><div class="statbar"><span style="width:${clamp(Number(bar)||0,0,100)}%"></span></div><div class="tiny">${esc(detail)}</div></div>`).join('');
+    renderHardWords();renderBookBars();renderDeck();
+  }
   function renderAchievements(){if(v16Runtime)v16Runtime.renderAchievements();}
   function renderRanked(){if(v16Runtime)v16Runtime.renderRanked();}
   function rankCards(){return v16Runtime?v16Runtime.rankCards():[];}
@@ -3820,7 +3927,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
     navigator.serviceWorker.register(`./sw.js?v=${encodeURIComponent(APP_VERSION)}`,{updateViaCache:'none'}).then(reg=>{
       reg.update().catch(()=>{});
-      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V20 Beta v43 cache ready');});
+      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V20 V44 cache ready');});
     }).catch(()=>{});
   }
 
@@ -3828,6 +3935,6 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
 })();
 </script>
-<script src="./studio-workspace.js?v=43.0.0-beta-studio.16"></script>
+<script src="./studio-workspace.js?v=44.0.0-beta-studio.19"></script>
 </body>
 </html>

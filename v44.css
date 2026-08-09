@@ -1,0 +1,21 @@
+/* Vocab Curve Studio V44 */
+.v44-books-mode-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:0 0 12px;padding:5px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.55)}
+.v44-books-mode-tabs button{min-height:42px;border:0;border-radius:14px;background:transparent;color:var(--muted);font-weight:900;cursor:pointer}
+.v44-books-mode-tabs button.active{background:rgba(255,255,255,.92);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(109,93,252,.14)}
+.v44-books-pane[hidden]{display:none!important}.v44-books-pane.active{display:block}.v44-books-import-grid{margin:0}
+.study-continue-chip{border:1px solid rgba(109,93,252,.24);border-radius:999px;padding:6px 11px;background:linear-gradient(135deg,rgba(109,93,252,.12),rgba(16,166,200,.12));color:#4d3db7;font-weight:950;cursor:pointer;white-space:nowrap}
+.study-continue-chip[hidden]{display:none!important}.study-continue-chip:hover{background:linear-gradient(135deg,rgba(109,93,252,.18),rgba(16,166,200,.16))}
+.v44-calibration-learning{font-size:.82em;color:var(--muted)}
+
+/* Low Power is intentionally aggressive: all essential controls remain functional while continuous paint work stops. */
+body[data-low-power="true"] *,body[data-low-power="true"] *::before,body[data-low-power="true"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+body[data-low-power="true"] :is(.panel,.topbar,.study-card,.section,.v19-study-side,.v20-library-workspace,.pro-set-review-page){backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;box-shadow:none!important}
+body[data-low-power="true"] .ambient,body[data-low-power="true"] .v17-atmosphere,body[data-low-power="true"] .v17-rail-bubble,body[data-low-power="true"] .memory-world-orbit,body[data-low-power="true"] [data-memory-world-body]{display:none!important}
+body[data-low-power="true"] .view:not(.active){content-visibility:hidden!important}
+body[data-low-power="true"] .tab-indicator{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}
+
+@media(max-width:720px){
+  .v44-books-mode-tabs{position:sticky;top:0;z-index:5;background:rgba(248,250,255,.94)}
+  .v44-books-import-grid{grid-template-columns:1fr!important}
+  .study-continue-chip{max-width:105px;overflow:hidden;text-overflow:ellipsis}
+}

@@ -1,4 +1,4 @@
-// Studio Workspace v43.0.0-beta-studio.16
+// Studio Workspace v44.0.0-beta-studio.19
 (function (root, factory) {
   'use strict';
   var api = factory(root);
@@ -581,6 +581,13 @@
       if (!nextOpen && settings.returnFocus && toggleUsable() && typeof toggle.focus === 'function') toggle.focus();
     }
 
+    function handleLowPowerChange(event) {
+      var enabled = Boolean(event && event.detail && event.detail.enabled);
+      if (enabled) stopInspectorAt(inspectorTarget);
+      else if (Math.abs(inspectorSpring.value - inspectorTarget) > 0.0005 && !inspectorFrame) inspectorFrame = requestFrame(inspectorTick);
+    }
+    if (typeof windowRef.addEventListener === 'function') windowRef.addEventListener('studio:low-power-change', handleLowPowerChange);
+
     function toggleInspector() {
       var open = Boolean(body.classList && body.classList.contains('mac-inspector-open'));
       setInspector(!open, { focusPanel: !open });
@@ -651,7 +658,7 @@
     function syncTabs(view) {
       syncNavPortal();
       if (!tabs || typeof tabs.querySelectorAll !== 'function') return;
-      var destination = isPhone() ? (view === 'study' ? 'study' : view === 'import' ? 'import' : 'more') : view;
+      var destination = isPhone() ? (view === 'study' ? 'study' : view === 'books' ? 'books' : 'more') : view;
       setAttributeIfChanged(tabs, 'data-mac-destination', destination);
       var tabList = tabs.querySelectorAll('.tab');
       if (!tabList || typeof tabList.forEach !== 'function') return;
@@ -1319,6 +1326,16 @@
       syncSharedControls();
     }
 
+    function lowPowerChange() {
+      if (isLowPower()) {
+        stopInspectorAt(inspectorTarget);
+        clearPress();
+        closeActiveLibraryMenu();
+        closeActiveSelect();
+      }
+      queueUpdate();
+    }
+
     function resize() {
       var nextViewportMode = viewportMode();
       ensureToggle();
@@ -1338,6 +1355,7 @@
       documentRef.addEventListener('pointerdown', press, { passive: true });
       documentRef.addEventListener('click', dismissAfterAction);
       documentRef.addEventListener('studio:controls-sync', controlsSync);
+      documentRef.addEventListener('studio:low-power-change', lowPowerChange);
       documentRef.addEventListener('pointerup', clearPress, { passive: true });
       documentRef.addEventListener('pointercancel', clearPress, { passive: true });
       documentRef.addEventListener('pointerleave', clearPress, { passive: true });

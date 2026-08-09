@@ -1,30 +1,24 @@
-# Vocab Curve Studio Beta v43
+# Vocab Curve Studio V44 — Bridge Edition
 
-Local-first adaptive vocabulary practice that spaces reviews, protects progress, and works offline.
-
-![Release](https://img.shields.io/badge/release-Beta%20v43-6d5dfc)
-![Storage](https://img.shields.io/badge/storage-local--first-168257)
-![PWA](https://img.shields.io/badge/PWA-offline--ready-2457d6)
-
-[Open the live app](https://flzsh.github.io/vocab-curve-studio/)
-
-![Vocab Curve Studio Study view](assets/readme-preview.png)
-
-## Why Vocab Curve Studio
-
-- **Adaptive review** keeps the next useful word ready, whether it is new, due, or needs reinforcement.
-- **Deliberate spacing** prevents immediate repeats and makes review cycles more meaningful.
-- **Durable progress** keeps your books, settings, and study memory in browser-local storage.
-- **Offline-ready PWA** keeps practice available when your connection is not.
-- **Responsive study views** make the same workflow comfortable on desktop and phone.
-- **Optional AI tutor** adds OpenRouter-powered help when you choose to connect it; core study works without it.
+Local-first adaptive vocabulary practice with day-scoped short-term memory, organized books and sets, offline support, and optional OpenRouter Pro Tutor.
 
 ## Run locally
 
-1. Download or clone this repository.
-2. Run `python3 -m http.server 4173` from the project folder.
-3. Open `http://localhost:4173/`.
+1. Run `python3 -m http.server 4173` in this folder.
+2. Open `http://localhost:4173/`.
 
-## Your data
+## V44 highlights
 
-Progress stays in this browser profile and origin. Use a **Full backup** export from Settings before changing browser profiles, devices, folders, or origins, then restore it where you continue studying. OpenRouter is optional; you can use the complete vocabulary workflow without an API key.
+- Short-term evidence remains meaningful through the local calendar day.
+- A weak-loop Continue control can open the next set while carrying weak words forward.
+- Import is integrated into Books.
+- Stats uses live scheduler and recall-calibration data.
+- Low Power mode pauses nonessential visual motion and effects.
+- Luna receives richer learner evidence and a broad multi-word coaching toolbox.
+- The bundled `耕读阅读救命词与熟词僻意` book is organized into 100-word chapters and 20-word sets.
+
+Progress is stored in this browser profile and origin. Export a full backup before changing browser profiles, devices, folders, or origins.
+
+## Book 2 lexical upgrade
+
+All 558 耕读 cards include a curated low-effort memory bridge and a complete natural English practice sentence. Existing scheduling and study history are preserved when the bundled book refreshes.

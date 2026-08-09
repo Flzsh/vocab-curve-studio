@@ -1,8 +1,0 @@
-{
-  "name": "vocab-curve-studio-beta-v43",
-  "version": "43.0.0-beta",
-  "private": true,
-  "scripts": {
-    "test": "node --test tests/*.test.mjs"
-  }
-}

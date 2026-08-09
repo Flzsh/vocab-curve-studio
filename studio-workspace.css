@@ -1,4 +1,4 @@
-/* Studio Workspace v43.0.0-beta-studio.16 */
+/* Studio Workspace v44.0.0-beta-studio.19 */
 
 /* Shared workspace palette, geometry, and contextual-current defaults. */
 :root {
@@ -1886,7 +1886,7 @@ textarea::placeholder {
     transform: translate3d(0, 0, 0) !important;
   }
 
-  .header-nav.v20-header-nav .tabs:has(> .tab[data-view="import"].active) > .tab-indicator {
+  .header-nav.v20-header-nav .tabs:has(> .tab[data-view="books"].active) > .tab-indicator {
     transform: translate3d(calc(100% + 4px), 0, 0) !important;
   }
 
@@ -1898,7 +1898,7 @@ textarea::placeholder {
     transform: translate3d(0, 0, 0) !important;
   }
 
-  .header-nav.v20-header-nav .tabs[data-mac-destination="import"] > .tab-indicator {
+  .header-nav.v20-header-nav .tabs[data-mac-destination="books"] > .tab-indicator {
     transform: translate3d(calc(100% + 4px), 0, 0) !important;
   }
 

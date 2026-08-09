@@ -4851,7 +4851,7 @@ body.study-mode .daily-cap-section{
   #memorySpine .v17-rail-bubble{animation:none!important;transition:none!important}
 }
 
-/* Build: 43.0.0-beta */
+/* Build: 44.0.0-beta */
 .pro-review-card[data-interaction-mode="coach"]{
   display:grid!important;
   align-content:start!important;

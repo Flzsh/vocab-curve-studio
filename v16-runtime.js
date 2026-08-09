@@ -824,13 +824,32 @@
     }
 
     function renderStats() {
-      const counts = h.counts(), day = h.todayLog(), adaptive = h.adaptiveModel(), rank = state().account.rank;
+      const counts = h.counts(), day = h.todayLog(), rank = state().account.rank;
+      const calibration = typeof h.calibrationView === 'function'
+        ? h.calibrationView()
+        : (typeof h.calibrationSummary === 'function'
+          ? h.calibrationSummary(typeof h.memoryCalibration === 'function' ? h.memoryCalibration() : {})
+          : Learning.calibrationSummary(state().profile.memoryCalibration || {}));
       const learnedTotal = counts.learned + counts.known;
       const longTermTotal = counts.longTerm + counts.known;
+      const studiedCards = h.cards().filter(card => Number(card.introducedAt || card.studySeenAt || card.studyReviews) > 0 || card.state === 'known');
+      const shortTermOf = typeof h.effectiveShortTerm === 'function'
+        ? h.effectiveShortTerm
+        : card => clamp(Number(card.shortTermMastery || card.memoryScore || 0), 0, 100);
+      const shortTermAverage = studiedCards.length
+        ? Math.round(studiedCards.reduce((sum, card) => sum + clamp(shortTermOf(card), 0, 100), 0) / studiedCards.length)
+        : 0;
+      const calibrationSamples = Number(calibration.samples || 0);
+      const calibrationValue = calibrationSamples ? clamp(Number(calibration.calibrationPercent ?? calibration.observedPercent) || 0, 0, 100) : 0;
+      const calibrationDisplay = calibration.display || (calibrationSamples ? `${Math.round(calibrationValue)}%` : 'Learning');
+      const calibrationSub = calibration.detail || (calibrationSamples
+        ? `${calibrationSamples} delayed sample${calibrationSamples === 1 ? '' : 's'} · ${Math.round(Number(calibration.observedPercent || 0))}% actual · ${Math.round(Number(calibration.predictedPercent || 0))}% expected · Brier ${Number(calibration.brierScore || 0).toFixed(3)}`
+        : 'Waiting for delayed independent recalls');
       const coreValues = [
         ['Book cards', counts.total, h.percent(counts.total, Math.max(1, state().settings.targetTotal)), `${counts.active} active · ${counts.known} known`],
         ['Learned', learnedTotal, h.percent(learnedTotal, Math.max(1, counts.total - counts.suspended)), `${counts.unseen} unseen`],
-        ['Recall calibration', `${Math.round((adaptive.accuracyEMA || 0) * 100)}%`, Math.round((adaptive.accuracyEMA || 0) * 100), `${adaptive.samples || 0} samples`],
+        ['Short-term today', `${shortTermAverage}%`, shortTermAverage, `${studiedCards.length} studied words`],
+        ['Recall calibration', calibrationDisplay, calibrationValue, calibrationSub],
         ['Reviews today', day.reviewsDone, h.percent(day.reviewsDone, Math.max(1, h.effectiveReviewLimit())), `${counts.dueAll} currently due`],
         ['Long-term', longTermTotal, h.percent(longTermTotal, Math.max(1, counts.total - counts.suspended)), '30+ day interval or explicitly known']
       ];

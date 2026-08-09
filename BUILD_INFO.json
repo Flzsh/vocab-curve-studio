@@ -1,7 +1,7 @@
 {
-  "name": "Vocab Curve Studio Beta v43",
-  "version": "43.0.0-beta",
-  "packageType": "tester-runtime",
+  "name": "Vocab Curve Studio V44",
+  "version": "44.0.0-beta",
+  "packageType": "verified-runtime-bridge-edition",
   "excluded": [
     "tests",
     "docs/verification",
@@ -11,6 +11,10 @@
     "legacy",
     "node_modules"
   ],
-  "workspaceRevision": 16,
-  "audit": "full scheduling, queue, responsive, persistence, asset, and package verification"
+  "workspaceRevision": 19,
+  "audit": "V44.1 curated 558-card Book 2 bridge and sentence upgrade; lexical migration, tutor integration, persistence, responsive, asset, and package verification",
+  "buildDate": "2026-08-07",
+  "book2Entries": 558,
+  "book2BridgeRevision": 2,
+  "packageNote": "Every bundled Book 2 card includes a curated direct memory bridge and a natural English practice sentence."
 }

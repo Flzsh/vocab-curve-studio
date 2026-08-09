@@ -307,6 +307,7 @@
   }
 
   function queueProgressFlow(event) {
+    if(typeof document!=='undefined'&&(document.body.dataset.lowPower==='true'||document.body.classList.contains('low-power')))return;
     pendingProgressPointer = { x: event.clientX, y: event.clientY };
     if (progressPointerFrame) return;
     progressPointerFrame = requestAnimationFrame(() => {
