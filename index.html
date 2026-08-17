@@ -8,10 +8,23 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Vocab Curve">
+<script>
+(()=>{
+  const key='vcs-display-preferences-v47';
+  try{
+    const saved=JSON.parse(localStorage.getItem(key)||'{}');
+    const theme=['light','dark','system'].includes(saved.themeMode)?saved.themeMode:'system';
+    const power=['full','low','ultra'].includes(saved.powerMode)?saved.powerMode:'full';
+    const dark=theme==='dark'||(theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
+    const resolved=dark?'dark':'light',root=document.documentElement;
+    root.dataset.themePreference=theme;root.dataset.themeResolved=resolved;root.dataset.powerMode=power;root.setAttribute('data-theme-resolved',resolved);root.style.colorScheme=resolved;const meta=document.querySelector('meta[name=\"theme-color\"]');if(meta)meta.content=dark?'#0b0d13':'#eef7ff';
+  }catch(_error){document.documentElement.dataset.themePreference='system';document.documentElement.dataset.themeResolved=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme-resolved',document.documentElement.dataset.themeResolved);document.documentElement.dataset.powerMode='full';}
+})();
+</script>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Vocab Curve Studio V44</title>
+<title>Vocab Curve Studio V47</title>
 <style>
 :root{
   --bg0:#f7f8ff;--bg1:#f1fbff;--bg2:#fff9f3;--ink:#202437;--muted:#697189;--soft:#8d94a8;
@@ -394,19 +407,21 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 @media(max-width:720px){.v20-performance-settings{align-items:stretch!important;flex-direction:column!important}.v20-low-power-toggle{width:100%}}
 
 </style>
-<link rel="stylesheet" href="./v16.css?v=44.0.0-beta-studio.19">
-<link rel="stylesheet" href="./v17.css?v=44.0.0-beta-studio.19">
-<link rel="stylesheet" href="./v18.css?v=44.0.0-beta-studio.19">
-<link rel="stylesheet" href="./v19.css?v=44.0.0-beta-studio.19">
-<link rel="stylesheet" href="./v20.css?v=44.0.0-beta-studio.19">
-<link rel="stylesheet" href="./studio-workspace.css?v=44.0.0-beta-studio.19">
-<link rel="stylesheet" href="./v44.css?v=44.0.0-beta-studio.19">
+<link rel="stylesheet" href="./v16.css?v=47.0.0">
+<link rel="stylesheet" href="./v17.css?v=47.0.0">
+<link rel="stylesheet" href="./v18.css?v=47.0.0">
+<link rel="stylesheet" href="./v19.css?v=47.0.0">
+<link rel="stylesheet" href="./v20.css?v=47.0.0">
+<link rel="stylesheet" href="./studio-workspace.css?v=47.0.0">
+<link rel="stylesheet" href="./v44.css?v=47.0.0">
+<link rel="stylesheet" href="./v46.css?v=47.0.0">
+<link rel="stylesheet" href="./v47.css?v=47.0.0">
 </head>
 <body>
 <div class="ambient"><div class="blob one"></div><div class="blob two"></div><div class="blob three"></div></div>
 <div class="app">
   <header class="topbar panel v20-top-shell">
-    <div class="brand"><div class="logo" aria-hidden="true"><img src="./icons/icon-192.png" alt="" width="52" height="52" onerror="this.hidden=true;this.parentElement.dataset.iconFallback='V'"></div><div><h1>Vocab Curve Studio</h1><p class="muted">V44 · Adaptive vocabulary</p></div></div>
+    <div class="brand"><div class="logo" aria-hidden="true"><img src="./icons/icon-192.png" alt="" width="52" height="52" onerror="this.hidden=true;this.parentElement.dataset.iconFallback='V'"></div><div><h1>Vocab Curve Studio</h1><p class="muted">V47 · Adaptive vocabulary</p></div></div>
     <nav class="header-nav v20-header-nav" aria-label="Primary">
       <div class="nav-tab-groups">
         <div class="tabs" id="tabs">
@@ -460,7 +475,16 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
                 </section>
                 <section class="v17-answer-zone v20-study-answer-region">
                   <div class="v17-pre-reveal" id="studyPreReveal"><b>Hold the meaning in mind.</b><span>Reveal when ready.</span></div>
-                  <div class="answer-panel" id="answerPanel"><div class="answer-grid v17-answer-sheet"><section class="answer-item answer-primary answer-word-card" aria-labelledby="answerWordLabel"><b id="answerWordLabel">Word</b><div class="answer-primary-text answer-word" id="answerWordText"></div></section><section class="answer-item answer-primary answer-meaning-card" aria-labelledby="answerMeaningLabel"><b id="answerMeaningLabel">Meaning</b><div class="answer-primary-text answer-meaning" id="answerMeaningText"></div></section><div class="answer-item full answer-secondary answer-bridge"><b>Memory bridge</b><div class="answer-secondary-text v17-memory-path"><span class="v17-path-signal" aria-hidden="true"><i></i></span><span class="v17-path-copy" id="answerBridgeText"></span></div></div><figure class="answer-item full answer-secondary desktop-answer-extra answer-example"><figcaption>In context</figcaption><blockquote id="answerExampleText"></blockquote></figure><div class="answer-item full answer-secondary desktop-answer-extra answer-review"><b>Review guidance</b><div class="answer-secondary-text"><span data-answer-timer></span> <span data-answer-recommendation></span> <span data-answer-memory></span></div></div><details class="mobile-answer-extra"><summary>Context &amp; review</summary><div class="v17-mobile-context"><b>In context</b><span id="mobileAnswerExampleText"></span></div><div><b>Timer:</b> <span data-mobile-answer-timer></span></div><div><b>Recommended:</b> <span data-mobile-answer-recommendation></span></div></details></div></div>
+                  <div class="answer-panel" id="answerPanel"><div class="answer-grid v17-answer-sheet"><section class="answer-item answer-primary answer-word-card" aria-labelledby="answerWordLabel"><b id="answerWordLabel">Word</b><div class="answer-primary-text answer-word" id="answerWordText"></div></section><section class="answer-item answer-primary answer-meaning-card" aria-labelledby="answerMeaningLabel"><b id="answerMeaningLabel">Meaning</b><div class="answer-primary-text answer-meaning" id="answerMeaningText"></div></section><div class="answer-item full answer-secondary answer-bridge"><b>Memory bridge</b><div class="answer-secondary-text v17-memory-path"><span class="v17-path-signal" aria-hidden="true"><i></i></span><span class="v17-path-copy" id="answerBridgeText"></span></div></div><figure class="answer-item full answer-secondary desktop-answer-extra answer-example"><figcaption>In context</figcaption><blockquote id="answerExampleText"></blockquote></figure><div class="answer-item full answer-secondary desktop-answer-extra answer-review"><b>Review guidance</b><div class="answer-secondary-text"><span data-answer-timer></span> <span data-answer-recommendation></span> <span data-answer-memory></span></div></div><details class="mobile-answer-extra"><summary>Context &amp; review</summary><div class="v17-mobile-context"><b>In context</b><span id="mobileAnswerExampleText"></span></div><div><b>Timer:</b> <span data-mobile-answer-timer></span></div><div><b>Recommended:</b> <span data-mobile-answer-recommendation></span></div></details></div>
+                    <div class="rating-dock" id="ratingDock">
+                      <div class="rate-grid smart-rate-grid">
+                        <button class="rate again" data-rating="wrong">1 Wrong<small>missed / guessed</small></button>
+                        <button class="rate good" data-rating="correct">2 Correct<small>recalled before show</small></button>
+                        <button class="rate known" data-rating="know">3 Know<small>already solid</small></button>
+                      </div>
+                      <div class="keyboard"><span><kbd>Space</kbd> show</span><span><kbd>H</kbd> hint</span><span><kbd>1–3</kbd> rate</span><span><kbd>S</kbd> speak</span></div>
+                    </div>
+                  </div>
                 </section>
               </div>
               <aside class="v17-memory-spine" id="memorySpine" aria-label="Session memory">
@@ -488,14 +512,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
             <footer class="pro-set-review-actions"><p class="tiny" id="proSetReviewNote"></p><div class="row"><button class="btn btn-ghost" id="proSetReviewRetryBtn" type="button">Retry AI</button><button class="btn btn-ghost" id="proSetReviewPrevBtn" type="button">Previous</button><button class="btn btn-ghost" id="proSetReviewAltBtn" type="button">Another angle</button><button class="btn btn-primary" id="proSetReviewTestBtn" type="button">Next</button><button class="btn btn-primary" id="proSetReviewContinueBtn" type="button">Continue study</button></div></footer>
           </section>
           <div class="sr-only" id="studyLiveRegion" role="status" aria-live="polite"></div>
-          <div class="rating-dock" id="ratingDock">
-            <div class="rate-grid smart-rate-grid">
-              <button class="rate again" data-rating="wrong">1 Wrong<small>missed / guessed</small></button>
-              <button class="rate good" data-rating="correct">2 Correct<small>recalled before show</small></button>
-              <button class="rate known" data-rating="know">3 Know<small>already solid</small></button>
-            </div>
-            <div class="keyboard"><span><kbd>Space</kbd> show</span><span><kbd>H</kbd> hint</span><span><kbd>1–3</kbd> rate</span><span><kbd>S</kbd> speak</span></div>
-          </div>
+
         </article>
         <aside class="side study-side">
           <div class="v19-side-tabs" id="studySideTabs" role="group" aria-label="Study sidebar">
@@ -595,7 +612,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     <section class="view" id="view-planner">
       <div class="grid">
         <div class="section panel col-6"><h2>Target plan</h2><p class="muted">Recommendations adapt to remaining words and review pressure.</p><div class="split" style="margin-top:12px"><div class="field"><label for="targetTotal">Target total words</label><input id="targetTotal" type="number" min="0" max="50000"></div><div class="field"><label for="targetDays">Days remaining</label><input id="targetDays" type="number" min="1" max="365"></div></div><div class="field"><label for="curveProfile">Curve profile</label><select id="curveProfile"><option value="cram">Fast SAT cram</option><option value="balanced">Balanced</option><option value="retention">High retention</option></select></div><div class="plan-grid" id="planGrid"></div><div class="toolbar" style="margin-top:12px"><button class="btn btn-primary" id="applyNewBtn">Apply new/day</button><button class="btn" id="applyReviewBtn">Apply review cap</button><button class="btn" id="reviewOnlyDayBtn">Make today review-only</button></div><p class="tiny" id="planNotice" style="margin-top:10px"></p></div>
-        <div class="section panel col-6 mac-daily-limits"><h2>Daily limits</h2><div class="field"><label for="dailyNewRange">New cards per day</label><div class="range-row"><input id="dailyNewRange" type="range" min="0" max="200" step="1"><b id="dailyNewValue">0</b></div></div><div class="field"><label for="dailyReviewRange">Max review/learning cards per day</label><div class="range-row"><input id="dailyReviewRange" type="range" min="20" max="600" step="5"><b id="dailyReviewValue">0</b></div></div><div class="field"><label for="queueStyle">Queue style</label><select id="queueStyle"><option value="reviewFirst">Reviews before new</option><option value="mixed">Mixed reviews + new</option><option value="newFirst">New first until cap</option></select></div><label class="row mac-switch-row" for="protectBacklog"><input id="protectBacklog" type="checkbox" role="switch"> <span>Protect against review backlog by pausing new words when due cards are too high</span></label><label class="row mac-switch-row" for="requireTypingInstant"><input id="requireTypingInstant" type="checkbox" role="switch"> <span>Require typed self-check before Know</span></label><div class="code-box" style="margin-top:12px"><b>Rule:</b> due cards are sorted by priority, but only your daily review cap is selected. Old due cards do not all attack you at once.</div></div>
+        <div class="section panel col-6 mac-daily-limits"><h2>Daily limits</h2><div class="field"><label for="dailyNewRange">New cards per day</label><div class="range-row"><input id="dailyNewRange" type="range" min="0" max="200" step="1"><b id="dailyNewValue">0</b></div></div><div class="field"><label for="dailyReviewRange">Max review/learning cards per day</label><div class="range-row"><input id="dailyReviewRange" type="range" min="20" max="600" step="5"><b id="dailyReviewValue">0</b></div></div><div class="field"><label for="queueStyle">Queue style</label><select id="queueStyle"><option value="reviewFirst">Reviews before new</option><option value="mixed">Mixed reviews + new</option><option value="newFirst">New first until cap</option></select></div><label class="row mac-switch-row" for="protectBacklog"><input id="protectBacklog" type="checkbox" role="switch"> <span>Prioritize overdue cards inside the review share</span></label><label class="row mac-switch-row" for="requireTypingInstant"><input id="requireTypingInstant" type="checkbox" role="switch"> <span>Require typed self-check before Know</span></label><div class="code-box" style="margin-top:12px"><b>Rule:</b> due cards are sorted by priority, but only your daily review cap is selected. Old due cards do not all attack you at once.</div></div>
       </div>
     </section>
     <section class="view" id="view-books">
@@ -759,7 +776,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       <div class="grid settings-grid">
         <div class="section panel col-12 pro-tutor-settings">
           <div class="pro-tutor-settings-head">
-            <div><div class="pro-tutor-title-row"><span class="v15-eyebrow">V20 PRO MODE</span><span class="pro-tutor-alpha">V44</span></div><h2>Adaptive Pro Tutor</h2><p class="muted">Focused tap reviews for words that need extra help.</p></div>
+            <div><div class="pro-tutor-title-row"><span class="v15-eyebrow">V20 PRO MODE</span><span class="pro-tutor-alpha">V47</span></div><h2>Adaptive Pro Tutor</h2><p class="muted">Focused tap reviews for words that need extra help.</p></div>
             <label class="pro-tutor-master-switch"><input id="proTutorEnabled" type="checkbox"><span>Enable Pro Tutor</span></label>
           </div>
           <div class="pro-tutor-settings-grid">
@@ -786,9 +803,12 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
             </section>
           </div>
         </div>
-        <div class="section panel col-12 v20-performance-settings">
-          <div><span class="v15-eyebrow">PERFORMANCE</span><h2>Power</h2></div>
-          <label class="v20-low-power-toggle"><input id="lowPowerMode" type="checkbox"><span><b>Low Power mode</b><small>Pauses nonessential motion and reduces visual effects.</small></span></label>
+        <div class="section panel col-12 v47-display-settings">
+          <div class="v47-display-settings-copy"><span class="v15-eyebrow">DISPLAY</span><h2>Appearance &amp; power</h2><p class="muted">Choose a complete theme and the amount of visual motion.</p></div>
+          <div class="v47-setting-grid">
+            <label class="v47-setting-card" for="themeMode"><span>Theme</span><select id="themeMode"><option value="system">Follow system</option><option value="light">Light</option><option value="dark">Dark</option></select><small>Dark applies to every view, menu, disclosure, dialog, and review surface.</small></label>
+            <label class="v47-setting-card" for="powerMode"><span>Power mode</span><select id="powerMode"><option value="full">Full visuals</option><option value="low">Low Power</option><option value="ultra">Ultra Battery</option></select><small>Ultra Battery disables all animation and expensive live effects.</small></label>
+          </div>
         </div>
         <div class="section panel col-12 transfer-center" id="transferCenter">
           <div class="transfer-heading"><div><span class="v15-eyebrow">TRANSFER</span><h2>Transfer center</h2><p class="muted">Move a complete study save or the current book.</p></div><span class="transfer-badge">V20</span></div>
@@ -809,39 +829,48 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 <div class="toast-zone" id="toastZone" role="status" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></div>
 <div class="modal" id="newPickerModal" role="dialog" aria-modal="true" aria-label="Pick a new word" tabindex="-1"><div class="modal-card picker-modal-card"><div class="row" style="justify-content:space-between;align-items:center"><div><h2>Pick a new word</h2><p class="muted">New words come from the active set, chapter, selection, or automatic section.</p></div><button class="btn btn-mini" id="closePickerBtn">Close</button></div><div class="split"><div class="field"><label for="modalBatchPicker">Batch</label><select id="modalBatchPicker"></select></div><div class="field"><label for="modalPickerSearch">Search</label><input id="modalPickerSearch" placeholder="word or meaning"></div></div><div class="field"><label for="modalSectionPicker">Review focus</label><select id="modalSectionPicker"></select></div><div class="section-progress" id="modalSectionProgress" aria-live="polite"></div><div class="new-card-list modal-new-card-list" id="modalNewCardList"></div></div></div>
 <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText" tabindex="-1"><div class="modal-card"><h2 id="confirmTitle">Confirm</h2><p class="muted" id="confirmText"></p><div class="modal-actions"><button class="btn" id="confirmCancel">Cancel</button><button class="btn btn-primary" id="confirmOk">OK</button></div></div></div>
-<script src="./v16-rules.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-storage.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-study-memory.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-queue-policy.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-liquid-motion.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-memory-world.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-library.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-default-workbook.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v44-default-book2.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-forecast.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v44-runtime.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v16-learning.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v16-transfer.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v16-runtime.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v17-study.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v18-study.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v19-ui.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-interactive-review.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-import-assistant.js?v=44.0.0-beta-studio.19"></script>
-<script src="./v20-pro-tutor.js?v=44.0.0-beta-studio.19"></script>
+<script src="./v47-display.js?v=47.0.0"></script>
+<script src="./v16-rules.js?v=47.0.0"></script>
+<script src="./v20-storage.js?v=47.0.0"></script>
+<script src="./v20-study-memory.js?v=47.0.0"></script>
+<script src="./v20-queue-policy.js?v=47.0.0"></script>
+<script src="./v45-study-mixer.js?v=47.0.0"></script>
+<script src="./v46-study-mixer.js?v=47.0.0"></script>
+<script src="./v20-liquid-motion.js?v=47.0.0"></script>
+<script src="./v20-memory-world.js?v=47.0.0"></script>
+<script src="./v46-memory-world-art.js?v=47.0.0"></script>
+<script src="./v20-library.js?v=47.0.0"></script>
+<script src="./v20-default-workbook.js?v=47.0.0"></script>
+<script src="./v44-default-book2.js?v=47.0.0"></script>
+<script src="./v45-wordsmart-book.js?v=47.0.0"></script>
+<script src="./v20-forecast.js?v=47.0.0"></script>
+<script src="./v44-runtime.js?v=47.0.0"></script>
+<script src="./v16-learning.js?v=47.0.0"></script>
+<script src="./v16-transfer.js?v=47.0.0"></script>
+<script src="./v16-runtime.js?v=47.0.0"></script>
+<script src="./v17-study.js?v=47.0.0"></script>
+<script src="./v18-study.js?v=47.0.0"></script>
+<script src="./v19-ui.js?v=47.0.0"></script>
+<script src="./v20-interactive-review.js?v=47.0.0"></script>
+<script src="./v20-import-assistant.js?v=47.0.0"></script>
+<script src="./v20-pro-tutor.js?v=47.0.0"></script>
 <script>
 (() => {
   'use strict';
+  const Display = window.V47Display;
   const V16 = window.V16Rules;
   const Storage = window.V20Storage;
   const Learning = window.V16Learning;
   const V20StudyMemory = window.V20StudyMemory;
   const QueuePolicy = window.V20QueuePolicy;
+  const StudyMixer = window.V46StudyMixer || window.V45StudyMixer;
   const LiquidMotion = window.V20LiquidMotion;
   const MemoryWorld = window.V20MemoryWorld;
+  const MemoryWorldArt = window.V46MemoryWorldArt;
   const Library = window.V20Library;
   const DefaultWorkbook = window.V20DefaultWorkbook;
   const DefaultBook2 = window.V44DefaultBook2;
+  const DefaultBook3 = window.V45WordSmartBook;
   const V44Runtime = window.V44Runtime;
   const Forecast = window.V20Forecast;
   const Transfer = window.V16Transfer;
@@ -850,7 +879,8 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   const ProInteractiveReview = window.ProInteractiveReview;
   const ImportAssistant = window.V20ImportAssistant;
   const ProTutor = window.V20ProTutor;
-  const APP_VERSION = '44.0.0-beta';
+  const APP_VERSION = '47.0.0';
+  const APP_STORAGE = (()=>{ if(window.__VCS_STORAGE_OVERRIDE) return window.__VCS_STORAGE_OVERRIDE; try{return window.localStorage;}catch(_error){return null;} })();
   const PRO_TUTOR_SESSION_KEY = 'vocab-curve-studio:v20-openrouter-session-key';
   const PRO_TUTOR_PKCE_KEY = 'vocab-curve-studio:v20-openrouter-pkce';
   const LEGACY_STORAGE_KEY = 'vocab-curve-studio:stable';
@@ -996,10 +1026,10 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   let proSetReviewUiState={session:null,review:null,cardsById:new Map(),local:false};
   const proTutorPending = new Map(), proTutorDecisions = new Map();
   function init(){ normalizeState(); bindEvents(); setupAttentionTracking(); hydrateInputs(); renderAll(); showView('study'); selectNextCard(false); setupTabIndicator(); updateSaveHealth(); registerServiceWorker(); }
-  function defaultState(){ const now=Date.now(),bundled=DefaultWorkbook?.createBook?.({now}),second=DefaultBook2?.createBook?.({now}); const id=bundled?.id||uid('book'); return {schemaVersion:13, appVersion:APP_VERSION, createdAt:Date.now(), updatedAt:Date.now(), activeBookId:id, books:[bundled||{id,name:'SAT Main Book',createdAt:now,updatedAt:now,cards:[],batches:[]},second].filter(Boolean), daily:{}, achievements:{unlocked:{}, recent:[]}, profile:{installId:uid('install'), totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0}, flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false}, model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.50,shortTermSlipRate:.18,intervalScale:1.0,speedTrust:1.0,reviewUrgency:1.0,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0}}, account:{id:uid('acct'), name:'Flzsh', rank:{tier:'D', pips:0, sStars:0, matches:0, wins:0, losses:0, ties:0, overtime:0, winStreak:0, bestStreak:0, peakTier:'D', peakSStars:0, history:[]}}, settings:{dailyNewLimit:70,dailyReviewLimit:180,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:15,smartReview:true,newBatchFilter:'all',sectionFocus:'all',lowPowerMode:false}}; }
+  function defaultState(){ const now=Date.now(),bundled=DefaultWorkbook?.createBook?.({now}),second=DefaultBook2?.createBook?.({now}); const id=bundled?.id||uid('book'); return {schemaVersion:13, appVersion:APP_VERSION, createdAt:Date.now(), updatedAt:Date.now(), activeBookId:id, books:[bundled||{id,name:'SAT Main Book',createdAt:now,updatedAt:now,cards:[],batches:[]},second].filter(Boolean), daily:{}, achievements:{unlocked:{}, recent:[]}, profile:{installId:uid('install'), totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0}, flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false}, model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.50,shortTermSlipRate:.18,intervalScale:1.0,speedTrust:1.0,reviewUrgency:1.0,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0}}, account:{id:uid('acct'), name:'Flzsh', rank:{tier:'D', pips:0, sStars:0, matches:0, wins:0, losses:0, ties:0, overtime:0, winStreak:0, bestStreak:0, peakTier:'D', peakSStars:0, history:[]}}, settings:{dailyNewLimit:70,dailyReviewLimit:180,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:15,smartReview:true,newBatchFilter:'all',sectionFocus:'all',themeMode:'system',powerMode:'full',lowPowerMode:false}}; }
   function loadState(){
     try{
-      const loaded=Storage.load(localStorage,{writerId:SAVE_WRITER_ID,legacyKeys:LEGACY_KEYS,defaultState,migrateState,now:()=>Date.now()});
+      const loaded=Storage.load(APP_STORAGE,{writerId:SAVE_WRITER_ID,legacyKeys:LEGACY_KEYS,defaultState,migrateState,now:()=>Date.now()});
       saveMeta=loaded.meta;
       if(saveMeta.source==='legacy'&&loaded.state?.profile?.flags)loaded.state.profile.flags.migratedFrom=saveMeta.legacyKey||LEGACY_STORAGE_KEY;
       return loaded.state;
@@ -1049,7 +1079,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     return Object.assign(def,data,{settings:Object.assign(def.settings,data.settings||{}),profile:Object.assign(def.profile,data.profile||{})});
   }
   function normalizeState(){
-    const def=defaultState(); state.settings=Object.assign(def.settings,state.settings||{}); state.profile=Object.assign(def.profile,state.profile||{}); state.profile.totals=Object.assign(def.profile.totals,state.profile.totals||{}); state.profile.flags=Object.assign(def.profile.flags,state.profile.flags||{}); state.profile.model=Object.assign(def.profile.model,(state.profile&&state.profile.model)||{}); state.achievements=state.achievements||{unlocked:{},recent:[]}; state.achievements.unlocked=state.achievements.unlocked||{}; state.daily=state.daily||{}; state.account=Object.assign(def.account,state.account||{}); state.account.rank=Object.assign(def.account.rank,(state.account&&state.account.rank)||{}); state.account.rank.history=Array.isArray(state.account.rank.history)?state.account.rank.history.slice(-50):[];
+    const def=defaultState(),previousSettings=state.settings&&typeof state.settings==='object'?state.settings:{},legacyLowPower=previousSettings.lowPowerMode===true&&!previousSettings.powerMode; state.settings=Object.assign(def.settings,previousSettings); state.settings.themeMode=Display?.normalizeTheme?.(state.settings.themeMode)||'system'; state.settings.powerMode=Display?.normalizePower?.(legacyLowPower?'low':state.settings.powerMode,legacyLowPower)||(legacyLowPower?'low':'full'); state.settings.lowPowerMode=state.settings.powerMode!=='full'; state.profile=Object.assign(def.profile,state.profile||{}); state.profile.totals=Object.assign(def.profile.totals,state.profile.totals||{}); state.profile.flags=Object.assign(def.profile.flags,state.profile.flags||{}); state.profile.model=Object.assign(def.profile.model,(state.profile&&state.profile.model)||{}); state.achievements=state.achievements||{unlocked:{},recent:[]}; state.achievements.unlocked=state.achievements.unlocked||{}; state.daily=state.daily||{}; state.account=Object.assign(def.account,state.account||{}); state.account.rank=Object.assign(def.account.rank,(state.account&&state.account.rank)||{}); state.account.rank.history=Array.isArray(state.account.rank.history)?state.account.rank.history.slice(-50):[];
     if (!Array.isArray(state.books)||!state.books.length) state.books=def.books;
     state.books.forEach((b,bi)=>{ b.id=b.id||uid('book'); b.name=(b.name||`Book ${bi+1}`).trim(); b.createdAt=Number(b.createdAt||Date.now()); b.updatedAt=Number(b.updatedAt||b.createdAt); b.cards=Array.isArray(b.cards)?b.cards:[]; b.batches=Array.isArray(b.batches)?b.batches:[]; const seen=new Set(); b.cards.forEach((c,idx)=>normalizeCard(c,idx,seen)); });
     if (!state.books.some(b=>b.id===state.activeBookId)) state.activeBookId=state.books[0].id;
@@ -1102,7 +1132,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const commit=async()=>{
       if(saveMeta.stale){notifySaveConflict();if(!transactional&&sequence===saveSequence&&!BOOT_SAVE_REASONS.has(reason))restoreLastCommittedState(reason);return false;}
       let result;
-      try{result=await Storage.saveCoordinated(localStorage,stateSnapshot,saveMeta,{writerId:SAVE_WRITER_ID,reason,now:()=>Date.now(),backupLimit:3});}
+      try{result=await Storage.saveCoordinated(APP_STORAGE,stateSnapshot,saveMeta,{writerId:SAVE_WRITER_ID,reason,now:()=>Date.now(),backupLimit:3});}
       catch(error){result={ok:false,error};}
       if(result.ok&&saveMeta.stale)result={ok:false,conflict:true,currentRevision:Number(saveMeta.externalRevision||result.meta?.revision||0)};
       if(result.ok){saveMeta={...result.meta,lastFailure:''};lastCommittedState=stateSnapshot;saveConflictNotified=false;setSaveConflictState(false);setSavePill('saved','Saved');}
@@ -1123,7 +1153,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(pendingSaveCount>0||pendingStateTransaction){setSavePill('dirty','Saving…');toast('Save in progress','Wait a moment for the current change to finish, then try again.');return false;}
     if(proTutorPending.size>0){toast('Tutor request in progress','Wait for the current OpenRouter request to finish before changing study data.');return false;}
     try{
-      const inspection=Storage.inspect(localStorage),latest=Math.max(Number(inspection.revision)||0,...(inspection.backupRevisions||[]).map(value=>Number(value)||0));
+      const inspection=Storage.inspect(APP_STORAGE),latest=Math.max(Number(inspection.revision)||0,...(inspection.backupRevisions||[]).map(value=>Number(value)||0));
       if((Number(saveMeta.revision)||0)>0&&!inspection.primaryValid||latest>(Number(saveMeta.revision)||0)){
         saveMeta={...saveMeta,stale:true,externalRevision:latest};notifySaveConflict(message);return false;
       }
@@ -1171,11 +1201,11 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     els.importAiCompleteBtn.addEventListener('click',()=>void completeImportWithOpenRouter());els.importCopyBtn.addEventListener('click',()=>void copyImportFormat());els.importDownloadBtn.addEventListener('click',downloadImportFormat);els.importAiLanguage.addEventListener('change',()=>{state.settings.importAiLanguage=importLanguage();invalidateImportCompletionSession();saveState('import-ai-language',true);renderImportPreview();});
     els.dropArea.addEventListener('dragover',e=>{e.preventDefault(); els.dropArea.classList.add('drag');}); els.dropArea.addEventListener('dragleave',()=>els.dropArea.classList.remove('drag')); els.dropArea.addEventListener('drop',e=>{e.preventDefault(); els.dropArea.classList.remove('drag'); const f=e.dataTransfer.files?.[0]; if(f){const r=new FileReader(); r.onload=()=>{importCompletionSession=null;els.importText.value=String(r.result||''); if(!els.batchName.value.trim()) els.batchName.value=f.name.replace(/\.[^.]+$/,''); renderImportPreview();}; r.readAsText(f);}});
     [els.targetTotal,els.targetDays,els.curveProfile].forEach(el=>el.addEventListener('change',()=>{syncPlanner(); renderPlanner();})); els.applyNewBtn.addEventListener('click',()=>{const r=recommendedNumbers(); state.settings.dailyNewLimit=r.newDay; saveState(); hydrateInputs(); renderAll(); toast('Applied',`New/day = ${r.newDay}`);}); els.applyReviewBtn.addEventListener('click',()=>{const r=recommendedNumbers(); state.settings.dailyReviewLimit=r.reviewCap; saveState(); hydrateInputs(); renderAll(); toast('Applied',`Review cap = ${r.reviewCap}`);}); els.reviewOnlyDayBtn.addEventListener('click',()=>{todayLog().pauseNew=true; saveState(); renderAll(); toast('Review-only day','No new cards today.');});
-    els.dailyNewRange.addEventListener('input',()=>{state.settings.dailyNewLimit=Number(els.dailyNewRange.value);hydrateInputs();renderAll();});els.dailyNewRange.addEventListener('change',()=>{state.settings.dailyNewLimit=Number(els.dailyNewRange.value);saveState('daily-limits',true);});els.dailyReviewRange.addEventListener('input',()=>{state.settings.dailyReviewLimit=Number(els.dailyReviewRange.value);hydrateInputs();renderAll();});els.dailyReviewRange.addEventListener('change',()=>{state.settings.dailyReviewLimit=Number(els.dailyReviewRange.value);saveState('daily-limits',true);});els.queueStyle.addEventListener('change',()=>{state.settings.queueStyle=els.queueStyle.value; saveState(); renderAll(); selectNextCard(false);}); els.protectBacklog.addEventListener('change',()=>{state.settings.protectBacklog=els.protectBacklog.checked; saveState(); renderAll();}); els.requireTypingInstant.addEventListener('change',()=>{state.settings.requireTypingInstant=els.requireTypingInstant.checked; saveState();}); els.lowPowerMode?.addEventListener('change',()=>{state.settings.lowPowerMode=!!els.lowPowerMode.checked;applyLowPowerMode();saveState('low-power-mode',true);});
+    els.dailyNewRange.addEventListener('input',()=>{state.settings.dailyNewLimit=Number(els.dailyNewRange.value);hydrateInputs();renderAll();});els.dailyNewRange.addEventListener('change',()=>{state.settings.dailyNewLimit=Number(els.dailyNewRange.value);saveState('daily-limits',true);});els.dailyReviewRange.addEventListener('input',()=>{state.settings.dailyReviewLimit=Number(els.dailyReviewRange.value);hydrateInputs();renderAll();});els.dailyReviewRange.addEventListener('change',()=>{state.settings.dailyReviewLimit=Number(els.dailyReviewRange.value);saveState('daily-limits',true);});els.queueStyle.addEventListener('change',()=>{state.settings.queueStyle=els.queueStyle.value; saveState(); renderAll(); selectNextCard(false);}); els.protectBacklog.addEventListener('change',()=>{state.settings.protectBacklog=els.protectBacklog.checked; saveState(); renderAll();}); els.requireTypingInstant.addEventListener('change',()=>{state.settings.requireTypingInstant=els.requireTypingInstant.checked; saveState();}); els.themeMode?.addEventListener('change',()=>{state.settings.themeMode=Display?.normalizeTheme?.(els.themeMode.value)||'system';applyThemeMode();saveState('theme-mode',true);}); els.powerMode?.addEventListener('change',()=>{state.settings.powerMode=Display?.normalizePower?.(els.powerMode.value)||'full';state.settings.lowPowerMode=state.settings.powerMode!=='full';applyLowPowerMode();saveState('power-mode',true);}); els.lowPowerMode?.addEventListener('change',()=>{state.settings.powerMode=els.lowPowerMode.checked?'low':'full';state.settings.lowPowerMode=state.settings.powerMode!=='full';applyLowPowerMode();saveState('power-mode',true);});
     els.createBookBtn.addEventListener('click',()=>void createBook()); [els.deckSearch,els.deckStateFilter].forEach(el=>el.addEventListener('input',debounce(renderDeck,100)));
     els.transferScope.addEventListener('change',renderTransferCenter); els.transferDownloadBtn.addEventListener('click',downloadTransfer); els.transferCopyBtn.addEventListener('click',copyTransferText); els.transferPasteBtn.addEventListener('click',importTransferText); els.transferFile.addEventListener('change',importTransferFile); els.transferText.addEventListener('input',debounce(renderTransferTextStatus,100));
     els.resetBookBtn.addEventListener('click',resetCurrentBook); els.resetAllBtn.addEventListener('click',resetAll);
-    els.confirmCancel.addEventListener('click',()=>closeConfirm(false)); els.confirmOk.addEventListener('click',()=>closeConfirm(true)); window.addEventListener('keydown',handleKeys);window.addEventListener('beforeunload',handleBeforeUnload);window.addEventListener('storage',handleExternalSave);document.addEventListener('visibilitychange',()=>{if(document.hidden)recordSessionMinutes(true);});window.addEventListener('resize',debounce(updateTabIndicator,80));
+    els.confirmCancel.addEventListener('click',()=>closeConfirm(false)); els.confirmOk.addEventListener('click',()=>closeConfirm(true)); window.addEventListener('keydown',handleKeys);window.addEventListener('beforeunload',handleBeforeUnload);window.addEventListener('storage',handleExternalSave);document.addEventListener('visibilitychange',()=>{if(document.hidden)recordSessionMinutes(true);});window.addEventListener('resize',debounce(updateTabIndicator,80));themeMediaQuery?.addEventListener?.('change',()=>{if(themeMode()==='system')applyThemeMode();});
   }
   function setupAttentionTracking(){
     const activity = (kind='activity') => {
@@ -1219,26 +1249,44 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     return {rawMs:raw,activeMs:active,seconds:active/1000,afk,hiddenMs:hidden,blurMs:blur,backgroundMs:background,inactiveMs:inactive,activityCount:cardTimer.activityCount||0,pointerMoves:cardTimer.pointerMoves||0,keyEvents:cardTimer.keyEvents||0,touchEvents:cardTimer.touchEvents||0};
   }
   function activeBook(){return state.books.find(b=>b.id===state.activeBookId)||state.books[0];} function cards(){return activeBook().cards.filter(c=>!c.deleted);} function activeCards(){return cards().filter(c=>c.state!=='suspended'&&c.state!=='known');} function totalCards(){return state.books.reduce((n,b)=>n+(b.cards||[]).filter(c=>!c.deleted).length,0);}
-  function todayKey(offset=0){const d=new Date(Date.now()+offset*DAY);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;} function todayLog(){const k=todayKey(); if(!state.daily[k]) state.daily[k]={newIntroduced:0,reviewsDone:0,learningDone:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,known:0,hints:0,answersShown:0,typedCorrect:0,pauseNew:false,boostReview:false,minutes:0,reviewSinceNew:0}; else {state.daily[k].wrong=state.daily[k].wrong||0; state.daily[k].correct=state.daily[k].correct||0; state.daily[k].know=state.daily[k].know||0;} return state.daily[k];}
-  function lowPowerEnabled(){return Boolean(state?.settings?.lowPowerMode);}
+  function todayKey(offset=0){const d=new Date(Date.now()+offset*DAY);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;} function todayLog(){const k=todayKey(); if(!state.daily[k]) state.daily[k]={newIntroduced:0,reviewsDone:0,learningDone:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,known:0,hints:0,answersShown:0,typedCorrect:0,pauseNew:false,boostReview:false,minutes:0,reviewSinceNew:0,mixPhase:0,mixHistory:[],mixNewServed:0,mixReviewServed:0}; else {state.daily[k].wrong=state.daily[k].wrong||0; state.daily[k].correct=state.daily[k].correct||0; state.daily[k].know=state.daily[k].know||0;} return state.daily[k];}
+  const themeMediaQuery=typeof window.matchMedia==='function'?window.matchMedia('(prefers-color-scheme: dark)'):null;
+  function themeMode(){return Display?.normalizeTheme?.(state?.settings?.themeMode)||'system';}
+  function powerMode(){return Display?.normalizePower?.(state?.settings?.powerMode,state?.settings?.lowPowerMode===true)||'full';}
+  function lowPowerEnabled(){return powerMode()!=='full';}
+  function ultraPowerEnabled(){return powerMode()==='ultra';}
+  function applyThemeMode(){
+    const preference=themeMode(),resolved=Display?.applyToDocument?.(document,{themeMode:preference,powerMode:powerMode()},Boolean(themeMediaQuery?.matches))||{themeMode:preference,resolvedTheme:preference==='dark'?'dark':'light'};
+    state.settings.themeMode=resolved.themeMode||preference;
+    Display?.writePreferences?.(APP_STORAGE,{themeMode:state.settings.themeMode,powerMode:powerMode()});
+    return resolved.resolvedTheme;
+  }
   function applyLowPowerMode(){
-    const enabled=lowPowerEnabled();
-    document.body.classList.toggle('low-power',enabled);
-    document.body.dataset.lowPower=enabled?'true':'false';
-    if(V44Runtime?.setLowPower)V44Runtime.setLowPower(enabled);else window.dispatchEvent(new CustomEvent('studio:low-power-change',{detail:{enabled}}));
+    const mode=powerMode(),enabled=mode!=='full',ultra=mode==='ultra';
+    state.settings.powerMode=mode;state.settings.lowPowerMode=enabled;
+    document.body.classList.toggle('low-power',enabled);document.body.classList.toggle('ultra-power',ultra);
+    document.body.dataset.powerMode=mode;document.body.dataset.lowPower=ultra?'true':'false';document.documentElement.dataset.powerMode=mode;
+    if(V44Runtime?.setLowPower)V44Runtime.setLowPower(enabled);else window.dispatchEvent(new CustomEvent('studio:low-power-change',{detail:{enabled,mode,ultra}}));
     liquidMotionController?.setLowPower?.(enabled);
     const studyVisible=document.body.dataset.activeView==='study'||!document.body.dataset.activeView;
-    if(memoryWorldMotionController){
-      if(enabled)memoryWorldMotionController.stop?.();
-      else{memoryWorldMotionController.start?.();memoryWorldMotionController.setActive(studyVisible&&!document.hidden);}
-    }
+    if(memoryWorldMotionController){if(enabled)memoryWorldMotionController.stop?.();else{memoryWorldMotionController.start?.();memoryWorldMotionController.setActive(studyVisible&&!document.hidden);}}
     if(enabled&&els.longTermSphere){els.longTermSphere.style.setProperty('--v20-sphere-x','0deg');els.longTermSphere.style.setProperty('--v20-sphere-y','0deg');}
+    if(ultra){
+      document.querySelectorAll('.v19-ripple').forEach(node=>node.remove());
+      for(const animation of document.getAnimations?.({subtree:true})||[]){
+        try{animation.commitStyles?.();}catch(_error){}
+        try{animation.cancel?.();}catch(_error){}
+      }
+      updateTabIndicator();
+    }
+    Display?.writePreferences?.(APP_STORAGE,{themeMode:themeMode(),powerMode:mode});
     return enabled;
   }
-  function hydrateInputs(){ const s=state.settings; els.targetTotal.value=s.targetTotal; els.targetDays.value=s.targetDays; els.curveProfile.value=s.curve; els.dailyNewRange.value=s.dailyNewLimit; els.dailyReviewRange.value=s.dailyReviewLimit; els.dailyNewValue.textContent=s.dailyNewLimit; els.dailyReviewValue.textContent=effectiveReviewLimit(); els.queueStyle.value=s.queueStyle; els.protectBacklog.checked=!!s.protectBacklog; els.requireTypingInstant.checked=!!s.requireTypingInstant; if(els.lowPowerMode)els.lowPowerMode.checked=!!s.lowPowerMode; if(els.importAiLanguage)els.importAiLanguage.value=s.importAiLanguage; applyLowPowerMode(); renderBookSelect(); document.dispatchEvent(new CustomEvent('studio:controls-sync')); }
+  function applyDisplayPreferences(){applyThemeMode();return applyLowPowerMode();}
+  function hydrateInputs(){ const s=state.settings; els.targetTotal.value=s.targetTotal; els.targetDays.value=s.targetDays; els.curveProfile.value=s.curve; els.dailyNewRange.value=s.dailyNewLimit; els.dailyReviewRange.value=s.dailyReviewLimit; els.dailyNewValue.textContent=s.dailyNewLimit; els.dailyReviewValue.textContent=effectiveReviewLimit(); els.queueStyle.value=s.queueStyle; els.protectBacklog.checked=!!s.protectBacklog; els.requireTypingInstant.checked=!!s.requireTypingInstant; if(els.themeMode)els.themeMode.value=themeMode(); if(els.powerMode)els.powerMode.value=powerMode(); if(els.lowPowerMode)els.lowPowerMode.checked=lowPowerEnabled(); if(els.importAiLanguage)els.importAiLanguage.value=s.importAiLanguage; applyDisplayPreferences(); renderBookSelect(); document.dispatchEvent(new CustomEvent('studio:controls-sync')); }
   function renderBookSelect(){const cur=state.activeBookId; els.bookSelect.innerHTML=state.books.map(b=>`<option value="${escAttr(b.id)}" ${b.id===cur?'selected':''}>${esc(b.name)} · ${b.cards.filter(c=>!c.deleted).length}</option>`).join('');}
   function showView(name){
-    const mobileOverflow = ['planner','books','achievements','stats','settings'].includes(name);
+    const mobileOverflow = ['planner','achievements','stats','settings'].includes(name);
     const useMoreTab = mobileOverflow && window.matchMedia && window.matchMedia('(max-width: 720px)').matches;
     document.body.classList.toggle('study-mode', name==='study');
     document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
@@ -2266,12 +2314,12 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(!verifyWritableRevision('A newer save appeared while the reset confirmation was open.'))return false;
     const stateBefore=cloneStateForRollback(),sessionStartBefore=sessionStart,deferredSessionMinutesBefore=deferredSessionMinutes;sessionStart=Date.now();deferredSessionMinutes=0;cancelRankMatchForDataChange();state=defaultState();normalizeState();
     if(!await saveState('reset',true)){sessionStart=sessionStartBefore;deferredSessionMinutes=deferredSessionMinutesBefore;return restoreFailedStateCommit(stateBefore,'Reset');}
-    try{localStorage.removeItem(Storage.BACKUP_KEY);for(const key of LEGACY_CLEANUP_KEYS)localStorage.removeItem(key);}catch(error){console.warn('Reset backup cleanup failed',error);}
+    try{APP_STORAGE?.removeItem(Storage.BACKUP_KEY);for(const key of LEGACY_CLEANUP_KEYS)APP_STORAGE?.removeItem(key);}catch(error){console.warn('Reset backup cleanup failed',error);}
     hydrateInputs();renderAll();selectNextCard(false);toast('Reset complete','Fresh defaults restored.');return true;
   }
   function updateSaveHealth(){
     if(!els.saveHealth)return;const bytes=new Blob([JSON.stringify(state)]).size;let legacy='none',inspection={primaryValid:false,revision:0,backupCount:0};
-    try{legacy=LEGACY_CLEANUP_KEYS.filter(k=>{try{return !!localStorage.getItem(k);}catch(e){return false;}}).join(', ')||'none';inspection=Storage.inspect(localStorage);}catch(e){legacy='unavailable in this test/origin';}
+    try{legacy=LEGACY_CLEANUP_KEYS.filter(k=>{try{return !!APP_STORAGE?.getItem(k);}catch(e){return false;}}).join(', ')||'none';inspection=Storage.inspect(APP_STORAGE);}catch(e){legacy='unavailable in this test/origin';}
     const status=saveMeta.stale?'Protected: newer revision in another tab':saveMeta.source==='backup'?`Recovered from backup r${saveMeta.recoveredFromRevision}`:saveMeta.source==='legacy'?'Imported from the previous save channel':'Healthy';
     els.saveHealth.innerHTML=`<b>App version:</b> ${APP_VERSION}<br><b>Save channel:</b> ${STORAGE_KEY}<br><b>Revision:</b> ${inspection.revision||saveMeta.revision||0}<br><b>Rolling backups:</b> ${inspection.backupCount||0}<br><b>Status:</b> ${esc(status)}<br><b>Encounter repairs:</b> ${Number(saveMeta.repairedCards||0)}<br><b>Save size:</b> ${(bytes/1024).toFixed(1)} KB<br><b>Books:</b> ${state.books.length}<br><b>Total cards:</b> ${totalCards()}<br><b>Legacy save detected:</b> ${esc(legacy)}<br><span class="tiny">V20 uses an isolated, revision-protected save channel. Different device/file path still requires JSON export/import.</span>`;
   }
@@ -2327,20 +2375,25 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
 
   /* ================= V14 adaptive memory + Elo health arena overrides ================= */
   function defaultAdaptiveV14(){return {version:14,samples:0,accuracyEMA:.74,wrongEMA:.18,hintEMA:.08,latencyEMA:7.5,wrongLatencyEMA:5.5,afkEMA:.02,targetRetention:.89,intervalScale:1,calibrationScale:1,calibrationBias:0,weights:{bias:2.05,logGap:-2.28,difficulty:-.68,recentWrong:-.82,streak:.15,lapses:-.21,hint:-.66,latency:-.24,shortTerm:-.92,first:-.15},calibration:Array.from({length:10},()=>({n:0,hits:0})),rankAccuracyEMA:.62,rankLatencyEMA:6,rankStreakEMA:0};}
-  function defaultState(){const now=Date.now(),bundled=DefaultWorkbook?.createBook?.({now}),second=DefaultBook2?.createBook?.({now});const id=bundled?.id||uid('book');return {schemaVersion:16,appVersion:APP_VERSION,createdAt:Date.now(),updatedAt:Date.now(),activeBookId:id,sectionUnlocks:{},sectionRetirements:{},books:[bundled||{id,name:'SAT Main Book',createdAt:now,updatedAt:now,cards:[],batches:[]},second].filter(Boolean),daily:{},achievements:{unlocked:{},recent:[],claimedRewards:{}},profile:{installId:uid('install'),totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0,trainingTokensEarned:0,upgradesPurchased:0,itemsUsed:0,perfectMatches:0,comebackWins:0},flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false},model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.5,shortTermSlipRate:.18,intervalScale:1,speedTrust:1,reviewUrgency:1,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0},adaptive:defaultAdaptiveV14(),studyClimate:Study.defaultClimateState()},account:{id:uid('acct'),name:'Flzsh',rank:{elo:850,peakElo:850,tier:'D',pips:0,sStars:0,matches:0,wins:0,losses:0,ties:0,overtime:0,winStreak:0,bestStreak:0,peakTier:'D',peakSStars:0,history:[]},progress:{trainingTokens:0,lifetimeTrainingTokens:0,selectedCharacter:'nova',unlockedCharacters:['nova'],upgrades:{vitality:0,regen:0,focus:0,wallet:0,arsenal:0},characterStats:{},battleItemsUsed:0}},settings:{dailyNewLimit:70,dailyReviewLimit:220,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:18,smartReview:true,newBatchFilter:'all',sectionFocus:'all',lowPowerMode:false}};}
+  function defaultState(){const now=Date.now(),bundled=DefaultWorkbook?.createBook?.({now}),second=DefaultBook2?.createBook?.({now});const id=bundled?.id||uid('book');return {schemaVersion:16,appVersion:APP_VERSION,createdAt:Date.now(),updatedAt:Date.now(),activeBookId:id,sectionUnlocks:{},sectionRetirements:{},books:[bundled||{id,name:'SAT Main Book',createdAt:now,updatedAt:now,cards:[],batches:[]},second].filter(Boolean),daily:{},achievements:{unlocked:{},recent:[],claimedRewards:{}},profile:{installId:uid('install'),totals:{reviews:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,knownBefore:0,hints:0,exports:0,backupImports:0,typedCorrect:0,answersShown:0,suspended:0,imports:0,trainingTokensEarned:0,upgradesPurchased:0,itemsUsed:0,perfectMatches:0,comebackWins:0},flags:{sampleLoaded:false,earlyStudy:false,lateStudy:false,mobileStudy:false},model:{reviews:0,accuracy:.72,wrongRate:.22,avgCorrectSec:7.5,avgWrongSec:9.5,hintUseRate:.12,hintCorrectRate:.5,shortTermSlipRate:.18,intervalScale:1,speedTrust:1,reviewUrgency:1,afkRate:.02,rankAccuracy:.62,rankAvgSec:5.8,rankStreakSkill:0},adaptive:defaultAdaptiveV14(),studyClimate:Study.defaultClimateState()},account:{id:uid('acct'),name:'Flzsh',rank:{elo:850,peakElo:850,tier:'D',pips:0,sStars:0,matches:0,wins:0,losses:0,ties:0,overtime:0,winStreak:0,bestStreak:0,peakTier:'D',peakSStars:0,history:[]},progress:{trainingTokens:0,lifetimeTrainingTokens:0,selectedCharacter:'nova',unlockedCharacters:['nova'],upgrades:{vitality:0,regen:0,focus:0,wallet:0,arsenal:0},characterStats:{},battleItemsUsed:0}},settings:{dailyNewLimit:70,dailyReviewLimit:220,targetTotal:3000,targetDays:45,curve:'balanced',queueStyle:'mixed',frontMode:'word',protectBacklog:true,requireTypingInstant:false,reviewsBeforeNew:2,learningPullAheadMin:18,smartReview:true,newBatchFilter:'all',sectionFocus:'all',themeMode:'system',powerMode:'full',lowPowerMode:false}};}
   function legacyEloFromRank(r={}){const map={D:850,C:950,'C+':1050,B:1150,'B+':1250,A:1350,'A+':1450,S:1500};return clamp((map[r.tier]||850)+(r.tier==='S'?(Number(r.sStars)||0)*7:(Number(r.pips)||0)*22),600,2600);}
   function rankBandForElo(elo){elo=Number(elo||0);return V14_RANK_BANDS.find(x=>elo>=x.min&&elo<=x.max)||V14_RANK_BANDS[0];}
   function syncRankFromElo(r=state.account.rank){r.elo=clamp(Math.round(Number(r.elo)||legacyEloFromRank(r)),600,2800);const band=rankBandForElo(r.elo);r.tier=band.tier;r.pips=band.tier==='S'?0:clamp(Math.floor((r.elo-band.min)/Math.max(1,(band.max-band.min+1)/3)),0,2);r.sStars=band.tier==='S'?Math.max(0,Math.floor((r.elo-1500)/10)):0;r.peakElo=Math.max(Number(r.peakElo)||r.elo,r.elo);r.peakTier=rankBandForElo(r.peakElo).tier;r.peakSStars=Math.max(Number(r.peakSStars)||0,r.sStars||0);return band;}
   function normalizeCard(c,idx,seen){c.id=c.id||uid('card');c.word=(c.word||'').trim();c.norm=c.norm||norm(c.word);if(seen.has(c.norm))c.norm=c.norm+'-'+idx;seen.add(c.norm);c.fullMeaning=c.fullMeaning||c.meaning||'';c.meaning=c.meaning||c.fullMeaning||'';c.bridge=c.bridge||'';c.example=c.example||'';c.batchId=c.batchId||'default';c.batchName=c.batchName||'Imported';c.batchIndex=Number.isFinite(Number(c.batchIndex))?Number(c.batchIndex):idx;c.state=c.suspended?'suspended':(c.state||'new');c.dueAt=c.state==='known'?0:Number(c.dueAt||0);c.intervalDays=Number(c.intervalDays||0);c.stability=Number(c.stability||Math.max(.16,c.intervalDays||.16));c.ease=Number(c.ease||2.35);c.difficulty=clamp(Number(c.difficulty??.35),0,1);c.reps=Number(c.reps||0);c.lapses=Number(c.lapses||0);c.correctStreak=Number(c.correctStreak||0);c.memoryScore=Number.isFinite(Number(c.memoryScore))?Number(c.memoryScore):0;c.modelBias=clamp(Number(c.modelBias||0),-1.5,1.5);c.personalScale=clamp(Number(c.personalScale||1),.45,2);c.createdAt=Number(c.createdAt||Date.now());c.updatedAt=Number(c.updatedAt||c.createdAt);c.history=Array.isArray(c.history)?c.history.slice(-80):[];Learning.migrateMemoryState(c);}
   function normalizeV14State(){
     const def=defaultState();
-    state.settings=Object.assign(def.settings,state.settings||{});
-    state.profile=Object.assign(def.profile,state.profile||{});
-    state.profile.totals=Object.assign(def.profile.totals,state.profile.totals||{});
-    state.profile.flags=Object.assign(def.profile.flags,state.profile.flags||{});
-    state.profile.model=Object.assign(def.profile.model,state.profile.model||{});
-    state.profile.adaptive=Object.assign(defaultAdaptiveV14(),state.profile.adaptive||{});
-    state.profile.adaptive.weights=Object.assign(defaultAdaptiveV14().weights,state.profile.adaptive.weights||{});
+    const inputSettings=state.settings&&typeof state.settings==='object'?state.settings:{};
+    const inputProfile=state.profile&&typeof state.profile==='object'?state.profile:{};
+    const inputAccount=state.account&&typeof state.account==='object'?state.account:{};
+    const inputRank=inputAccount.rank&&typeof inputAccount.rank==='object'?inputAccount.rank:{};
+    const inputProgress=inputAccount.progress&&typeof inputAccount.progress==='object'?inputAccount.progress:{};
+    state.settings={...def.settings,...inputSettings};
+    state.profile={...def.profile,...inputProfile};
+    state.profile.totals={...def.profile.totals,...(inputProfile.totals&&typeof inputProfile.totals==='object'?inputProfile.totals:{})};
+    state.profile.flags={...def.profile.flags,...(inputProfile.flags&&typeof inputProfile.flags==='object'?inputProfile.flags:{})};
+    state.profile.model={...def.profile.model,...(inputProfile.model&&typeof inputProfile.model==='object'?inputProfile.model:{})};
+    state.profile.adaptive={...defaultAdaptiveV14(),...(inputProfile.adaptive&&typeof inputProfile.adaptive==='object'?inputProfile.adaptive:{})};
+    state.profile.adaptive.weights={...defaultAdaptiveV14().weights,...(state.profile.adaptive.weights&&typeof state.profile.adaptive.weights==='object'?state.profile.adaptive.weights:{})};
     state.profile.adaptive.calibration=Array.isArray(state.profile.adaptive.calibration)?state.profile.adaptive.calibration.slice(0,10):defaultAdaptiveV14().calibration;
     while(state.profile.adaptive.calibration.length<10)state.profile.adaptive.calibration.push({n:0,hits:0});
     state.schemaVersion=16;
@@ -2352,13 +2405,13 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     state.sectionRetirements=state.sectionRetirements&&typeof state.sectionRetirements==='object'?state.sectionRetirements:{};
     state.continuedWeakCardIds=[...new Set([...(Array.isArray(state.continuedWeakCardIds)?state.continuedWeakCardIds:[]),...(Array.isArray(state.settings.carryoverWeakCardIds)?state.settings.carryoverWeakCardIds:[])].map(String).filter(Boolean))].slice(0,24);delete state.settings.carryoverWeakCardIds;
     state.daily=state.daily||{};
-    state.account=Object.assign(def.account,state.account||{});
-    state.account.rank=Object.assign(def.account.rank,state.account.rank||{});
-    state.account.rank.history=Array.isArray(state.account.rank.history)?state.account.rank.history.slice(0,60):[];
-    state.account.progress=Object.assign(def.account.progress,state.account.progress||{});
-    state.account.progress.upgrades=Object.assign(def.account.progress.upgrades,state.account.progress.upgrades||{});
-    state.account.progress.characterStats=state.account.progress.characterStats||{};
-    state.account.progress.unlockedCharacters=Array.isArray(state.account.progress.unlockedCharacters)?state.account.progress.unlockedCharacters:['nova'];
+    state.account={...def.account,...inputAccount};
+    state.account.rank={...def.account.rank,...inputRank};
+    state.account.rank.history=Array.isArray(inputRank.history)?inputRank.history.slice(0,60):[];
+    state.account.progress={...def.account.progress,...inputProgress};
+    state.account.progress.upgrades={...def.account.progress.upgrades,...(inputProgress.upgrades&&typeof inputProgress.upgrades==='object'?inputProgress.upgrades:{})};
+    state.account.progress.characterStats=inputProgress.characterStats&&typeof inputProgress.characterStats==='object'?inputProgress.characterStats:{};
+    state.account.progress.unlockedCharacters=Array.isArray(inputProgress.unlockedCharacters)?inputProgress.unlockedCharacters.slice():['nova'];
     if(!state.account.progress.unlockedCharacters.includes('nova'))state.account.progress.unlockedCharacters.unshift('nova');
     if(!V14_CHARACTERS.some(x=>x.id===state.account.progress.selectedCharacter)||!state.account.progress.unlockedCharacters.includes(state.account.progress.selectedCharacter))state.account.progress.selectedCharacter='nova';
     syncRankFromElo(state.account.rank);
@@ -2371,11 +2424,11 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     });
     if(!state.books.some(b=>b.id===state.activeBookId))state.activeBookId=state.books[0].id;
   }
-  function todayLog(){const k=todayKey();if(!state.daily[k])state.daily[k]={newIntroduced:0,reviewsDone:0,learningDone:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,known:0,hints:0,answersShown:0,typedCorrect:0,pauseNew:false,boostReview:false,minutes:0,reviewSinceNew:0,trainingTokens:0};const d=state.daily[k];for(const key of ['wrong','correct','know','trainingTokens','reviewSinceNew','reviewsDone','newIntroduced','hints','answersShown','minutes'])d[key]=Number(d[key]||0);return d;}
+  function todayLog(){const k=todayKey();if(!state.daily[k])state.daily[k]={newIntroduced:0,reviewsDone:0,learningDone:0,wrong:0,correct:0,know:0,again:0,hard:0,good:0,instant:0,known:0,hints:0,answersShown:0,typedCorrect:0,pauseNew:false,boostReview:false,minutes:0,reviewSinceNew:0,mixPhase:0,mixHistory:[],mixNewServed:0,mixReviewServed:0,trainingTokens:0};const d=state.daily[k];for(const key of ['wrong','correct','know','trainingTokens','reviewSinceNew','reviewsDone','newIntroduced','hints','answersShown','minutes','mixPhase','mixNewServed','mixReviewServed'])d[key]=Number(d[key]||0);d.mixPhase=StudyMixer?.normalizePhase?.(d.mixPhase)||0;d.mixHistory=Array.isArray(d.mixHistory)?d.mixHistory.filter(kind=>kind==='new'||kind==='review').slice(-40):[];return d;}
   function hydrateV14Els(){Object.assign(els,{playerCharAvatar:$('playerCharAvatar'),botCharAvatar:$('botCharAvatar'),playerHealthFill:$('playerHealthFill'),botHealthFill:$('botHealthFill'),playerShieldFill:$('playerShieldFill'),botShieldFill:$('botShieldFill'),playerHealthText:$('playerHealthText'),botHealthText:$('botHealthText'),matchTimerText:$('matchTimerText'),matchTimerFill:$('matchTimerFill'),flashOverlay:$('flashOverlay'),battleStatusStrip:$('battleStatusStrip'),playerCredits:$('playerCredits'),botCredits:$('botCredits'),activeCharMini:$('activeCharMini'),activeCharacterName:$('activeCharacterName'),activeCharacterPassive:$('activeCharacterPassive'),characterActiveBtn:$('characterActiveBtn'),wagerPanel:$('wagerPanel'),wagerButtons:$('wagerButtons'),wagerStatus:$('wagerStatus'),itemShop:$('itemShop'),rankEloDisplay:$('rankEloDisplay'),trainingTokenDisplay:$('trainingTokenDisplay'),characterRoster:$('characterRoster'),upgradeGrid:$('upgradeGrid'),matchTimerText:$('matchTimerText'),matchTimerFill:$('matchTimerFill')});}
   function init(){hydrateV14Els();normalizeState();bindEvents();bindV14Events();setupAttentionTracking();hydrateInputs();renderAll();showView('study');selectNextCard(false);setupTabIndicator();updateSaveHealth();registerServiceWorker();}
   function bindV14Events(){if(els.characterRoster)els.characterRoster.addEventListener('click',e=>{const b=e.target.closest('[data-character]');if(b)selectCharacter(b.dataset.character);});if(els.upgradeGrid)els.upgradeGrid.addEventListener('click',e=>{const b=e.target.closest('[data-upgrade]');if(b)purchaseUpgrade(b.dataset.upgrade);});if(els.itemShop)els.itemShop.addEventListener('click',e=>{const b=e.target.closest('[data-item]');if(b)useBattleItem('player',b.dataset.item);});if(els.characterActiveBtn)els.characterActiveBtn.addEventListener('click',()=>useCharacterAbility('player'));if(els.wagerButtons)els.wagerButtons.addEventListener('click',e=>{const b=e.target.closest('[data-wager]');if(b)setNextWager(Number(b.dataset.wager));});window.addEventListener('resize',debounce(()=>{updateTabIndicator();renderRanked();},100));document.addEventListener('visibilitychange',()=>{if(!rankMatch)return;rankMatch.clockPaused=!!document.hidden;if(!document.hidden)rankMatch.lastTick=performance.now();});window.addEventListener('blur',()=>{if(rankMatch)rankMatch.clockPaused=true;});window.addEventListener('focus',()=>{if(rankMatch){rankMatch.clockPaused=false;rankMatch.lastTick=performance.now();}});}
-  function showView(name){const mobileOverflow=['planner','books','achievements','stats','settings'].includes(name),useMoreTab=mobileOverflow&&window.matchMedia&&window.matchMedia('(max-width:720px)').matches;document.body.classList.toggle('study-mode',name==='study');document.body.classList.toggle('ranked-mode',name==='ranked'&&!!rankMatch);document.body.classList.toggle('theme-rank-lock',name==='ranked');document.body.dataset.activeView=name;document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',useMoreTab?t.dataset.view==='more':t.dataset.view===name));requestAnimationFrame(()=>{updateTabIndicator();});if(name==='stats')renderStats();if(name==='achievements')renderAchievements();if(name==='ranked'){renderRanked();resumeRankClock();}else pauseRankClock();if(name==='books')renderBooks();if(name==='planner')renderPlanner();if(name==='import')renderImportPreview();}
+  function showView(name){const mobileOverflow=['planner','achievements','stats','settings'].includes(name),useMoreTab=mobileOverflow&&window.matchMedia&&window.matchMedia('(max-width:720px)').matches;document.body.classList.toggle('study-mode',name==='study');document.body.classList.toggle('ranked-mode',name==='ranked'&&!!rankMatch);document.body.classList.toggle('theme-rank-lock',name==='ranked');document.body.dataset.activeView=name;document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',useMoreTab?t.dataset.view==='more':t.dataset.view===name));requestAnimationFrame(()=>{updateTabIndicator();});if(name==='stats')renderStats();if(name==='achievements')renderAchievements();if(name==='ranked'){renderRanked();resumeRankClock();}else pauseRankClock();if(name==='books')renderBooks();if(name==='planner')renderPlanner();if(name==='import')renderImportPreview();}
 
   function adaptiveModel(){const a=Object.assign(defaultAdaptiveV14(),state.profile.adaptive||{});a.weights=Object.assign(defaultAdaptiveV14().weights,a.weights||{});a.calibration=Array.isArray(a.calibration)?a.calibration:defaultAdaptiveV14().calibration;state.profile.adaptive=a;return a;}
   function sigmoid(z){return 1/(1+Math.exp(-clamp(z,-20,20)));}function logit(p){p=clamp(p,.001,.999);return Math.log(p/(1-p));}
@@ -2603,7 +2656,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       const advanceResult=await maybeAdvanceLibraryStudyScope();
       if(advanceResult===null){deferCommittedStudyAdvanceRetry(continuation);return false;}
       if(continuation.contextEpoch!==dataContextEpoch||continuation.bookId!==(activeBook()?.id||''))return false;
-      selectNextCard(false,false,true);return true;
+      selectNextCard(false,false,false);return true;
     }finally{
       committedStudyAdvanceRunning=false;
       if(pendingCommittedStudyAdvance&&!pendingCommittedStudyAdvance.retryOnUser&&document.body.dataset.activeView==='study')void resumeCommittedStudyAdvance();
@@ -2627,7 +2680,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const c=current.card,now=Date.now(),d=todayLog(),first=!c.introducedAt,repsBefore=Math.max(0,Number(c.reps)||0),recentWrongBefore=recentWrongCount(c,5),typed=els.typeInput.value.trim(),kind=current.kind||'review',sectionKey=Learning.sectionKey(c);
     settleProTutorPrediction(c,rating);settleProTutorDelayedOutcome(c,rating,now);
     const before=currentStudySnapshot(c),timing=recallTiming(),latencyBaseline=Number(memoryCalibration().avgCorrectSeconds)||7.5;
-    if(first){c.introducedAt=now;d.newIntroduced++;d.reviewSinceNew=0;}else{d.reviewsDone++;d.reviewSinceNew++;}
+    if(first){c.introducedAt=now;d.newIntroduced++;d.reviewSinceNew=0;}else{d.reviewsDone++;d.reviewSinceNew++;}StudyMixer?.recordOutcome?.(d,current);
     d[rating]=(d[rating]||0)+1;if(rating==='wrong')d.again=(d.again||0)+1;if(rating==='correct')d.good=(d.good||0)+1;if(rating==='know'){d.known=(d.known||0)+1;d.knownBefore=(d.knownBefore||0)+1;}
     state.profile.totals.reviews++;state.profile.totals[rating]=(state.profile.totals[rating]||0)+1;if(rating==='wrong')state.profile.totals.again=(state.profile.totals.again||0)+1;if(rating==='correct')state.profile.totals.good=(state.profile.totals.good||0)+1;if(rating==='know')state.profile.totals.knownBefore=(state.profile.totals.knownBefore||0)+1;
     const result=applySmartRating(c,rating,now,first,{typed,hints:hintCount,timing}),tokens=0;
@@ -2855,7 +2908,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       onReveal:()=>showAnswer(),
       onRate:(rating,meta)=>void rateCurrent(rating,meta?.source||'gesture'),
       onPhaseChange:phase=>{els.studyStage.dataset.studyPhase=phase;},
-      prefersReducedMotion:()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      prefersReducedMotion:()=>ultraPowerEnabled()||window.matchMedia('(prefers-reduced-motion: reduce)').matches
     });
     initLongTermSphereInteraction();
     applyV17Climate();
@@ -2958,7 +3011,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
       usabilityRail:$('usabilityRail'),usabilityRailLiquid:$('usabilityRailLiquid'),usabilityRailMarker:$('usabilityRailMarker'),longTermSphere:$('longTermSphere'),longTermWordValue:$('longTermWordValue'),longTermSectionValue:$('longTermSectionValue'),longTermAverageBadge:$('longTermAverageBadge'),memoryWorldStageLabel:$('memoryWorldStageLabel'),
       proTutorChip:$('proTutorChip'),proTutorBtn:$('proTutorBtn'),continueNextSetBtn:$('continueNextSetBtn'),
       proSetReviewPage:$('proSetReviewPage'),proSetReviewStatus:$('proSetReviewStatus'),proSetReviewTitle:$('proSetReviewTitle'),proSetReviewSummary:$('proSetReviewSummary'),proSetReviewSource:$('proSetReviewSource'),proSetReviewLessons:$('proSetReviewLessons'),proSetReviewProgress:$('proSetReviewProgress'),proSetReviewCard:$('proSetReviewCard'),proSetReviewFeedback:$('proSetReviewFeedback'),proSetFinalRecall:$('proSetFinalRecall'),proSetReviewNote:$('proSetReviewNote'),proSetReviewRetryBtn:$('proSetReviewRetryBtn'),proSetReviewPrevBtn:$('proSetReviewPrevBtn'),proSetReviewAltBtn:$('proSetReviewAltBtn'),proSetReviewTestBtn:$('proSetReviewTestBtn'),proSetReviewContinueBtn:$('proSetReviewContinueBtn'),
-      lowPowerMode:$('lowPowerMode'),proTutorEnabled:$('proTutorEnabled'),proTutorMode:$('proTutorMode'),proTutorThreshold:$('proTutorThreshold'),proTutorThresholdValue:$('proTutorThresholdValue'),proTutorThresholdHelp:$('proTutorThresholdHelp'),proTutorModel:$('proTutorModel'),proTutorShareSemantic:$('proTutorShareSemantic'),proTutorDailyTokenLimit:$('proTutorDailyTokenLimit'),proTutorDailyCostLimit:$('proTutorDailyCostLimit'),proTutorConnectBtn:$('proTutorConnectBtn'),proTutorKeyInput:$('proTutorKeyInput'),proTutorSaveKeyBtn:$('proTutorSaveKeyBtn'),proTutorTestBtn:$('proTutorTestBtn'),proTutorDisconnectBtn:$('proTutorDisconnectBtn'),proTutorConnectionStatus:$('proTutorConnectionStatus'),proTutorDiagnostics:$('proTutorDiagnostics')
+      themeMode:$('themeMode'),powerMode:$('powerMode'),lowPowerMode:$('lowPowerMode'),proTutorEnabled:$('proTutorEnabled'),proTutorMode:$('proTutorMode'),proTutorThreshold:$('proTutorThreshold'),proTutorThresholdValue:$('proTutorThresholdValue'),proTutorThresholdHelp:$('proTutorThresholdHelp'),proTutorModel:$('proTutorModel'),proTutorShareSemantic:$('proTutorShareSemantic'),proTutorDailyTokenLimit:$('proTutorDailyTokenLimit'),proTutorDailyCostLimit:$('proTutorDailyCostLimit'),proTutorConnectBtn:$('proTutorConnectBtn'),proTutorKeyInput:$('proTutorKeyInput'),proTutorSaveKeyBtn:$('proTutorSaveKeyBtn'),proTutorTestBtn:$('proTutorTestBtn'),proTutorDisconnectBtn:$('proTutorDisconnectBtn'),proTutorConnectionStatus:$('proTutorConnectionStatus'),proTutorDiagnostics:$('proTutorDiagnostics')
     });
   }
   function defaultProTutorProfile(){
@@ -2988,7 +3041,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function proTutorAppUrl(){try{const url=new URL(location.href);for(const key of ['code','error','error_description','vcs_openrouter'])url.searchParams.delete(key);return url.toString();}catch(_error){return '';}}
   function rebuildProTutorClient(){
     if(!ProTutor||typeof fetch!=='function'){proTutorClient=null;return null;}
-    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio V44'});return proTutorClient;
+    const settings=proTutorSettings();proTutorClient=ProTutor.createOpenRouterClient({fetchImpl:fetch.bind(window),getApiKey:getOpenRouterSessionKey,model:settings.model,timeoutMs:settings.requestTimeoutMs,appUrl:proTutorAppUrl(),appTitle:'Vocab Curve Studio V47'});return proTutorClient;
   }
 
   function friendlyProTutorError(error){
@@ -3337,6 +3390,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     const before=stateFingerprint();
     DefaultWorkbook?.ensureInState?.(state,{now:Date.now()});
     DefaultBook2?.ensureInState?.(state,{now:Date.now()});
+    DefaultBook3?.ensureInState?.(state,{now:Date.now()});
     normalizeV14State();
     V44Runtime?.ensureState?.(state,{now:Date.now(),book2:DefaultBook2,learning:Learning});
     normalizeProTutorState();
@@ -3344,7 +3398,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     state.sectionRetirements=state.sectionRetirements&&typeof state.sectionRetirements==='object'?state.sectionRetirements:{};
     state.profile.studyClimate=Study.migrateClimateState(state.profile.studyClimate);
     if(v16Runtime)v16Runtime.normalizeState();
-    state.schemaVersion=44;
+    state.schemaVersion=47;
     return stateFingerprint()!==before;
   }
 
@@ -3663,35 +3717,31 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   }
 
   function buildBaseQueue(forceNew=false,queueOptions={}){
-    const now=Date.now(),day=todayLog(),summary=counts(),scope=activeLibraryStudyScope(),focus=libraryScopeAutomatic(scope)?activeSectionFocus():'library-active',items=priorityReviewCards(now),selected=items.filter(entry=>entry.selected).map(entry=>entry.card),overflow=items.map(entry=>entry.card),news=filteredNewCards(''),repair=shortTermRepairCards(now),scopeDuePressure=libraryScopeAutomatic(scope)?summary.dueAll:items.length,canNew=(libraryScopeAutomatic(scope)?focus==='all':true)&&dailyNewRemaining()>0&&!day.pauseNew&&(!state.settings.protectBacklog||scopeDuePressure<=Math.max(5,effectiveReviewLimit()*.9)||forceNew),suppressEarlyExpansion=queueOptions.allowEmptyNormalBridge===false;
+    const now=Date.now(),day=todayLog(),summary=counts(),scope=activeLibraryStudyScope(),focus=libraryScopeAutomatic(scope)?activeSectionFocus():'library-active';
+    const items=priorityReviewCards(now),selected=items.filter(entry=>entry.selected).map(entry=>entry.card),overflow=items.map(entry=>entry.card),news=filteredNewCards(''),repair=shortTermRepairCards(now);
+    const suppressEarlyExpansion=queueOptions.allowEmptyNormalBridge===false;
+    const reviewOnly=day.pauseNew===true||String(queueOptions.mode||'')==='review-only';
+    const scopeDuePressure=libraryScopeAutomatic(scope)?summary.dueAll:items.length;
+    const canNew=!reviewOnly&&(libraryScopeAutomatic(scope)?focus==='all':true)&&dailyNewRemaining()>0;
     if(suppressEarlyExpansion&&!selected.length&&!overflow.length&&!(canNew&&news.length))return[];
-    let normalQueue=[];
-    if(forceNew&&canNew&&news.length){
-      normalQueue=[{card:news[0],kind:'new'}];
-    }else{
-      let due=selected;
-      const newUnavailable=!canNew||!news.length||dailyNewRemaining()<=0||day.pauseNew;
-      if(!due.length&&overflow.length&&newUnavailable)due=overflow.slice(0,Math.min(35,overflow.length));
-      if(!due.length&&newUnavailable)due=soonLearningCards(now);
-      const before=Math.max(1,Number(state.settings.reviewsBeforeNew||2));
-      if(due.length&&(!canNew||!news.length||day.reviewSinceNew<before||state.settings.queueStyle==='reviewFirst')){
-        normalQueue=due.map(card=>({card,kind:'review'})).concat(canNew&&news.length&&day.reviewSinceNew>=before?[{card:news[0],kind:'new'}]:[]);
-      }else if(canNew&&news.length&&state.settings.queueStyle==='newFirst'){
-        normalQueue=[{card:news[0],kind:'new'}].concat(due.map(card=>({card,kind:'review'})));
-      }else if(due.length){
-        normalQueue=due.map(card=>({card,kind:'review'})).concat(canNew&&news.length?[{card:news[0],kind:'new'}]:[]);
-      }else if(canNew&&news.length){
-        normalQueue=[{card:news[0],kind:'new'}];
-      }else if(repair.length){
-        normalQueue=repair.map(card=>({card,kind:'reinforcement'}));
-      }
-    }
-    if(day.pauseNew&&overflow.length)normalQueue=normalQueue.concat(overflow.map(card=>({card,kind:'review'})));
+    let due=selected.slice();
+    if(!due.length&&overflow.length&&(reviewOnly||!canNew||!news.length))due=overflow.slice(0,Math.min(35,overflow.length));
+    if(!due.length&&(reviewOnly||!canNew||!news.length))due=soonLearningCards(now);
+    let normalQueue=StudyMixer?.plan?.({
+      dueCards:due,
+      newCards:news,
+      repairCards:repair,
+      canNew,
+      reviewOnly,
+      forceNew,
+      reviewSinceNew:day.reviewSinceNew,
+      reviewsBeforeNew:state.settings.reviewsBeforeNew,
+      mixPhase:day.mixPhase,
+      queueStyle:state.settings.queueStyle
+    })||[];
+    if(reviewOnly&&overflow.length)normalQueue=normalQueue.concat(overflow.map(card=>({card,kind:'review'})));
     let bridgePool=routineStudyCards(libraryScopedReviewPool(activeCards(),scope),{includeRetired:false});
-    if(libraryScopeAutomatic(scope)){
-      const focus=activeSectionFocus();
-      bridgePool=Learning.filterForSection(bridgePool,focus,state.sectionUnlocks||{});
-    }
+    if(libraryScopeAutomatic(scope))bridgePool=Learning.filterForSection(bridgePool,activeSectionFocus(),state.sectionUnlocks||{});
     return QueuePolicy.interleaveRecentReviews(normalQueue,bridgePool,{recentCardIds:studyRecentCardIds,now,gap:2,allowEmptyNormalBridge:queueOptions.allowEmptyNormalBridge!==false});
   }
   function currentStudySnapshot(card=current?.card){
@@ -3760,7 +3810,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   function init(){
     const beforeNormalize=stateFingerprint();
     syncShellScrollbarEdge();window.addEventListener('resize',debounce(syncShellScrollbarEdge,80),{passive:true});
-    hydrateV14Els();hydrateV16Els();hydrateV17Els();hydrateV20Els();normalizeState();applyLowPowerMode();initLiquidMemoryMotion();applyLowPowerMode();v16Runtime=createV16Runtime();v16Runtime.normalizeState();state.schemaVersion=44;
+    hydrateV14Els();hydrateV16Els();hydrateV17Els();hydrateV20Els();normalizeState();MemoryWorldArt?.install?.(document);applyDisplayPreferences();initLiquidMemoryMotion();applyDisplayPreferences();v16Runtime=createV16Runtime();v16Runtime.normalizeState();state.schemaVersion=47;
     const normalizationChanged=beforeNormalize!==stateFingerprint();
     if(saveMeta.needsInitialSave||normalizationChanged)saveState(saveMeta.needsInitialSave?'initial-normalize':'normalize-v20',true);
     else{setSaveConflictState(saveMeta.stale===true);setSavePill(saveMeta.stale?'warn':'saved',saveMeta.stale?'Newer save detected':'Saved');}
@@ -3781,7 +3831,7 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     if(!supportedViews.has(name))name='study';
     const outgoingView=document.querySelector('.view.active'),focusedInOutgoing=!!(outgoingView&&outgoingView.id!=='view-'+name&&outgoingView.contains(document.activeElement));
     if(name!=='study')invalidateStudyTransition();
-    const mobileOverflow=['planner','books','stats','settings'].includes(name),useMoreTab=mobileOverflow&&window.matchMedia&&window.matchMedia('(max-width:720px)').matches;
+    const mobileOverflow=['planner','stats','settings'].includes(name),useMoreTab=mobileOverflow&&window.matchMedia&&window.matchMedia('(max-width:720px)').matches;
     document.body.classList.toggle('study-mode',name==='study');if(memoryWorldMotionController){if(lowPowerEnabled())memoryWorldMotionController.stop?.();else{memoryWorldMotionController.start?.();memoryWorldMotionController.setActive(name==='study'&&!document.hidden);}}document.body.classList.remove('ranked-mode','theme-rank-lock');document.body.dataset.activeView=name;
     document.querySelectorAll('.view').forEach(view=>view.classList.toggle('active',view.id==='view-'+name));
     document.querySelectorAll('.tab').forEach(tab=>{const selected=useMoreTab?tab.dataset.view==='more':tab.dataset.view===name;tab.classList.toggle('active',selected);if(selected)tab.setAttribute('aria-current','page');else tab.removeAttribute('aria-current');});
@@ -3912,11 +3962,11 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
   async function prepareAlphaRuntime(){
     const runtimeKey='vcs:alpha-runtime-build';
     let previous='';
-    try{previous=localStorage.getItem(runtimeKey)||'';}catch(_error){}
+    try{previous=APP_STORAGE?.getItem(runtimeKey)||'';}catch(_error){}
     if(previous===APP_VERSION)return false;
     try{if('caches'in window){const keys=await caches.keys();await Promise.all(keys.filter(key=>key.startsWith('vocab-curve-')).map(key=>caches.delete(key)));}}catch(_error){}
     try{if('serviceWorker'in navigator){const appWorkerUrl=new URL('./sw.js',location.href),appScopeUrl=new URL('./',location.href).href,registrations=await navigator.serviceWorker.getRegistrations(),ownedRegistrations=registrations.filter(registration=>{let exactScope=false;try{exactScope=new URL(registration.scope,location.href).href===appScopeUrl;}catch(_error){return false;}return exactScope&&[registration.active,registration.waiting,registration.installing].filter(Boolean).some(worker=>{const workerUrl=new URL(worker.scriptURL,location.href);return workerUrl.origin===appWorkerUrl.origin&&workerUrl.pathname===appWorkerUrl.pathname;});});await Promise.all(ownedRegistrations.map(registration=>registration.unregister()));}}catch(_error){}
-    try{localStorage.setItem(runtimeKey,APP_VERSION);}catch(_error){}
+    try{APP_STORAGE?.setItem(runtimeKey,APP_VERSION);}catch(_error){}
     return true;
   }
   async function registerServiceWorker(){
@@ -3927,14 +3977,39 @@ body.save-conflict .main :is(button,input,select,textarea):not([data-view]):not(
     navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
     navigator.serviceWorker.register(`./sw.js?v=${encodeURIComponent(APP_VERSION)}`,{updateViaCache:'none'}).then(reg=>{
       reg.update().catch(()=>{});
-      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V20 V44 cache ready');});
+      navigator.serviceWorker.addEventListener('message',event=>{if(event.data==='V20_READY')console.info('V47 offline cache ready');});
     }).catch(()=>{});
   }
+
+  async function studyWordSmartIds(cardIds,label='Word Smart missed words'){
+    const ids=Array.from(new Set((Array.isArray(cardIds)?cardIds:[]).map(String))).filter(Boolean);
+    const targetBook=state.books.find(book=>book.id===DefaultBook3?.BOOK_ID);
+    if(!targetBook||!ids.length)return false;
+    if(studyRatingInFlight||pendingCommittedStudyAdvance||committedStudyAdvanceRunning)return toast('Finishing this card','Wait for the next flashcard before changing the Study scope.');
+    if(!verifyWritableRevision('Study data changed before the Word Smart selection could start.'))return false;
+    const before=cloneStateForRollback();
+    cancelRankMatchForDataChange();state.activeBookId=targetBook.id;
+    Library.setActiveScope(targetBook,{type:'selection',label,cardIds:ids,includeOutsideReviews:true});
+    current=null;answerShown=false;
+    if(!await saveState('wordsmart-study-selection',true,true))return restoreFailedStateCommit(before,'Word Smart selection');
+    renderBookSelect();renderBooks();renderSide();updateSaveHealth();showView('study');selectNextCard(false);return true;
+  }
+  const publicApp=Object.freeze({
+    getState:()=>state,
+    save:reason=>saveState(reason||'v46-app',true),
+    toast,
+    showView,
+    studyWordSmartIds
+  });
+  window.VCS46App=publicApp;
+  window.VCS45App=publicApp;
 
   init();
 
 })();
 </script>
-<script src="./studio-workspace.js?v=44.0.0-beta-studio.19"></script>
+<script src="./studio-workspace.js?v=47.0.0"></script>
+<script src="./v45-wordsmart-diagnostic.js?v=47.0.0"></script>
+<script>window.V45WordSmartDiagnostic?.mount(window.VCS46App||window.VCS45App);</script>
 </body>
 </html>

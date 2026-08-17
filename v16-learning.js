@@ -51,7 +51,8 @@
       brierScore: 0.1875,
       avgCorrectSeconds: 7.5,
       avgWrongSeconds: 9.5,
-      intervalScale: 1
+      intervalScale: 1,
+      updatedAt: 0
     };
   }
 
@@ -435,6 +436,7 @@
       const adjustment = clamp(calibrationGap * 0.018, -0.012, 0.012);
       target.intervalScale = clamp(target.intervalScale * Math.exp(adjustment), 0.70, 1.30);
     }
+    target.updatedAt = Math.max(0, finite(evidence && evidence.now, Date.now()));
     return target;
   }
 
@@ -597,6 +599,15 @@
       if (transition.source === 'study') {
         target.studyMastery = transition.studyMastery;
         target.studyReviews = Math.max(0, Math.floor(finite(target.studyReviews, 0))) + 1;
+        target.lapses = Math.max(0, Math.floor(finite(target.lapses, 0)));
+        target.correctStreak = Math.max(0, Math.floor(finite(target.correctStreak, 0)));
+        if (transition.rating === 'wrong') {
+          // A first exposure miss is encoding evidence, not a forgotten-memory lapse.
+          if (!transition.first) target.lapses += 1;
+          target.correctStreak = 0;
+        } else {
+          target.correctStreak += 1;
+        }
         if (!(finite(target.studySeenAt, 0) > 0)) target.studySeenAt = transition.reviewTime;
         if (!finite(target.introducedAt, 0)) target.introducedAt = transition.reviewTime;
       }
@@ -610,7 +621,8 @@
       timedOut: context.timedOut,
       timing: transition.timing,
       delayMinutes: transition.delayMinutes,
-      independent: finite(context.hints, 0) === 0 && !transition.timing.afk
+      independent: finite(context.hints, 0) === 0 && !transition.timing.afk,
+      now: transition.reviewTime
     });
     return transition;
   }

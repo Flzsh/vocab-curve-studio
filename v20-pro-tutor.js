@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='44.0.0-beta';
+  const VERSION='44.1.0-beta';
   const OPENROUTER_CHAT_URL='https://openrouter.ai/api/v1/chat/completions';
   const OPENROUTER_AUTH_URL='https://openrouter.ai/auth';
   const OPENROUTER_KEY_URL='https://openrouter.ai/api/v1/auth/keys';
@@ -800,7 +800,7 @@
       seen.add(id);
       const meaning=shareSemanticData?text(source.fullMeaning||source.meaning,320):'';
       const history=(Array.isArray(source.history)?source.history:[]).slice(-8),wrongCount=history.filter(item=>String(item.rating||'').toLowerCase()==='wrong').length,independentCorrect=history.filter(item=>['correct','know'].includes(String(item.rating||'').toLowerCase())&&finite(item.hints,0)===0).length;
-      result.push({id,word,meaning,fullMeaning:meaning,bridge:shareSemanticData?text(source.bridge,260):'',example:shareSemanticData?text(source.example,300):'',partOfSpeech:partOfSpeech(meaning),memoryScore:Math.round(clamp(source.memoryScore,0,100)),shortTermMastery:Math.round(clamp(source.shortTermMastery,0,100)),usabilityScore:Math.round(clamp(source.usabilityScore,0,100)),studyReviews:Math.max(0,Math.round(finite(source.studyReviews,0))),lapses:Math.max(0,Math.round(finite(source.lapses,0))),recentWrong:wrongCount,independentCorrect});
+      result.push({id,word,meaning,fullMeaning:meaning,bridge:shareSemanticData?text(source.bridge,320):'',example:shareSemanticData?text(source.example,360):'',sourceNotes:shareSemanticData?text(source.sourceNotes,520):'',officialMeaning:shareSemanticData?text(source.wordSmartOfficialMeaning,260):'',rootGroup:shareSemanticData?text(source.wordSmartRootGroup,180):'',rootMnemonic:shareSemanticData?text(source.wordSmartRootMnemonic,260):'',quickQuizzes:Array.isArray(source.wordSmartQuickQuizzes)?source.wordSmartQuickQuizzes.slice(0,4).map(item=>({quiz:Math.max(0,Math.round(finite(item.quiz,0))),index:Math.max(0,Math.round(finite(item.index,0)))})):[],partOfSpeech:text(source.partOfSpeech,40)||partOfSpeech(meaning),memoryScore:Math.round(clamp(source.memoryScore,0,100)),shortTermMastery:Math.round(clamp(source.shortTermMastery,0,100)),usabilityScore:Math.round(clamp(source.usabilityScore,0,100)),studyReviews:Math.max(0,Math.round(finite(source.studyReviews,0))),lapses:Math.max(0,Math.round(finite(source.lapses,0))),recentWrong:wrongCount,independentCorrect});
       if(result.length>=Math.max(0,Math.round(finite(maxItems,2200))))break;
     }
     return result;
@@ -850,8 +850,8 @@
       anchors:Array.from(anchorsById.values()).slice(0,8),
       relationships:relationships.slice(0,24),
       recentMethods:(Array.isArray(options.recentMethods)?options.recentMethods:[]).slice(-12),
-      referencePool:compactReferenceCards(options.referenceCards,shareSemanticData),
-      strugglingReferencePool:compactReferenceCards(options.referenceCards,shareSemanticData).filter(item=>item.recentWrong>0||item.lapses>0||item.shortTermMastery<70||item.memoryScore<45).sort((a,b)=>(b.recentWrong-a.recentWrong)||(b.lapses-a.lapses)||(a.shortTermMastery-b.shortTermMastery)||(a.memoryScore-b.memoryScore)).slice(0,36),
+      referencePool:[],
+      strugglingReferencePool:[],
       toolbox:V44_TOOLBOX.map(item=>({...item})),
       activityEffectiveness:options.activityEffectiveness&&typeof options.activityEffectiveness==='object'?options.activityEffectiveness:{},
       peerDifficultySummary:targets.map(target=>({
@@ -861,6 +861,9 @@
         shortTermMastery:target.shortTermMastery,responseSeconds:target.responseSeconds,hintCount:target.hintCount
       })).slice(0,12)
     };
+    const compactReferencePool=compactReferenceCards(options.referenceCards,shareSemanticData);
+    payload.referencePool=compactReferencePool;
+    payload.strugglingReferencePool=compactReferencePool.filter(item=>item.recentWrong>0||item.lapses>0||item.shortTermMastery<70||item.memoryScore<45).sort((a,b)=>(b.recentWrong-a.recentWrong)||(b.lapses-a.lapses)||(a.shortTermMastery-b.shortTermMastery)||(a.memoryScore-b.memoryScore)).slice(0,48);
     payload.methodPlans=buildSetMethodPlans(payload,{recentMethods:payload.recentMethods});
     if(options.interactive===true){
       payload.interactionMode='coach';

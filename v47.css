@@ -1,0 +1,316 @@
+/* Vocab Curve Studio V47 — complete themes, integrated rating surface, and ultra battery mode. */
+
+:root[data-theme-resolved="light"] {
+  color-scheme: light;
+  --bg0:#f7f8ff;--bg1:#f1fbff;--bg2:#fff9f3;
+  --ink:#202437;--muted:#697189;--soft:#8d94a8;
+  --panel:rgba(255,255,255,.82);--panel2:rgba(255,255,255,.96);
+  --line:rgba(87,95,130,.14);--strong:rgba(109,93,252,.24);
+  --mac-canvas:#f5f5f7;--mac-surface:#fff;--mac-elevated:rgba(255,255,255,.82);
+  --mac-text:#1d1d1f;--mac-secondary:#6e6e73;--mac-separator:rgba(60,60,67,.18);
+  --studio-surface:#fff;--studio-surface-2:#f7f8fc;--studio-surface-3:#eef2fa;
+  --studio-overlay:rgba(255,255,255,.94);--studio-track:rgba(70,76,102,.13);
+  --studio-field:rgba(255,255,255,.92);--studio-hover:#f3f5fb;
+  --shadow:0 22px 70px rgba(72,79,150,.14),0 10px 32px rgba(16,166,200,.10);
+  --shadow2:0 12px 28px rgba(72,79,150,.10);
+}
+
+:root[data-theme-resolved="dark"] {
+  color-scheme: dark;
+  --bg0:#090b11;--bg1:#0b1018;--bg2:#121017;
+  --ink:#f2f4fb;--muted:#a7aec1;--soft:#7f879b;
+  --panel:rgba(19,22,31,.90);--panel2:rgba(25,29,40,.98);
+  --line:rgba(181,190,219,.18);--strong:rgba(139,126,255,.38);
+  --accent:#8d82ff;--accent2:#3bc4df;--green:#48cf93;--red:#ff7169;
+  --orange:#f4a340;--blue:#6f9cff;--violet:#ae7cff;
+  --mac-canvas:#08090d;--mac-surface:#171920;--mac-elevated:rgba(27,30,40,.94);
+  --mac-text:#f5f5f7;--mac-secondary:#aeb2bd;--mac-separator:rgba(137,142,158,.34);
+  --mac-blue:#61a8ff;--mac-focus:#77b8ff;--mac-focus-strong:#b7d9ff;
+  --mac-red:#ff6961;--mac-green:#42d77d;--mac-amber:#ffd064;
+  --mac-success-foreground:#66e49a;--mac-warning-foreground:#ffd064;--mac-error-foreground:#ff8882;
+  --mac-context-a:#6f9cff;--mac-context-b:#53d7ed;--mac-context-glow:rgba(91,137,255,.22);
+  --studio-surface:#171920;--studio-surface-2:#1d2029;--studio-surface-3:#242835;
+  --studio-overlay:rgba(19,22,30,.97);--studio-track:rgba(199,206,229,.14);
+  --studio-field:rgba(28,31,41,.96);--studio-hover:#252936;
+  --shadow:0 22px 70px rgba(0,0,0,.42),0 8px 28px rgba(0,0,0,.26);
+  --shadow2:0 12px 30px rgba(0,0,0,.34);
+}
+
+html[data-theme-resolved="dark"],
+html[data-theme-resolved="dark"] body {
+  background-color:var(--bg0)!important;
+}
+html[data-theme-resolved="dark"] body {
+  color:var(--ink)!important;
+  background:
+    radial-gradient(circle at 8% 0%,rgba(112,93,252,.16),transparent 29%),
+    radial-gradient(circle at 96% 4%,rgba(20,154,184,.14),transparent 27%),
+    linear-gradient(135deg,var(--bg0),#0d1017 46%,var(--bg1))!important;
+}
+html[data-theme-resolved="dark"] body::before {opacity:.28!important;mix-blend-mode:screen!important;}
+
+/* Every substantial application surface follows the selected theme, including disclosures. */
+html[data-theme-resolved="dark"] :is(
+  .panel,.section,.topbar,.header-nav,.nav,.tabs,.top-actions,.study-card,.card-shell,
+  .v17-card-face,.v17-recall-zone,.v17-answer-zone,.answer-panel,.answer-item,
+  .side-card,.v19-side-deck,.v19-side-pane,.side-section,.v19-side-tabs,
+  .v20-library-workspace,.v20-library-builder,.v20-library-word-browser,
+  .v20-library-chapter-browser,.v20-chapter-card,.v20-study-set-card,
+  .v20-word-row,.v20-library-empty,.v44-books-mode-tabs,.v45-wordsmart-panel,
+  .v45-scan-summary,.v45-scan-result,.v45-scan-options button,
+  .pro-set-review-page,.pro-review-card,.pro-interactive-feedback,.pro-set-final-recall,
+  .pro-tutor-config-card,.pro-tutor-diagnostics,.pro-tutor-connection-status,
+  .modal,.modal-card,.toast,.table-wrap,.code-box,.empty,.plan-box,.preview-box,
+  .transfer-center,.transfer-description,.import-ai-panel,.import-ai-status,
+  details,.save-details,.mobile-answer-extra,.new-card-item,.priority-item,
+  .forecast-empty,.day,.mini-progress,.studio-progress-track,.v20-library-progress,
+  .daily-cap-progress-grid,.stat,.book-card,.achievement-card,.mobile-hub,.hub-tile
+) {
+  color:var(--ink)!important;
+  border-color:var(--line)!important;
+}
+
+html[data-theme-resolved="dark"] :is(
+  .panel,.section,.study-card,.side-card,.v19-side-deck,.v19-side-pane,.side-section,
+  .v20-library-workspace,.v20-library-builder,.v20-library-word-browser,
+  .v20-library-chapter-browser,.v20-chapter-card,.v20-study-set-card,
+  .pro-set-review-page,.pro-tutor-config-card,.modal-card,.toast,.table-wrap,.code-box,
+  .transfer-center,.import-ai-panel,.mobile-hub
+) {background:var(--panel)!important;}
+
+html[data-theme-resolved="dark"] :is(
+  .card-shell,.v17-card-face,.answer-panel,.answer-item,.new-card-item,.priority-item,
+  .v20-word-row,.v20-library-empty,.v45-scan-summary,.v45-scan-result,
+  .pro-review-card,.pro-interactive-feedback,.pro-set-final-recall,
+  .transfer-description,.import-ai-status,.forecast-empty,.day,.stat,.book-card,
+  .achievement-card,.hub-tile
+) {background:var(--studio-surface)!important;}
+
+html[data-theme-resolved="dark"] :is(
+  input,select,textarea,.book-select,.save-pill,.pill,.mode-chip,.memory-chip,
+  .study-section-chip,.pro-tutor-chip,.btn:not(.btn-primary):not(.btn-danger),
+  button:not(.tab):not(.rate):not(.btn-primary):not(.btn-danger),
+  label.btn:not(.btn-primary):not(.btn-danger),.studio-combobox-trigger,
+  .studio-combobox-menu,.studio-menu-surface,.v20-library-more > div
+) {
+  color:var(--ink)!important;
+  background:var(--studio-field)!important;
+  border-color:var(--line)!important;
+  box-shadow:none!important;
+}
+html[data-theme-resolved="dark"] select option {color:var(--ink);background:var(--studio-surface);}
+html[data-theme-resolved="dark"] input::placeholder,
+html[data-theme-resolved="dark"] textarea::placeholder {color:#858da1!important;}
+
+html[data-theme-resolved="dark"] :is(.tabs,.v19-side-tabs,.v44-books-mode-tabs) {
+  background:rgba(18,21,29,.92)!important;
+  border-color:var(--line)!important;
+}
+html[data-theme-resolved="dark"] :is(.tab-indicator,.v19-side-tab.active,.v44-books-mode-tabs button.active) {
+  color:var(--ink)!important;
+  background:linear-gradient(145deg,#2b3040,#20242f)!important;
+  border-color:rgba(142,132,255,.35)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.08)!important;
+}
+html[data-theme-resolved="dark"] :is(.tab,.v19-side-tab) {color:var(--muted)!important;}
+html[data-theme-resolved="dark"] :is(.tab.active,.v19-side-tab.active) {color:var(--ink)!important;text-shadow:none!important;}
+
+html[data-theme-resolved="dark"] :is(details,.save-details,.mobile-answer-extra,.v20-chapter-card) > summary {
+  color:var(--ink)!important;
+  background:var(--studio-surface-2)!important;
+  border-color:var(--line)!important;
+}
+html[data-theme-resolved="dark"] :is(details,.save-details,.mobile-answer-extra,.v20-chapter-card)[open] > summary {
+  background:var(--studio-surface-3)!important;
+}
+html[data-theme-resolved="dark"] :is(.muted,.tiny,small,.answer-item b,figcaption,.v20-chapter-card-meta,.v20-word-state,.v20-library-meta) {
+  color:var(--muted)!important;
+}
+html[data-theme-resolved="dark"] :is(th,td) {color:var(--ink)!important;border-color:var(--line)!important;}
+html[data-theme-resolved="dark"] tbody tr:nth-child(even) {background:rgba(255,255,255,.025)!important;}
+html[data-theme-resolved="dark"] tbody tr:hover {background:rgba(112,132,255,.08)!important;}
+html[data-theme-resolved="dark"] :is(.mini-progress,.studio-progress-track,.v20-library-progress,.import-ai-progress) {
+  background:var(--studio-track)!important;
+  border-color:transparent!important;
+}
+html[data-theme-resolved="dark"] .logo {background:#151820!important;border-color:var(--line)!important;box-shadow:none!important;}
+html[data-theme-resolved="dark"] .save-pill.saved {color:var(--green)!important;background:color-mix(in srgb,var(--green) 12%,var(--studio-surface))!important;}
+html[data-theme-resolved="dark"] .save-pill.dirty {color:var(--orange)!important;background:color-mix(in srgb,var(--orange) 12%,var(--studio-surface))!important;}
+html[data-theme-resolved="dark"] .save-pill.warn {color:var(--red)!important;background:color-mix(in srgb,var(--red) 12%,var(--studio-surface))!important;}
+html[data-theme-resolved="dark"] .rate {box-shadow:none!important;background:var(--studio-surface-2)!important;}
+html[data-theme-resolved="dark"] .rate.again {color:#ff8f9e!important;border-color:rgba(255,100,120,.34)!important;}
+html[data-theme-resolved="dark"] .rate.good {color:#70dca5!important;border-color:rgba(67,202,135,.34)!important;}
+html[data-theme-resolved="dark"] .rate.known {color:#a89fff!important;border-color:rgba(139,126,255,.38)!important;}
+html[data-theme-resolved="dark"] .keyboard kbd {color:var(--ink)!important;background:#282d3a!important;border-color:var(--line)!important;}
+html[data-theme-resolved="dark"] ::-webkit-scrollbar-thumb {background:#3e4659;border:2px solid #171920;}
+html[data-theme-resolved="dark"] ::-webkit-scrollbar-track {background:#11141b;}
+html[data-theme-resolved="dark"] * {scrollbar-color:#3e4659 #11141b;}
+
+/* Settings: compact, explicit theme and power selection. */
+.v47-display-settings {display:grid!important;grid-template-columns:minmax(180px,.7fr) minmax(0,1.3fr);gap:18px!important;align-items:center!important;}
+.v47-display-settings-copy {display:grid;gap:4px;}
+.v47-setting-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.v47-setting-card {display:grid;gap:7px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--panel2) 86%,transparent);}
+.v47-setting-card > span {font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+.v47-setting-card select {width:100%;min-height:42px;}
+.v47-setting-card small {line-height:1.3;color:var(--muted);}
+
+/* Reveal keeps the reading surface full-size; assessment belongs to the same answer surface. */
+body.study-mode .study-card {grid-template-rows:auto minmax(0,1fr)!important;}
+body.study-mode #cardShell,
+body.study-mode #studyStage,
+body.study-mode #studyCardFace,
+body.study-mode .v17-card-face {width:100%!important;min-width:0!important;}
+#answerPanel > .rating-dock {
+  position:sticky!important;
+  left:auto!important;right:auto!important;bottom:-1px!important;
+  width:100%!important;max-width:none!important;max-height:none!important;min-height:0!important;
+  margin:10px 0 0!important;padding:8px!important;
+  border:1px solid var(--line)!important;border-radius:17px!important;
+  background:color-mix(in srgb,var(--panel2) 94%,transparent)!important;
+  box-shadow:0 -10px 24px color-mix(in srgb,var(--bg0) 34%,transparent)!important;
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  transform:none!important;z-index:6!important;
+  backdrop-filter:blur(14px) saturate(1.1)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.1)!important;
+}
+#cardShell:not(.answer-visible) #ratingDock {display:none!important;}
+#cardShell.answer-visible #ratingDock {display:block!important;}
+body.study-mode #answerPanel.show {
+  display:grid!important;grid-template-rows:minmax(0,1fr) auto!important;
+  width:100%!important;max-width:none!important;
+  max-height:min(48vh,440px)!important;overflow:auto!important;
+  overscroll-behavior:contain!important;
+}
+body.study-mode #answerPanel > .answer-grid {min-height:0!important;overflow:visible!important;}
+body.study-mode #ratingDock .rate-grid {width:100%;grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+body.study-mode #ratingDock .keyboard {margin-top:5px;}
+
+/* Low power pauses continuous aesthetics but preserves short functional feedback. */
+body[data-power-mode="low"] {--tab-liquid-speed:90ms!important;--view-speed:1ms!important;}
+body[data-power-mode="low"] :is(.ambient,.blob,.v17-atmosphere,.v17-rail-bubble,.v20-liquid-flow-layer,.v20-orbit-body,.v20-world-corona) {display:none!important;animation:none!important;}
+body[data-power-mode="low"] :is(.panel,.tabs,.rating-dock,.v19-side-deck,.v19-side-pane,.modal-card,.toast) {backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;}
+body[data-power-mode="low"] :is(.btn,.rate,.tab,.answer-panel,.toast) {transition:opacity 70ms linear,background-color 70ms linear,color 70ms linear!important;}
+
+/* Ultra Battery: no animation, no transition, no expensive live effects anywhere. */
+body[data-power-mode="ultra"] *,
+body[data-power-mode="ultra"] *::before,
+body[data-power-mode="ultra"] *::after {
+  animation:none!important;
+  transition:none!important;
+  scroll-behavior:auto!important;
+}
+body[data-power-mode="ultra"] :is(
+  .ambient,.blob,.v17-atmosphere,.v17-rail-bubble,.v20-liquid-flow-layer,
+  .v20-orbit-body,.v20-world-corona,.memory-world-orbit
+) {display:none!important;}
+body[data-power-mode="ultra"] :is(
+  .panel,.topbar,.header-nav,.tabs,.top-actions,.study-card,.card-shell,.v17-card-face,
+  .answer-panel,.rating-dock,.v19-side-deck,.v19-side-pane,.side-section,
+  .v20-library-workspace,.pro-set-review-page,.modal-card,.toast
+) {
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+body[data-power-mode="ultra"] .view:not(.active) {content-visibility:hidden!important;}
+body[data-power-mode="ultra"] :is(.btn:hover,.rate:hover,.tab:hover,.hub-tile:hover) {transform:none!important;box-shadow:none!important;}
+body[data-power-mode="ultra"] .tab-indicator {transition:none!important;box-shadow:none!important;}
+
+@media (max-width:720px) {
+  .v47-display-settings {grid-template-columns:1fr!important;gap:12px!important;}
+  .v47-setting-grid {grid-template-columns:1fr!important;}
+  body.study-mode #answerPanel.show {max-height:min(54svh,520px)!important;}
+  #answerPanel > .rating-dock {position:sticky!important;padding:6px!important;border-radius:15px!important;}
+  body.study-mode #ratingDock .keyboard {display:none!important;}
+}
+
+@media (max-height:720px) and (min-width:721px) {
+  body.study-mode #answerPanel.show {max-height:min(51vh,360px)!important;}
+  body.study-mode #ratingDock .keyboard {display:none!important;}
+}
+
+@media (prefers-contrast:more) {
+  :root[data-theme-resolved="dark"] :is(.panel,.section,.answer-item,details>summary,input,select,textarea,.btn,.rate) {border-color:currentColor!important;}
+}
+/* Override legacy low-power 1ms transition shims when Ultra Battery is selected. */
+body.low-power[data-power-mode="ultra"] *,
+body.low-power[data-power-mode="ultra"] *::before,
+body.low-power[data-power-mode="ultra"] *::after {
+  animation:none!important;
+  transition:none!important;
+  transition-property:none!important;
+  transition-duration:0s!important;
+  transition-delay:0s!important;
+}
+
+/* Dark-theme completion pass for surfaces that retained hard-coded light fills. */
+html[data-theme-resolved="dark"] :is(
+  .section-status,
+  .v20-scope-summary,
+  .pro-tutor-master-switch,
+  .pro-tutor-connection-status,
+  .pro-tutor-privacy-note,
+  .v45-wordsmart-filters > label
+) {
+  color:var(--ink)!important;
+  background:var(--studio-surface-2)!important;
+  border-color:var(--line)!important;
+  box-shadow:none!important;
+}
+html[data-theme-resolved="dark"] .section-status :is(small,em),
+html[data-theme-resolved="dark"] .v20-scope-summary :is(span,small),
+html[data-theme-resolved="dark"] .pro-tutor-privacy-note,
+html[data-theme-resolved="dark"] .pro-tutor-privacy-note b {
+  color:var(--muted)!important;
+}
+html[data-theme-resolved="dark"] .section-status.unlocked,
+html[data-theme-resolved="dark"] .section-status.completed,
+html[data-theme-resolved="dark"] .section-status.retired,
+html[data-theme-resolved="dark"] .v45-wordsmart-filters > label:has(input:checked) {
+  background:color-mix(in srgb,var(--accent) 16%,var(--studio-surface-2))!important;
+  border-color:color-mix(in srgb,var(--accent) 48%,var(--line))!important;
+}
+html[data-theme-resolved="dark"] .pro-tutor-connection-status.connected {
+  background:color-mix(in srgb,var(--green) 12%,var(--studio-surface-2))!important;
+}
+html[data-theme-resolved="dark"] .pro-tutor-connection-status.error {
+  background:color-mix(in srgb,var(--red) 12%,var(--studio-surface-2))!important;
+}
+html[data-theme-resolved="dark"] .pro-tutor-master-switch:has(input:checked) {
+  background:color-mix(in srgb,var(--accent) 16%,var(--studio-surface-2))!important;
+}
+
+/* Dark Study internals use dark glass rather than inherited white glass gradients. */
+html[data-theme-resolved="dark"] .v17-answer-zone {
+  background:linear-gradient(rgba(255,255,255,.018),rgba(255,255,255,.045))!important;
+}
+html[data-theme-resolved="dark"] #memorySpine {
+  background:linear-gradient(rgba(31,35,46,.94),rgba(20,23,31,.96))!important;
+  border-color:var(--line)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.06)!important;
+}
+html[data-theme-resolved="dark"] .v17-conduit {
+  background:linear-gradient(90deg,rgba(255,255,255,.025),rgba(255,255,255,.09) 46%,rgba(255,255,255,.025))!important;
+  border-color:rgba(205,212,236,.22)!important;
+  box-shadow:inset 1px 0 3px rgba(0,0,0,.28),inset -1px 0 2px rgba(255,255,255,.06)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-theme-resolved="dark"] .v17-conduit::before {border-left-color:rgba(255,255,255,.13)!important;opacity:.62!important;}
+html[data-theme-resolved="dark"] .v17-reading-bubble {
+  background:var(--studio-surface-2)!important;
+  border-color:color-mix(in srgb,currentColor 30%,var(--line))!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-theme-resolved="dark"] #studyCardFace {
+  box-shadow:inset 0 1px rgba(255,255,255,.06),inset 0 -1px rgba(0,0,0,.18),0 20px 56px rgba(0,0,0,.24)!important;
+}
+
+/* Phone navigation exposes the intended three stable destinations: Study, Books, More. */
+@media (max-width:720px) {
+  .v20-header-nav .tab[data-view="books"].mobile-main {display:inline-flex!important;}
+}

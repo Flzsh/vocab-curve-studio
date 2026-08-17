@@ -1,10 +1,14 @@
-Vocab Curve Studio V44 — Bridge Enhanced
+Vocab Curve Studio V47
 
 1. Extract this ZIP.
 2. Open a terminal in the extracted folder.
 3. Run: python3 -m http.server 4173
 4. Open: http://localhost:4173/
 
-Book 2 contains 558 curated cards from the supplied 耕读 vocabulary PDF. Every card includes a direct Chinese memory bridge and a complete natural English practice sentence.
+Settings > Appearance & power:
+- Follow system / Light / Dark
+- Full visuals / Low Power / Ultra Battery
 
-Progress is stored by browser profile and origin. Export a full backup before changing browser profiles, devices, folders, or ports.
+Ultra Battery stops all nonessential visual motion while keeping Study and saved progress functional.
+
+Export a full backup before changing browser profiles, devices, folders, ports, or origins.

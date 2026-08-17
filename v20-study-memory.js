@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function createV20StudyMemory() {
   'use strict';
 
-  const VERSION = '44.0.0-beta';
+  const VERSION = '44.1.0-beta';
   const MINUTE = 60 * 1000;
   const HOUR = 60 * MINUTE;
   const DAY = 24 * HOUR;

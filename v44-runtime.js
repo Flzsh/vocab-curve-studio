@@ -8,7 +8,7 @@
   function safeRequire(path){try{return require(path);}catch(_error){return null;}}
 })(typeof globalThis!=='undefined'?globalThis:this,function(root,Memory,Learning){
   'use strict';
-  const VERSION='44.0.0-beta';
+  const VERSION='44.1.0-beta';
   const MEMORY_STATE_VERSION=44;
   const DAY=86400000;
   const CARRYOVER_TTL_MS=36*60*60*1000;

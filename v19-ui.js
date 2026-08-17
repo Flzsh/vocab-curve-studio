@@ -167,6 +167,7 @@
 
   function rippleEligible(button) {
     if (!button || button.disabled) return false;
+    if (typeof document !== 'undefined' && document.body?.classList?.contains('low-power')) return false;
     if (typeof button.matches === 'function' && button.matches('.tab')) return false;
     if (typeof button.closest === 'function' && button.closest('#tabs')) return false;
     if (typeof button.closest === 'function' && button.closest('#view-ranked')) return false;

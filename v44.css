@@ -19,3 +19,30 @@ body[data-low-power="true"] .tab-indicator{backdrop-filter:none!important;-webki
   .v44-books-import-grid{grid-template-columns:1fr!important}
   .study-continue-chip{max-width:105px;overflow:hidden;text-overflow:ellipsis}
 }
+
+
+/* V45 Word Smart diagnostic and mixed-study release */
+.v45-wordsmart-diagnostic{display:grid;gap:14px;grid-column:1/-1}
+.v45-wordsmart-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.v45-wordsmart-head h2{margin:2px 0 0}
+.v45-wordsmart-select{display:flex;align-items:center;gap:8px}
+.v45-wordsmart-select label{font-size:.76rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.v45-wordsmart-select select{min-width:94px}
+.v45-wordsmart-filters{display:flex;flex-wrap:wrap;gap:8px}
+.v45-wordsmart-filters label{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:7px 12px;border:1px solid rgba(112,105,181,.16);border-radius:999px;background:rgba(255,255,255,.42);font-weight:700}
+#wordSmartDiagnosticBody{display:grid;gap:12px}
+.v45-scan-summary,.v45-scan-result{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid rgba(112,105,181,.14);border-radius:18px;background:rgba(255,255,255,.38)}
+.v45-scan-summary span,.v45-scan-result span{color:var(--muted)}
+.v45-scan-progress{font-size:.76rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.v45-scan-word{font-size:clamp(2rem,5vw,4.2rem);font-weight:900;letter-spacing:-.04em;text-align:center;padding:12px}
+.v45-scan-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v45-scan-options button{min-height:58px;padding:12px 14px;text-align:left;border:1px solid rgba(112,105,181,.16);border-radius:18px;background:rgba(255,255,255,.52);font:inherit;font-weight:750;color:inherit;cursor:pointer}
+.v45-scan-options button:hover{border-color:rgba(111,94,234,.38);background:rgba(246,244,255,.82)}
+@media(max-width:720px){
+ .v45-wordsmart-head{align-items:flex-start;flex-direction:column}
+ .v45-wordsmart-select{width:100%;justify-content:space-between}
+ .v45-wordsmart-select select{flex:1}
+ .v45-wordsmart-filters{display:grid;grid-template-columns:1fr;width:100%}
+ .v45-scan-options{grid-template-columns:1fr}
+ .v45-scan-summary,.v45-scan-result{align-items:flex-start;flex-direction:column}
+}

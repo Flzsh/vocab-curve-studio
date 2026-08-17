@@ -1,20 +1,31 @@
 {
-  "name": "Vocab Curve Studio V44",
-  "version": "44.0.0-beta",
-  "packageType": "verified-runtime-bridge-edition",
+  "name": "Vocab Curve Studio V47",
+  "version": "47.0.0",
+  "packageType": "audited-runtime-themes-integrated-rating-ultra-battery",
   "excluded": [
     "tests",
-    "docs/verification",
-    "docs/superpowers",
-    "scripts",
+    "development scripts",
     ".git",
-    "legacy",
-    "node_modules"
+    "node_modules",
+    "previous release packages",
+    "verification screenshots"
   ],
-  "workspaceRevision": 19,
-  "audit": "V44.1 curated 558-card Book 2 bridge and sentence upgrade; lexical migration, tutor integration, persistence, responsive, asset, and package verification",
-  "buildDate": "2026-08-07",
+  "workspaceRevision": 24,
+  "buildDate": "2026-08-17",
+  "audit": "V47 adds complete Light, Dark, and Follow System themes; integrates Wrong, Correct, and Know into the revealed answer surface without changing flashcard width; adds Ultra Battery mode that stops CSS and script-driven visual motion; repairs the three-destination phone navigation lens; and retains V46 scheduling, queue spacing, Word Smart, Books, Stats, persistence, and Pro Tutor behavior.",
+  "themes": ["system", "light", "dark"],
+  "powerModes": ["full", "low", "ultra"],
+  "integratedRatingSurface": true,
+  "ultraBatteryDisablesVisualMotion": true,
+  "book1Entries": 1357,
   "book2Entries": 558,
-  "book2BridgeRevision": 2,
-  "packageNote": "Every bundled Book 2 card includes a curated direct memory bridge and a natural English practice sentence."
+  "book3Entries": 892,
+  "book3Chapters": 9,
+  "book3StudySets": 45,
+  "wordSmartQuickQuizzes": 86,
+  "defaultMixedWindow": {
+    "reviews": 7,
+    "new": 3
+  },
+  "reviewOnlySupported": true
 }
